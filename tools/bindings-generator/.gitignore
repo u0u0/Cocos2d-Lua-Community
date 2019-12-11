@@ -1,0 +1,8 @@
+.DS_Store
+gen/
+*.pyc
+test/user.cfg
+test/userconf.ini
+test/simple_test_bindings/
+.idea
+.swp
