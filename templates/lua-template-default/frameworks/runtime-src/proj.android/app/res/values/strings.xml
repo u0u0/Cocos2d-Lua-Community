@@ -1,3 +1,3 @@
 <resources>
-    <string name="app_name">HelloLua</string>
+    <string name="app_name">__PROJECT_COCOS_NAME__</string>
 </resources>

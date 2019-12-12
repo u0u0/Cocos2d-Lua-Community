@@ -1,8 +1,8 @@
 {
     "init_cfg":{
-       "isLandscape": true,
+       "isLandscape": __SCREEN_ISLANDSCAPE__,
        "isWindowTop": false,
-       "name": "HelloLua",
+       "name": "__PROJECT_COCOS_NAME__",
        "width": 960,
        "height": 640,
        "entry": "src/main.lua",

@@ -11,7 +11,7 @@
     <key>CFBundleIconFile</key>
     <string>Icon-57.png</string>
     <key>CFBundleIdentifier</key>
-    <string>org.cocos2dx.${PRODUCT_NAME}</string>
+    <string>__PROJECT_PACKAGE_FULL_NAME__</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleVersion</key>
@@ -41,8 +41,8 @@
     <true/>
     <key>UISupportedInterfaceOrientations</key>
     <array>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>__SCREEN_ORIENTATION_IOS5__</string>
+        <string>__SCREEN_ORIENTATION_IOS6__</string>
     </array>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © 2019. All rights reserved.</string>

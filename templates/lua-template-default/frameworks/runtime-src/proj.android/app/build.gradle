@@ -6,7 +6,7 @@ android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
 
     defaultConfig {
-        applicationId "org.cocos2dx.hellolua"
+        applicationId "__PROJECT_PACKAGE_FULL_NAME__"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
         versionCode 1
@@ -157,76 +157,76 @@ android.applicationVariants.all { variant ->
         // }
 
         // compile & encrypt the scripts if necessary
-        def compileScript = (variant.name.compareTo('release') == 0)
-        if (project.hasProperty('PROP_COMPILE_SCRIPT')) {
-            compileScript = (PROP_COMPILE_SCRIPT.compareTo('1') == 0)
-        }
+        // def compileScript = (variant.name.compareTo('release') == 0)
+        // if (project.hasProperty('PROP_COMPILE_SCRIPT')) {
+        //     compileScript = (PROP_COMPILE_SCRIPT.compareTo('1') == 0)
+        // }
 
-        def encryptLua = project.hasProperty('PROP_LUA_ENCRYPT') && (PROP_LUA_ENCRYPT.compareTo('1') == 0)
-        if (compileScript || encryptLua) {
-            // -1 means not build bytecode
-            // 0 means build 32bit only
-            // 1 means build 64bit only
-            // 2 means build both 32bit & 64bit
-            def buildType = -1
-            if (compileScript) {
-                def need64 = false
-                def need32 = false
-                def abis = PROP_APP_ABI.split(':').collect{it as String}
-                abis.each{ abi->
-                    if (abi.compareTo('arm64-v8a') == 0) {
-                        need64 = true
-                    }
-                    else
-                    {
-                        need32 = true
-                    }
-                }
+        // def encryptLua = project.hasProperty('PROP_LUA_ENCRYPT') && (PROP_LUA_ENCRYPT.compareTo('1') == 0)
+        // if (compileScript || encryptLua) {
+        //     // -1 means not build bytecode
+        //     // 0 means build 32bit only
+        //     // 1 means build 64bit only
+        //     // 2 means build both 32bit & 64bit
+        //     def buildType = -1
+        //     if (compileScript) {
+        //         def need64 = false
+        //         def need32 = false
+        //         def abis = PROP_APP_ABI.split(':').collect{it as String}
+        //         abis.each{ abi->
+        //             if (abi.compareTo('arm64-v8a') == 0) {
+        //                 need64 = true
+        //             }
+        //             else
+        //             {
+        //                 need32 = true
+        //             }
+        //         }
 
-                if (need64 && need32) {
-                    buildType = 2
-                }
-                else if (need64) {
-                    buildType = 1
-                }
-                else {
-                    buildType = 0
-                }
-            }
+        //         if (need64 && need32) {
+        //             buildType = 2
+        //         }
+        //         else if (need64) {
+        //             buildType = 1
+        //         }
+        //         else {
+        //             buildType = 0
+        //         }
+        //     }
 
-            // invoke cocos command to compile & encrypt the lua files
-            switch (buildType) {
-                case -1:
-                    compileLua(dest_assets_folder + "/src",
-                               dest_assets_folder + "/src",
-                               false, false, encryptLua)
-                    break
-                case 0:
-                    compileLua(dest_assets_folder + "/src",
-                               dest_assets_folder + "/src",
-                               true, false, encryptLua)
-                    break
-                case 1:
-                    compileLua(dest_assets_folder + "/src",
-                               dest_assets_folder + "/src/64bit",
-                               true, true, encryptLua)
+        //     // invoke cocos command to compile & encrypt the lua files
+        //     switch (buildType) {
+        //         case -1:
+        //             compileLua(dest_assets_folder + "/src",
+        //                        dest_assets_folder + "/src",
+        //                        false, false, encryptLua)
+        //             break
+        //         case 0:
+        //             compileLua(dest_assets_folder + "/src",
+        //                        dest_assets_folder + "/src",
+        //                        true, false, encryptLua)
+        //             break
+        //         case 1:
+        //             compileLua(dest_assets_folder + "/src",
+        //                        dest_assets_folder + "/src/64bit",
+        //                        true, true, encryptLua)
 
-                    // remove the lua files in src dir
-                    delete fileTree(dest_assets_folder + "/src") {
-                        include '**/*.lua'
-                    }
-                    delete dest_assets_folder + "/src/cocos"
-                    break
-                case 2:
-                    compileLua(dest_assets_folder + "/src",
-                               dest_assets_folder + "/src/64bit",
-                               true, true, encryptLua)
-                    compileLua(dest_assets_folder + "/src",
-                               dest_assets_folder + "/src",
-                               true, false, encryptLua)
-                    break
-            }
-        }
+        //             // remove the lua files in src dir
+        //             delete fileTree(dest_assets_folder + "/src") {
+        //                 include '**/*.lua'
+        //             }
+        //             delete dest_assets_folder + "/src/cocos"
+        //             break
+        //         case 2:
+        //             compileLua(dest_assets_folder + "/src",
+        //                        dest_assets_folder + "/src/64bit",
+        //                        true, true, encryptLua)
+        //             compileLua(dest_assets_folder + "/src",
+        //                        dest_assets_folder + "/src",
+        //                        true, false, encryptLua)
+        //             break
+        //     }
+        // }
     }
     tasks.getByName("pre${targetName}Build").dependsOn copyTaskName
 }
