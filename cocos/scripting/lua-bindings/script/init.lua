@@ -41,8 +41,6 @@ if nil ~= ccui then
     require "cocos.ui.GuiConstants"
 end
 
--- extensions
-require "cocos.extension.ExtensionConstants"
 -- network
 require "cocos.network.NetworkConstants"
 -- Spine

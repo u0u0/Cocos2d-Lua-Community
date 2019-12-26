@@ -25,7 +25,6 @@ THE SOFTWARE.
 
 #include "editor-support/cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
-#include "editor-support/cocostudio/SimpleAudioEngine.h"
 #include "base/ObjectFactory.h"
 #include "base/ccUtils.h"
 #include "platform/CCFileUtils.h"
@@ -577,7 +576,6 @@ void SceneReader::destroyInstance()
 {
     DictionaryHelper::destroyInstance();
     TriggerMng::destroyInstance();
-    CocosDenshion::SimpleAudioEngine::end();
     CC_SAFE_DELETE(s_sharedReader);
 }
 

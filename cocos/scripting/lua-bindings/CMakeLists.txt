@@ -16,7 +16,6 @@ set(lua_bindings_manual_headers
     manual/network/Lua_web_socket.h
     manual/network/lua_extensions.h
     manual/network/lua_downloader.h
-    manual/audioengine/lua_cocos2dx_audioengine_manual.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
     manual/navmesh/lua_cocos2dx_navmesh_manual.h
@@ -60,14 +59,12 @@ set(lua_bindings_manual_files
     #manual/spine/lua_cocos2dx_spine_manual.cpp
     manual/spine/LuaSkeletonAnimation.cpp
     manual/ui/lua_cocos2dx_ui_manual.cpp
-    manual/audioengine/lua_cocos2dx_audioengine_manual.cpp
     manual/physics3d/lua_cocos2dx_physics3d_manual.cpp
     manual/navmesh/lua_cocos2dx_navmesh_conversions.cpp
     manual/navmesh/lua_cocos2dx_navmesh_manual.cpp
     )
 
 set(lua_bindings_auto_headers
-    auto/lua_cocos2dx_audioengine_auto.hpp
     auto/lua_cocos2dx_3d_auto.hpp
     auto/lua_cocos2dx_controller_auto.hpp
     auto/lua_cocos2dx_spine_auto.hpp
@@ -92,7 +89,6 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_studio_auto.cpp
     auto/lua_cocos2dx_csloader_auto.cpp
     auto/lua_cocos2dx_ui_auto.cpp
-    auto/lua_cocos2dx_audioengine_auto.cpp
     auto/lua_cocos2dx_physics3d_auto.cpp
     auto/lua_cocos2dx_navmesh_auto.cpp
     auto/lua_cocos2dx_backend_auto.cpp
