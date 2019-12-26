@@ -21,7 +21,6 @@ set(lua_bindings_manual_headers
     manual/tolua_fix.h
     manual/navmesh/lua_cocos2dx_navmesh_manual.h
     manual/navmesh/lua_cocos2dx_navmesh_conversions.h
-    manual/cocos2d/lua_cocos2dx_deprecated.h
     manual/cocos2d/LuaScriptHandlerMgr.h
     manual/cocos2d/lua_cocos2dx_manual.hpp
     manual/Cocos2dxLuaLoader.h
@@ -44,7 +43,6 @@ set(lua_bindings_manual_files
     manual/tolua_fix.cpp
     manual/CCComponentLua.cpp
     manual/cocos2d/LuaScriptHandlerMgr.cpp
-    manual/cocos2d/lua_cocos2dx_deprecated.cpp
     manual/cocos2d/lua_cocos2dx_manual.cpp
     manual/cocos2d/lua_cocos2dx_physics_manual.cpp
     manual/3d/lua_cocos2dx_3d_manual.cpp
@@ -142,8 +140,6 @@ elseif(ANDROID)
         auto/lua_cocos2dx_video_auto.cpp
         )
 endif()
-
-include(../deprecated/CMakeLists.txt)
 
 set(lua_bindings_files
     ${lua_bindings_manual_files}

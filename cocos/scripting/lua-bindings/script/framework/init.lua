@@ -35,8 +35,6 @@ transition = require("cocos.framework.transition")
 
 require("cocos.framework.extends.NodeEx")
 require("cocos.framework.extends.SpriteEx")
-require("cocos.framework.extends.LayerEx")
-require("cocos.framework.extends.MenuEx")
 
 if ccui then
 require("cocos.framework.extends.UIWidget")

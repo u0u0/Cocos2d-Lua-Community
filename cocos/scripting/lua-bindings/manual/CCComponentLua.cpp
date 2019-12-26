@@ -26,6 +26,7 @@
 #include "scripting/lua-bindings/manual/CCComponentLua.h"
 #include <string>
 #include "base/CCScriptSupport.h"
+#include "base/ccUTF8.h"
 #include "platform/CCFileUtils.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"

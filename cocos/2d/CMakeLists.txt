@@ -42,7 +42,6 @@ set(COCOS_2D_HEADER
     2d/CCCameraBackgroundBrush.h
     2d/CCFastTMXTiledMap.h
     2d/CCLabelTextFormatter.h
-    2d/CCMenuItem.h
     2d/CCFontFNT.h
     2d/CCSpriteBatchNode.h
     2d/CCTransitionProgress.h
@@ -61,7 +60,6 @@ set(COCOS_2D_HEADER
     2d/CCActionTiledGrid.h
     2d/CCActionManager.h
     2d/CCMotionStreak.h
-    2d/CCMenu.h
     2d/CCDrawNode.h
     2d/CCTMXLayer.h
     2d/CCCamera.h
@@ -107,8 +105,6 @@ set(COCOS_2D_SRC
     2d/CCLabelTextFormatter.cpp
     2d/CCLayer.cpp
     2d/CCLight.cpp
-    2d/CCMenu.cpp
-    2d/CCMenuItem.cpp
     2d/CCMotionStreak.cpp
     2d/CCNode.cpp
     2d/CCNodeGrid.cpp

@@ -251,14 +251,12 @@ private:
 enum ScriptEventType
 {
     kNodeEvent = 0,
-    kMenuClickedEvent,
     kCallFuncEvent,
     kScheduleEvent,
     kTouchEvent,
     kTouchesEvent,
     kKeypadEvent,
     kAccelerometerEvent,
-    kControlEvent,
     kCommonEvent,
     kComponentEvent,
     kRestartGame,

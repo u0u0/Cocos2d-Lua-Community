@@ -27,12 +27,10 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 
-#include "extensions/GUI/CCControlExtension/CCControl.h"
 #include "scripting/lua-bindings/manual/cocos2d/lua_cocos2dx_manual.hpp"
 #include "scripting/lua-bindings/manual/extension/lua_cocos2dx_extension_manual.h"
 #include "scripting/lua-bindings/manual/cocostudio/lua_cocos2dx_coco_studio_manual.hpp"
 #include "scripting/lua-bindings/manual/ui/lua_cocos2dx_ui_manual.hpp"
-#include "2d/CCMenuItem.h"
 #include "base/CCDirector.h"
 #include "base/CCEventCustom.h"
 
@@ -117,17 +115,6 @@ int LuaEngine::executeMenuItemEvent(MenuItem* pMenuItem)
     return 0;
 }
 
-int LuaEngine::executeNotificationEvent(__NotificationCenter* pNotificationCenter, const char* pszName)
-{
-    int nHandler = pNotificationCenter->getObserverHandlerByName(pszName);
-    if (!nHandler) return 0;
-    
-    _stack->pushString(pszName);
-    int ret = _stack->executeFunctionByHandler(nHandler, 1);
-    _stack->clean();
-    return ret;
-}
-
 int LuaEngine::executeCallFuncActionEvent(CallFunc* pAction, Ref* pTarget/* = NULL*/)
 {
     return 0;
@@ -143,11 +130,6 @@ int LuaEngine::executeSchedule(int nHandler, float dt, Node* pNode/* = NULL*/)
 }
 
 int LuaEngine::executeLayerTouchEvent(Layer* pLayer, int eventType, Touch *pTouch)
-{
-    return 0;
-}
-
-int LuaEngine::executeLayerTouchesEvent(Layer* pLayer, int eventType, __Set *pTouches)
 {
     return 0;
 }
@@ -216,11 +198,6 @@ int LuaEngine::sendEvent(ScriptEvent* evt)
                return handleNodeEvent(evt->data);
             }
             break;
-        case kMenuClickedEvent:
-            {
-                return handleMenuClickedEvent(evt->data);
-            }
-            break;
         case kCallFuncEvent:
             {
                 return handleCallFuncActionEvent(evt->data);
@@ -254,11 +231,6 @@ int LuaEngine::sendEvent(ScriptEvent* evt)
         case kCommonEvent:
             {
                 return handleCommonEvent(evt->data);
-            }
-            break;
-        case kControlEvent:
-            {
-                return handlerControlEvent(evt->data);
             }
             break;
         default:
@@ -309,28 +281,6 @@ int LuaEngine::handleNodeEvent(void* data)
             return 0;
     }
     int ret = _stack->executeFunctionByHandler(handler, 1);
-    _stack->clean();
-    return ret;
-}
-
-int LuaEngine::handleMenuClickedEvent(void* data)
-{
-    if (NULL == data)
-        return 0;
-    
-    BasicScriptData* basicScriptData = (BasicScriptData*)data;
-    if (NULL == basicScriptData->nativeObject)
-        return 0;
-        
-    MenuItem* menuItem = static_cast<MenuItem*>(basicScriptData->nativeObject);
-    
-    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler(menuItem, ScriptHandlerMgr::HandlerType::MENU_CLICKED);
-    if (0 == handler)
-        return 0;
-    
-    _stack->pushInt(menuItem->getTag());
-    _stack->pushObject(menuItem, "cc.MenuItem");
-    int ret = _stack->executeFunctionByHandler(handler, 2);
     _stack->clean();
     return ret;
 }
@@ -560,40 +510,6 @@ int LuaEngine::handleTouchesEvent(void* data)
 
     _stack->clean();
     return ret;
-}
-
-int LuaEngine::handlerControlEvent(void* data)
-{
-    if ( NULL == data )
-        return 0;
-    
-    BasicScriptData* basicScriptData = static_cast<BasicScriptData*>(data);
-    if (NULL == basicScriptData->nativeObject)
-        return 0;
-    
-    int controlEvents = *((int*)(basicScriptData->value));
-    
-    int handler = 0;
-    int ret = 0;
-    
-    for (int i = 0; i < kControlEventTotalNumber; i++)
-    {
-        if ((controlEvents & (1 << i)))
-        {
-            ScriptHandlerMgr::HandlerType controlHandler = ScriptHandlerMgr::HandlerType((int)ScriptHandlerMgr::HandlerType::CONTROL_TOUCH_DOWN + i);
-            handler = ScriptHandlerMgr::getInstance()->getObjectHandler(basicScriptData->nativeObject, controlHandler);
-            
-            if (0 != handler)
-            {
-                _stack->pushObject((Ref*)basicScriptData->nativeObject, "cc.Ref");
-                _stack->pushInt(controlEvents);
-                ret = _stack->executeFunctionByHandler(handler, 2);
-                _stack->clean();
-            }
-        }
-    }
-
-    return ret;    
 }
 
 int LuaEngine::handleEventAcc(void* data)
