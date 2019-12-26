@@ -588,52 +588,6 @@ void Armature::setColliderFilter(ColliderFilter *filter)
         element.second->setColliderFilter(filter);
     }
 }
-#elif ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX
-
-void Armature::drawContour()
-{
-    for(auto& element : _boneDic)
-    {
-        Bone *bone = element.second;
-        ColliderDetector *detector = bone->getColliderDetector();
-
-        if (!detector)
-            continue;
-
-        const cocos2d::Vector<ColliderBody*>& bodyList = detector->getColliderBodyList();
-
-        for (auto& object : bodyList)
-        {
-            ColliderBody *body = static_cast<ColliderBody*>(object);
-            const std::vector<Vec2> &vertexList = body->getCalculatedVertexList();
-
-            unsigned long length = vertexList.size();
-            Vec2 *points = new (std::nothrow) Vec2[length];
-            for (unsigned long i = 0; i<length; i++)
-            {
-                Vec2 p = vertexList.at(i);
-                points[i].x = p.x;
-                points[i].y = p.y;
-            }
-            
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (push)
-#pragma warning (disable: 4996)
-#endif
-            cocos2d::log("TODO in %s %s %d", __FILE__, __FUNCTION__, __LINE__);
-
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (pop)
-#endif
-            
-            delete []points;
-        }
-    }
-}
 
 #endif
 

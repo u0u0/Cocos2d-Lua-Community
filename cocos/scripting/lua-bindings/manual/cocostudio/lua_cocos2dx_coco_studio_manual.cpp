@@ -384,7 +384,7 @@ static int lua_cocos2dx_extension_Bone_getIgnoreMovementBoneData(lua_State* L)
     
     if (0 == argc)
     {
-        tolua_pushboolean(L, self->getIgnoreMovementBoneData());
+        tolua_pushboolean(L, self->isIgnoreMovementBoneData());
         return 1;
     }
     
@@ -405,7 +405,7 @@ static void extendBone(lua_State* L)
     if (lua_istable(L,-1))
     {
         tolua_function(L, "setIgnoreMovementBoneData", lua_cocos2dx_extension_Bone_setIgnoreMovementBoneData);
-        tolua_function(L, "getIgnoreMovementBoneData", lua_cocos2dx_extension_Bone_getIgnoreMovementBoneData);
+        tolua_function(L, "isIgnoreMovementBoneData", lua_cocos2dx_extension_Bone_getIgnoreMovementBoneData);
     }
     lua_pop(L, 1);
 }

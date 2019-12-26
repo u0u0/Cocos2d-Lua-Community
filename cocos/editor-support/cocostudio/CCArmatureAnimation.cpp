@@ -124,17 +124,6 @@ void ArmatureAnimation::stop()
     ProcessBase::stop();
 }
 
-void ArmatureAnimation::setAnimationScale(float animationScale )
-{
-    setSpeedScale(animationScale);
-}
-
-float ArmatureAnimation::getAnimationScale() const
-{
-    return getSpeedScale();
-}
-
-
 void ArmatureAnimation::setSpeedScale(float speedScale)
 {
     if(speedScale == _speedScale)
@@ -255,11 +244,6 @@ void ArmatureAnimation::play(const std::string& animationName, int durationTo,  
     }
 
     _armature->update(0);
-}
-
-void ArmatureAnimation::playByIndex(int animationIndex, int durationTo, int loop)
-{
-    playWithIndex(animationIndex, durationTo, loop);
 }
 
 void ArmatureAnimation::playWithIndex(int animationIndex, int durationTo, int loop)
@@ -470,22 +454,11 @@ std::string ArmatureAnimation::getCurrentMovementID() const
     return _movementID;
 }
 
-void ArmatureAnimation::setMovementEventCallFunc(Ref *target, SEL_MovementEventCallFunc callFunc)
-{
-    _movementEventTarget = target;
-    _movementEventCallFunc = callFunc;
-}
-
-void ArmatureAnimation::setFrameEventCallFunc(Ref *target, SEL_FrameEventCallFunc callFunc)
-{
-    _frameEventTarget = target;
-    _frameEventCallFunc = callFunc;
-}
-
 void ArmatureAnimation::setMovementEventCallFunc(std::function<void(Armature *armature, MovementEventType movementType, const std::string& movementID)> listener)
 {
     _movementEventListener = listener;
 }
+
 void ArmatureAnimation::setFrameEventCallFunc(std::function<void(Bone *bone, const std::string& frameEventName, int originFrameIndex, int currentFrameIndex)> listener)
 {
     _frameEventListener = listener;

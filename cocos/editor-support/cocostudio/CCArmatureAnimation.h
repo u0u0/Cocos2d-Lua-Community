@@ -94,21 +94,10 @@ public:
 
     /**
      * Scale animation play speed.
-     * This method is deprecated, please use setSpeedScale.
-     * @param animationScale Scale value
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void setAnimationScale(float animationScale);
-    CC_DEPRECATED_ATTRIBUTE virtual float getAnimationScale() const;
-
-    /**
-     * Scale animation play speed.
      * @param animationScale Scale value
      */
     virtual void setSpeedScale(float speedScale);
     virtual float getSpeedScale() const;
-
-    //! The animation update speed
-    CC_DEPRECATED_ATTRIBUTE virtual void setAnimationInternal(float animationInternal) {}
 
     using ProcessBase::play;
     /**
@@ -127,12 +116,6 @@ public:
      */
     virtual void play(const std::string& animationName, int durationTo = -1,  int loop = -1);
 
-    /**
-     * Play animation by index, the other param is the same to play.
-     * @deprecated, please use playWithIndex
-     * @param  animationIndex  the animation index you want to play
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void playByIndex(int animationIndex,  int durationTo = -1, int loop = -1);
     virtual void playWithIndex(int animationIndex,  int durationTo = -1, int loop = -1);
 
     virtual void playWithNames(const std::vector<std::string>& movementNames, int durationTo = -1, bool loop = true);
@@ -181,18 +164,6 @@ public:
      * @return The name of current movement
      */
     std::string getCurrentMovementID() const;
-
-    /**
-     * Set armature's movement event callback function
-     * To disconnect this event, just setMovementEventCallFunc(nullptr, nullptr);
-     */
-    CC_DEPRECATED_ATTRIBUTE void setMovementEventCallFunc(cocos2d::Ref *target, SEL_MovementEventCallFunc callFunc);
-
-    /**
-     * Set armature's frame event callback function
-     * To disconnect this event, just setFrameEventCallFunc(nullptr, nullptr);
-     */
-    CC_DEPRECATED_ATTRIBUTE void setFrameEventCallFunc(cocos2d::Ref *target, SEL_FrameEventCallFunc callFunc);
     
     void setMovementEventCallFunc(std::function<void(Armature *armature, MovementEventType movementType, const std::string& movementID)> listener);
     void setFrameEventCallFunc(std::function<void(Bone *bone, const std::string& frameEventName, int originFrameIndex, int currentFrameIndex)> listener);

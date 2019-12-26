@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-#include "ExtensionMacros.h"
 #include "editor-support/cocostudio/CocosStudioExport.h"
 #include "platform/CCPlatformMacros.h"
 #include "ui/UIWidget.h"
@@ -98,8 +97,6 @@ class CC_STUDIO_DLL FlatBuffersSerialize
     
 public:
     static FlatBuffersSerialize* getInstance();
-    /** @deprecated Use method destroyInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE static void purge();
     static void destroyInstance();
     
     FlatBuffersSerialize();

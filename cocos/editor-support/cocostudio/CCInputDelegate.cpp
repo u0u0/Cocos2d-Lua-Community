@@ -56,35 +56,6 @@ InputDelegate::~InputDelegate()
     dispatcher->removeEventListener(_accelerometerListener);
     Device::setAccelerometerEnabled(false);
 }
-    
-void InputDelegate::didAccelerate(cocos2d::Acceleration* /*accelerationValue*/)
-{}
-
-bool InputDelegate::ccTouchBegan(cocos2d::Touch* /*touch*/, cocos2d::Event* /*event*/)
-{
-    return false;
-}
-
-void InputDelegate::ccTouchMoved(cocos2d::Touch* /*touch*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchEnded(cocos2d::Touch* /*touch*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchCancelled(cocos2d::Touch* /*touch*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchesBegan(cocos2d::__Set* /*touches*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchesMoved(cocos2d::__Set* /*touches*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchesEnded(cocos2d::__Set* /*touches*/, cocos2d::Event* /*event*/)
-{}
-
-void InputDelegate::ccTouchesCancelled(cocos2d::__Set* /*touches*/, cocos2d::Event* /*event*/)
-{}
 
 void InputDelegate::onAcceleration(cocos2d::Acceleration* /*acc*/, cocos2d::Event* /*event*/)
 {}

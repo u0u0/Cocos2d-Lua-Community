@@ -160,11 +160,6 @@ namespace cocostudio
         return instanceWidgetReader;
     }
     
-    void WidgetReader::purge()
-    {
-        CC_SAFE_DELETE(instanceWidgetReader);
-    }
-    
     void WidgetReader::destroyInstance()
     {
         CC_SAFE_DELETE(instanceWidgetReader);

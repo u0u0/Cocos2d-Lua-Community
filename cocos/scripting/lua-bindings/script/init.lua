@@ -32,8 +32,6 @@ __G__TRACKBACK__ = function(msg)
     return msg
 end
 
--- audio
-require "cocos.cocosdenshion.AudioEngine"
 -- cocosstudio
 if nil ~= ccs then
     require "cocos.cocostudio.CocoStudio"
@@ -52,41 +50,7 @@ if nil ~= sp then
     require "cocos.spine.SpineConstants"
 end
 
--- require "cocos.cocos2d.deprecated"
-
--- Lua extensions
-require "cocos.cocos2d.bitExtend"
-
--- CCLuaEngine
--- require "cocos.cocos2d.DeprecatedCocos2dClass"
--- require "cocos.cocos2d.DeprecatedCocos2dEnum"
--- require "cocos.cocos2d.DeprecatedCocos2dFunc"
-
--- register_cocostudio_module
--- if nil ~= ccs then
---     require "cocos.cocostudio.DeprecatedCocoStudioClass"
---     require "cocos.cocostudio.DeprecatedCocoStudioFunc"
--- end
-
--- register_extension_module
--- require "cocos.extension.DeprecatedExtensionClass"
--- require "cocos.extension.DeprecatedExtensionEnum"
--- require "cocos.extension.DeprecatedExtensionFunc"
-
--- register_network_module
--- require "cocos.network.DeprecatedNetworkClass"
--- require "cocos.network.DeprecatedNetworkEnum"
--- require "cocos.network.DeprecatedNetworkFunc"
-
--- register_ui_module
--- if nil ~= ccui then
---     require "cocos.ui.DeprecatedUIEnum"
---     require "cocos.ui.DeprecatedUIFunc"
--- end
-
 -- physics3d
 require "cocos.physics3d.physics3d-constants"
 
-if CC_USE_FRAMEWORK then
-    require "cocos.framework.init"
-end
+require "cocos.framework.init"

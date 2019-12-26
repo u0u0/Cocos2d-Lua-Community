@@ -144,12 +144,10 @@ endif()
 set(lua_bindings_files
     ${lua_bindings_manual_files}
     ${lua_bindings_auto_files}
-    ${COCOS_DEPRECATED_SRC}
     )
 set(lua_bindings_headers
     ${lua_bindings_manual_headers}
     ${lua_bindings_auto_headers}
-    ${COCOS_DEPRECATED_HEADER}
     )
 
 list(APPEND lua_bindings_files ${lua_bindings_headers})

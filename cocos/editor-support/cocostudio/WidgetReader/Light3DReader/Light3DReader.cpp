@@ -64,11 +64,6 @@ namespace cocostudio
         return _instanceLight3DReader;
     }
     
-    void Light3DReader::purge()
-    {
-        CC_SAFE_DELETE(_instanceLight3DReader);
-    }
-    
     void Light3DReader::destroyInstance()
     {
         CC_SAFE_DELETE(_instanceLight3DReader);

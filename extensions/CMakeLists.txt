@@ -1,7 +1,4 @@
 set(COCOS_EXTENSIONS_HEADER
-    ../extensions/ExtensionMacros.h
-    ../extensions/physics-nodes/CCPhysicsSprite.h
-    ../extensions/physics-nodes/CCPhysicsDebugNode.h
     ../extensions/Particle3D/CCParticleSystem3D.h
     ../extensions/Particle3D/PU/CCPUDoExpireEventHandler.h
     ../extensions/Particle3D/PU/CCPUParticleSystem3D.h
@@ -154,13 +151,10 @@ set(COCOS_EXTENSIONS_HEADER
     ../extensions/Particle3D/CCParticle3DAffector.h
     ../extensions/Particle3D/CCParticle3DRender.h
     ../extensions/cocos-ext.h
-    ../extensions/ExtensionExport.h
     )
 
 set(COCOS_EXTENSIONS_SRC
 
-    ../extensions/physics-nodes/CCPhysicsDebugNode.cpp
-    ../extensions/physics-nodes/CCPhysicsSprite.cpp
     ../extensions/Particle3D/CCParticle3DAffector.cpp
     ../extensions/Particle3D/CCParticle3DEmitter.cpp
     ../extensions/Particle3D/CCParticle3DRender.cpp

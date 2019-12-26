@@ -71,11 +71,6 @@ namespace cocostudio
         return _sceneBrushInstance;
     }
     
-    void GameNode3DReader::purge()
-    {
-        CC_SAFE_DELETE(_instanceNode3DReader);
-    }
-    
     void GameNode3DReader::destroyInstance()
     {
         CC_SAFE_DELETE(_instanceNode3DReader);

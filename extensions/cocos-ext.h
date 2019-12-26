@@ -25,12 +25,6 @@
 #ifndef __COCOS2D_EXT_H__
 #define __COCOS2D_EXT_H__
 
-#include "ExtensionMacros.h"
-
-// Physics integration
-#include "physics-nodes/CCPhysicsDebugNode.h"
-#include "physics-nodes/CCPhysicsSprite.h"
-
 // Particle System, include Particle Universe Particle System
 #include "Particle3D/CCParticle3DRender.h"
 #include "Particle3D/CCParticleSystem3D.h"

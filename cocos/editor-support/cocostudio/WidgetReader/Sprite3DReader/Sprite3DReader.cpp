@@ -68,11 +68,6 @@ namespace cocostudio
         return _instanceSprite3DReader;
     }
     
-    void Sprite3DReader::purge()
-    {
-        CC_SAFE_DELETE(_instanceSprite3DReader);
-    }
-    
     void Sprite3DReader::destroyInstance()
     {
         CC_SAFE_DELETE(_instanceSprite3DReader);

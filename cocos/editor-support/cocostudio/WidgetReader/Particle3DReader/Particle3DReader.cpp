@@ -65,11 +65,6 @@ namespace cocostudio
         return _instanceParticle3DReader;
     }
     
-    void Particle3DReader::purge()
-    {
-        CC_SAFE_DELETE(_instanceParticle3DReader);
-    }
-    
     void Particle3DReader::destroyInstance()
     {
         CC_SAFE_DELETE(_instanceParticle3DReader);

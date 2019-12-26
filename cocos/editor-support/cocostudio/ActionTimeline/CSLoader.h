@@ -75,8 +75,6 @@ public:
     static void destroyInstance();
     
     CSLoader();
-    /** @deprecated Use method destroyInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE void purge();    
     
     void init();
     

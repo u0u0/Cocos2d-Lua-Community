@@ -33,7 +33,6 @@
 #include "scripting/lua-bindings/manual/cocos2d/LuaScriptHandlerMgr.h"
 
 USING_NS_CC;
-USING_NS_CC_EXT;
 
 
 int lua_cocos2dx_extension_ParticleSystem3D_getParticlePool(lua_State* tolua_S)
