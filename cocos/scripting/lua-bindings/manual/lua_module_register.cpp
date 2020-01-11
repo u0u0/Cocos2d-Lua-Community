@@ -32,11 +32,12 @@
 #include "scripting/lua-bindings/manual/3d/lua_cocos2dx_3d_manual.h"
 #include "scripting/lua-bindings/manual/physics3d/lua_cocos2dx_physics3d_manual.h"
 #include "scripting/lua-bindings/manual/navmesh/lua_cocos2dx_navmesh_manual.h"
-
+#include "scripting/lua-bindings/manual/audio/lua_audio_manual.h"
 
 int lua_module_register(lua_State* L)
 {
     // Don't change the module register order unless you know what your are doing
+    register_audio_module(L);
     register_network_module(L);
     register_cocostudio_module(L);
     register_ui_module(L);

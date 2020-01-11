@@ -25,6 +25,10 @@ option(BUILD_EXT_UNZIP "Build with internal unzip support" ON)
 
 add_library(external empty.cpp)
 
+# OpenAL
+add_subdirectory(OpenAL)
+target_link_libraries(external ext_OpenAL)
+
 if(BUILD_EXT_BOX2D)
     add_subdirectory(Box2D)
     target_link_libraries(external ext_box2d)

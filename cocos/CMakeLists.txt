@@ -126,6 +126,9 @@ target_include_directories(cocos2d
     PUBLIC ${COCOS2DX_ROOT_PATH}/extensions
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/platform
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/editor-support
+    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libogg
+    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libvorbis
+    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libvorbis/lib
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/platform/${PLATFORM_FOLDER}

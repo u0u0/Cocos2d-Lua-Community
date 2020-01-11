@@ -140,9 +140,9 @@ def createProject(packageName, outputDir, isLandscape, needCopyCocos2d):
     if needCopyCocos2d:
         print "====> Copying cocos sources."
         os.mkdir(joinDir(outputDir, "frameworks", "cocos2d-x"))
-        for dirName in ["cmake", "cocos", "extensions", "external", "licenses"]:
+        for dirName in ["cmake", "cocos", "extensions", "external"]:
             shutil.copytree(joinDir(engineRoot, dirName), joinDir(outputDir, "frameworks", "cocos2d-x", dirName))
-        for fileName in ["CHANGELOG", "CMakeLists.txt", "install-deps-linux.sh", "README.md"]:
+        for fileName in ["CHANGELOG", "VERSION", "README.md"]:
             copyFile(joinDir(engineRoot, fileName), joinDir(outputDir, "frameworks", "cocos2d-x", fileName))
         copyFile(joinDir(engineRoot, "cocos", "scripting", "lua-bindings", "manual", "lua_module_register.h"), joinDir(outputDir, "frameworks", "runtime-src", "Classes", "lua_module_register.h"))
         shutil.rmtree(joinDir(outputDir, "frameworks", "cocos2d-x", "cocos", "scripting", "lua-bindings", "script")) # remove double files

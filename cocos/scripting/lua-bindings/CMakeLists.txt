@@ -1,6 +1,7 @@
 set(cocos_root ${COCOS2DX_ROOT_PATH})
 
 set(lua_bindings_manual_headers
+    manual/audio/lua_audio_manual.h
     manual/CCComponentLua.h
     manual/3d/lua_cocos2dx_3d_manual.h
     manual/CCLuaStack.h
@@ -32,6 +33,7 @@ set(lua_bindings_manual_headers
     )
 
 set(lua_bindings_manual_files
+    manual/audio/lua_audio_manual.cpp
     manual/CCLuaBridge.cpp
     manual/CCLuaEngine.cpp
     manual/CCLuaStack.cpp

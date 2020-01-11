@@ -15,14 +15,75 @@
 #ifndef __RDAudio_H__
 #define __RDAudio_H__
 
-class RDAudio
+#include <queue>
+#include <thread>
+#include <string>
+#include <mutex>
+#include <condition_variable>
+
+#include "platform/CCPlatformConfig.h"
+#include "base/CCRef.h"
+
+#include "alext.h"
+
+typedef void (*AudioCallback)(int funcID, ALuint bufferID);
+
+class CC_DLL RDAudio : public cocos2d::Ref
 {
 public:
     RDAudio();
     virtual ~RDAudio();
     
     static RDAudio *getInstance();
-    static void destroyInstance();   
+    static void destroyInstance();
+    
+    void pause();
+    void resume();
+    void loadFileAsyn(const char *filename, int funcID, AudioCallback cb);
+private:
+    struct AsyncStruct {
+    public:
+        AsyncStruct(const char *fn, int fid, AudioCallback func)
+        : filename(fn)
+        , cb(func)
+        , funcID(fid)
+        , pcmData(NULL)
+        , channels(0)
+        , rate(0)
+        , size(0)
+        {
+        }
+        ~AsyncStruct()
+        {
+            if (pcmData) free(pcmData);
+        };
+        std::string filename;
+        AudioCallback cb;
+        int funcID;
+        unsigned char *pcmData;
+        int channels;
+        int rate;
+        int size;
+    };
+    
+    void init();
+    void threadLoop();
+    void scheduleLoop(float);
+    void waitForQuit();
+ 
+    static RDAudio *s_instant;
+    // OpenAL
+    ALCdevice *_device = NULL;
+    ALCcontext *_context = NULL;
+    // thread relative
+    bool _needQuit;
+    int _asyncRefCount;
+    std::thread *_thread = NULL;
+    std::queue<AsyncStruct *> _inQueue;
+    std::queue<AsyncStruct *> _outQueue;
+    std::mutex _inMutex;
+    std::mutex _outMutex;
+    std::condition_variable _inCondition;
 };
 
 #endif // __RDAudio_H__

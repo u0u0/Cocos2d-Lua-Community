@@ -26,12 +26,14 @@ macro(cocos2dx_depend)
         include_directories(/System/Library/Frameworks)
         find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
         find_library(FOUNDATION_LIBRARY Foundation)
-        find_library(OPENAL_LIBRARY OpenAL)
+        find_library(COREAUDIO_LIBRARY CoreAudio)
+        find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
         find_library(QUARTZCORE_LIBRARY QuartzCore)
         find_library(GAMECONTROLLER_LIBRARY GameController)
         find_library(METAL_LIBRARY Metal)
         set(COCOS_APPLE_LIBS
-            ${OPENAL_LIBRARY}
+            ${COREAUDIO_LIBRARY}
+            ${SYSTEMCONFIGURATION_LIBRARY}
             ${AUDIOTOOLBOX_LIBRARY}
             ${QUARTZCORE_LIBRARY}
             ${FOUNDATION_LIBRARY}
