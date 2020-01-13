@@ -33,10 +33,6 @@ extern "C" {
 }
 #endif
 
-/// @cond
-TOLUA_API int register_all_cocos2dx_spine_manual(lua_State* L);
-/// @endcond
-
 /**
  * @addtogroup lua
  * @{

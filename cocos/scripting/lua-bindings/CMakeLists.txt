@@ -10,6 +10,8 @@ set(lua_bindings_manual_headers
     manual/CCLuaBridge.h
     manual/extension/lua_cocos2dx_extension_manual.h
     manual/LuaBasicConversions.h
+    manual/spine/lua_cocos2dx_spine_manual.hpp
+    manual/spine/lua_spSkeletonData.hpp
     manual/spine/LuaSkeletonAnimation.h
     manual/platform/ios/CCLuaObjcBridge.h
     manual/network/lua_cocos2dx_network_manual.h
@@ -59,6 +61,7 @@ set(lua_bindings_manual_files
     manual/network/lua_xml_http_request.cpp
     manual/network/lua_downloader.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp
+    manual/spine/lua_spSkeletonData.cpp
     manual/spine/LuaSkeletonAnimation.cpp
     manual/ui/lua_cocos2dx_ui_manual.cpp
     manual/physics3d/lua_cocos2dx_physics3d_manual.cpp
