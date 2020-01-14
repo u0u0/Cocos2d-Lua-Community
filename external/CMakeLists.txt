@@ -28,6 +28,11 @@ add_library(external empty.cpp)
 # OpenAL
 add_subdirectory(OpenAL)
 target_link_libraries(external ext_OpenAL)
+# OGG
+add_subdirectory(libogg)
+target_link_libraries(external ext_libogg)
+add_subdirectory(libvorbis)
+target_link_libraries(external ext_libvorbis)
 
 if(BUILD_EXT_BOX2D)
     add_subdirectory(Box2D)

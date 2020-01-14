@@ -50,7 +50,7 @@ function(cocos_copy_lua_scripts cocos_target src_dir dst_dir)
     if(MSVC)
         add_custom_command(TARGET ${luacompile_target} POST_BUILD
             COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/cmake/scripts/sync_folder.py
-                -s ${src_dir} -d ${dst_dir} -l ${LUAJIT32_COMMAND} -m $<CONFIG>
+                -s ${src_dir} -d ${dst_dir}
         )
     else()
         if("${CMAKE_BUILD_TYPE}" STREQUAL "")

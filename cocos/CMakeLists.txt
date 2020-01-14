@@ -126,9 +126,8 @@ target_include_directories(cocos2d
     PUBLIC ${COCOS2DX_ROOT_PATH}/extensions
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/platform
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/editor-support
-    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libogg
-    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libvorbis
-    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/libvorbis/lib
+    PRIVATE ${COCOS2DX_ROOT_PATH}/external/libogg
+    PRIVATE ${COCOS2DX_ROOT_PATH}/external/libvorbis
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/platform/${PLATFORM_FOLDER}
@@ -157,7 +156,7 @@ if(WINDOWS)
     set_target_properties(cocos2d PROPERTIES COMPILE_FLAGS "/Yuprecheader.h /FIprecheader.h")
     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp" PROPERTIES COMPILE_FLAGS "/Ycprecheader.h")
     # compile c as c++. needed for precompiled header
-    set_source_files_properties(${COCOS_SPINE_SRC} base/ccFPSImages.c PROPERTIES LANGUAGE CXX)
+    set_source_files_properties(base/ccFPSImages.c PROPERTIES LANGUAGE CXX)
 endif()
 
 #if(XCODE)
