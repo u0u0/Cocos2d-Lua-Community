@@ -197,12 +197,7 @@ bool Node::init()
 void Node::cleanup()
 {
 #if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnCleanup))
-            return;
-    }
-    else if (_scriptType == kScriptTypeLua)
+    if (_scriptType == kScriptTypeLua)
     {
         ScriptEngineManager::sendNodeEventToLua(this, kNodeOnCleanup);
     }
@@ -1274,13 +1269,6 @@ void Node::onEnter()
     {
         ++__attachedNodeCount;
     }
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnEnter))
-            return;
-    }
-#endif
     
     if (_onEnterCallback)
         _onEnterCallback();
@@ -1309,14 +1297,6 @@ void Node::onEnter()
 
 void Node::onEnterTransitionDidFinish()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnEnterTransitionDidFinish))
-            return;
-    }
-#endif
-    
     if (_onEnterTransitionDidFinishCallback)
         _onEnterTransitionDidFinishCallback();
 
@@ -1334,14 +1314,6 @@ void Node::onEnterTransitionDidFinish()
 
 void Node::onExitTransitionDidStart()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnExitTransitionDidStart))
-            return;
-    }
-#endif
-    
     if (_onExitTransitionDidStartCallback)
         _onExitTransitionDidStartCallback();
     
@@ -1362,13 +1334,6 @@ void Node::onExit()
     {
         --__attachedNodeCount;
     }
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnExit))
-            return;
-    }
-#endif
     
     if (_onExitCallback)
         _onExitCallback();

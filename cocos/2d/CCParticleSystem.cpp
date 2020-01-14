@@ -803,14 +803,6 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
 
 void ParticleSystem::onEnter()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
-            return;
-    }
-#endif
-    
     Node::onEnter();
     
     // update after action in run!
@@ -820,15 +812,7 @@ void ParticleSystem::onEnter()
 }
 
 void ParticleSystem::onExit()
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExit))
-            return;
-    }
-#endif
-    
+{    
     this->unscheduleUpdate();
     Node::onExit();
 

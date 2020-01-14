@@ -869,27 +869,6 @@ public:
      */
     static void destroyInstance();
     /**
-     *
-     *
-     * @lua NA
-     * @js NA
-     */
-    static bool sendActionEventToJS(Action* actionObject, int eventType, void* param);
-    /**
-     *
-     *
-     * @lua NA
-     * @js NA
-     */
-    static bool sendNodeEventToJS(Node* node, int action);
-    /**
-     *
-     *
-     * @lua NA
-     * @js NA
-     */
-    static bool sendNodeEventToJSExtended(Node* node, int action);
-    /**
      * Call the Lua function when the event of node is triggered.
      * 
      * @param node the nativeobject triggers the event.
