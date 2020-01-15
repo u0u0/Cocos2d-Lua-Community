@@ -3,7 +3,6 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -139,7 +138,7 @@ public:
      * @param tmxFile A TMX file.
      * @return An autorelease object.
      */
-    static TMXTiledMap* create(const std::string& tmxFile);
+    static TMXTiledMap* create(const std::string& tmxFile, bool setupTiles = true);
 
     /** Initializes a TMX Tiled Map with a TMX formatted XML string and a path to TMX resources. 
      *
@@ -148,7 +147,7 @@ public:
      * @return An autorelease object.
      * @js NA
      */
-    static TMXTiledMap* createWithXML(const std::string& tmxString, const std::string& resourcePath);
+    static TMXTiledMap* createWithXML(const std::string& tmxString, const std::string& resourcePath, bool setupTiles = true);
 
     /** Return the TMXLayer for the specific layer. 
      *
@@ -178,86 +177,44 @@ public:
      */
     Value getPropertiesForGID(int GID) const;
 
-    /** Assigns properties to argument value, returns true if it did found properties 
-     * for that GID and did assigned a value, else it returns false.
-     *
-     * @param GID The tile GID.
-     * @param value Argument value.
-     * @return Return true if it did found properties for that GID and did assigned a value, else it returns false.
-     */
-    bool getPropertiesForGID(int GID, Value** value);
-
-    /** The map's size property measured in tiles. 
-     *
-     * @return The map's size property measured in tiles.
-     */
+    /** The map's size property measured in tiles. */
     const Size& getMapSize() const { return _mapSize; }
-    
-    /** Set the map's size property measured in tiles. 
-     *
-     * @param mapSize The map's size property measured in tiles.
-     */
     void setMapSize(const Size& mapSize) { _mapSize = mapSize; }
 
-    /** The tiles's size property measured in pixels. 
-     *
-     * @return The tiles's size property measured in pixels.
-     */
+    /** The tiles's size property measured in pixels. */
     const Size& getTileSize() const { return _tileSize; }
-    
-    /** Set the tiles's size property measured in pixels. 
-     *
-     * @param tileSize The tiles's size property measured in pixels.
-     */
     void setTileSize(const Size& tileSize) { _tileSize = tileSize; }
 
-    /** Map orientation. 
-     *
-     * @return Map orientation.
-     */
+    /** Map orientation */
     int getMapOrientation() const { return _mapOrientation; }
-    
-    /** Set map orientation. 
-     *
-     * @param mapOrientation The map orientation.
-     */
     void setMapOrientation(int mapOrientation) { _mapOrientation = mapOrientation; }
+    /** Map staggerAxis */
+    int getStaggerAxis() const { return _staggerAxis; }
+    void setStaggerAxis(int staggerAxis) { _staggerAxis = staggerAxis; }
+    /** Map staggerIndex */
+    int getStaggerIndex() const { return _staggerIndex; }
+    void setStaggerIndex(int staggerIndex) { _staggerIndex = staggerIndex; }
+    /** Map hexSideLength */
+    int getHexSideLength() const { return _hexSideLength; }
+    void setHexSideLength(int hexSideLength) { _hexSideLength = hexSideLength; }
 
-    /** Get the Object groups. 
-     *
-     * @return The object groups.
-     */
-    const Vector<TMXObjectGroup*>& getObjectGroups() const { return _objectGroups; }
+    /** Get the Object groups */
     Vector<TMXObjectGroup*>& getObjectGroups() { return _objectGroups; }
+    void setObjectGroups(const Vector<TMXObjectGroup*>& groups) { _objectGroups = groups; }
     
-    /** Set the object groups. 
-     *
-     * @param groups The object groups.
-     */
-    void setObjectGroups(const Vector<TMXObjectGroup*>& groups) {
-        _objectGroups = groups;
-    }
-    
-    /** Properties. 
-     *
-     * @return Properties.
-     */
+    /** Properties */
     ValueMap& getProperties() { return _properties; }
+    void setProperties(const ValueMap& properties) { _properties = properties; }
     
-    /** Set the properties.
-     *
-     * @param properties A  Type of ValueMap to set the properties.
-     */
-    void setProperties(const ValueMap& properties) {
-        _properties = properties;
-    }
+    /** Tilesets */
+    const Vector<TMXTilesetInfo*>& getTilesets() const { return _tilesets; }
+    TMXTilesetInfo *getTilesetByGID(uint32_t gid) const;
     
     /** Get the description.
      * @js NA
      */
     virtual std::string getDescription() const override;
 
-    int  getLayerNum();
     const std::string& getResourceFile() const { return _tmxFile; }
 
 CC_CONSTRUCTOR_ACCESS:
@@ -278,9 +235,9 @@ CC_CONSTRUCTOR_ACCESS:
     bool initWithXML(const std::string& tmxString, const std::string& resourcePath);
 
 protected:
-    TMXLayer * parseLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo);
-    TMXTilesetInfo * tilesetForLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo);
     void buildWithMapInfo(TMXMapInfo* mapInfo);
+    Node *createChild(Ref *childInfo);
+    TMXLayer *findLayer(const Node *parent, const std::string& layerName) const;
 
     /** the map's size property measured in tiles */
     Size _mapSize;
@@ -288,22 +245,26 @@ protected:
     Size _tileSize;
     /** map orientation */
     int _mapOrientation;
+    /** Stagger Axis */
+    int _staggerAxis;
+    /** Stagger Index */
+    int _staggerIndex;
+    /** Hex side length*/
+    int _hexSideLength;
     /** object groups */
     Vector<TMXObjectGroup*> _objectGroups;
     /** properties */
     ValueMap _properties;
     
-    //! tile properties
+    /** tilesets info */
+    Vector<TMXTilesetInfo*> _tilesets;
+    /** tile properties */
     ValueMapIntKey _tileProperties;
 
     std::string _tmxFile;
-    int _tmxLayerNum;
-
-    static const int TMXLayerTag = 32768;
-
+    bool _setupTiles;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(TMXTiledMap);
-
 };
 
 // end of tilemap_parallax_nodes group

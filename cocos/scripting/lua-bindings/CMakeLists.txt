@@ -82,6 +82,7 @@ set(lua_bindings_auto_headers
     auto/lua_cocos2dx_physics_auto.hpp
     auto/lua_cocos2dx_extension_auto.hpp
     auto/lua_cocos2dx_backend_auto.hpp
+    auto/lua_cocos2dx_tmx_auto.hpp
     )
 
 set(lua_bindings_auto_files
@@ -97,6 +98,7 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_physics3d_auto.cpp
     auto/lua_cocos2dx_navmesh_auto.cpp
     auto/lua_cocos2dx_backend_auto.cpp
+    auto/lua_cocos2dx_tmx_auto.cpp
     )
 
 if(APPLE)

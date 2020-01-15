@@ -166,7 +166,7 @@ public:
      * @param   rotated     Whether or not the rect is rotated.
      * @return  An autoreleased sprite object.
      */
-    static Sprite* createWithTexture(Texture2D *texture, const Rect& rect, bool rotated=false);
+    static Sprite* createWithTexture(Texture2D *texture, const Rect& rect, bool rotated=false, bool fixArtifacts=false);
 
     /**
      * Creates a sprite with an sprite frame.
@@ -706,7 +706,7 @@ protected:
     int _fileType = 0;
 
     bool _stretchEnabled = true;
-    
+    bool _fixArtifacts;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Sprite);
 };

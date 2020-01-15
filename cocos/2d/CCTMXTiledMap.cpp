@@ -3,7 +3,6 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -26,20 +25,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "2d/CCTMXTiledMap.h"
-#include "2d/CCTMXXMLParser.h"
 #include "2d/CCTMXLayer.h"
 #include "2d/CCSprite.h"
-#include "base/ccUTF8.h"
+#include "base/ccUTF8.h" // For StringUtils::format
+#include "base/CCDirector.h"
+#include "renderer/CCTextureCache.h"
 
 NS_CC_BEGIN
 
 // implementation TMXTiledMap
 
-TMXTiledMap * TMXTiledMap::create(const std::string& tmxFile)
+TMXTiledMap * TMXTiledMap::create(const std::string& tmxFile, bool setupTiles)
 {
     TMXTiledMap *ret = new (std::nothrow) TMXTiledMap();
-    if (ret->initWithTMXFile(tmxFile))
-    {
+    ret->_setupTiles = setupTiles;
+    if (ret->initWithTMXFile(tmxFile)) {
         ret->autorelease();
         return ret;
     }
@@ -47,11 +47,11 @@ TMXTiledMap * TMXTiledMap::create(const std::string& tmxFile)
     return nullptr;
 }
 
-TMXTiledMap* TMXTiledMap::createWithXML(const std::string& tmxString, const std::string& resourcePath)
+TMXTiledMap* TMXTiledMap::createWithXML(const std::string& tmxString, const std::string& resourcePath, bool setupTiles)
 {
     TMXTiledMap *ret = new (std::nothrow) TMXTiledMap();
-    if (ret->initWithXML(tmxString, resourcePath))
-    {
+    ret->_setupTiles = setupTiles;
+    if (ret->initWithXML(tmxString, resourcePath)) {
         ret->autorelease();
         return ret;
     }
@@ -64,103 +64,101 @@ bool TMXTiledMap::initWithTMXFile(const std::string& tmxFile)
     CCASSERT(tmxFile.size()>0, "TMXTiledMap: tmx file should not be empty");
 
     _tmxFile = tmxFile;
-
     setContentSize(Size::ZERO);
-
     TMXMapInfo *mapInfo = TMXMapInfo::create(tmxFile);
-
-    if (! mapInfo)
-    {
+    if (! mapInfo) {
         return false;
     }
     CCASSERT( !mapInfo->getTilesets().empty(), "TMXTiledMap: Map not found. Please check the filename.");
     buildWithMapInfo(mapInfo);
-
     return true;
 }
 
 bool TMXTiledMap::initWithXML(const std::string& tmxString, const std::string& resourcePath)
 {
     _tmxFile = tmxString;
-
     setContentSize(Size::ZERO);
-
     TMXMapInfo *mapInfo = TMXMapInfo::createWithXML(tmxString, resourcePath);
-
+    if (! mapInfo) {
+        return false;
+    }
     CCASSERT( !mapInfo->getTilesets().empty(), "TMXTiledMap: Map not found. Please check the filename.");
     buildWithMapInfo(mapInfo);
-
     return true;
 }
 
 TMXTiledMap::TMXTiledMap()
-    :_mapSize(Size::ZERO)
-    ,_tileSize(Size::ZERO)        
-    ,_tmxFile("")
-    , _tmxLayerNum(0)
+:_mapSize(Size::ZERO)
+,_tileSize(Size::ZERO)
+,_tmxFile("")
+,_setupTiles(true)
 {
 }
 
 TMXTiledMap::~TMXTiledMap()
 {
+    // unload texture
+    TextureCache *textureCache = Director::getInstance()->getTextureCache();
+    for (auto iter = _tilesets.crbegin(), iterCrend = _tilesets.crend(); iter != iterCrend; ++iter) {
+        TMXTilesetInfo* tilesetInfo = *iter;
+        if (tilesetInfo) {
+            Texture2D *texture = textureCache->addImage(tilesetInfo->_sourceImage);
+            if (texture) {
+                texture->release();
+            }
+        }
+    }
 }
 
 // private
-TMXLayer * TMXTiledMap::parseLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
+Node *TMXTiledMap::createChild(Ref *childInfo)
 {
-    TMXTilesetInfo *tileset = tilesetForLayer(layerInfo, mapInfo);
-    if (tileset == nullptr)
-        return nullptr;
-    
-    TMXLayer *layer = TMXLayer::create(tileset, layerInfo, mapInfo);
-
-    if (nullptr != layer)
-    {
-        // tell the layerinfo to release the ownership of the tiles map.
-        layerInfo->_ownTiles = false;
-        layer->setupTiles();
-    }
-
-    return layer;
-}
-
-TMXTilesetInfo * TMXTiledMap::tilesetForLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
-{
-    auto height = static_cast<uint32_t>(layerInfo->_layerSize.height);
-    auto width  = static_cast<uint32_t>(layerInfo->_layerSize.width);
-    auto& tilesets = mapInfo->getTilesets();
-
-    for (auto iter = tilesets.crbegin(), end = tilesets.crend(); iter != end; ++iter)
-    {
-        TMXTilesetInfo* tileset = *iter;
-
-        if (tileset)
-        {
-            for (uint32_t y = 0; y < height; y++)
-            {
-                for (uint32_t x = 0; x < width; x++)
-                {
-                    auto pos = x + width * y;
-                    auto gid = layerInfo->_tiles[ pos ];
-
-                    // FIXME:: gid == 0 --> empty tile
-                    if (gid != 0)
-                    {
-                        // Optimization: quick return
-                        // if the layer is invalid (more than 1 tileset per layer)
-                        // an CCAssert will be thrown later
-                        if (tileset->_firstGid < 0 ||
-                            (gid & kTMXFlippedMask) >= static_cast<uint32_t>(tileset->_firstGid))
-                            return tileset;
-                    }
-                }
-            }        
+    TMXLayerInfo *layerInfo = dynamic_cast<TMXLayerInfo *>(childInfo);
+    if (layerInfo) {
+        TMXLayer *layer = TMXLayer::create(layerInfo, this);
+        if (layer == nullptr) return nullptr;
+        if (_setupTiles) {
+            layer->setupTiles();
         }
+        layer->setVisible(layerInfo->_visible);
+        // update content size with the max size
+        const Size& childSize = layer->getContentSize();
+        Size currentSize = this->getContentSize();
+        currentSize.width = std::max(currentSize.width, childSize.width);
+        currentSize.height = std::max(currentSize.height, childSize.height);
+        this->setContentSize(currentSize);
+        return layer;
     }
-
-    // If all the tiles are 0, return empty tileset
-    CCLOG("cocos2d: Warning: TMX Layer '%s' has no tiles", layerInfo->_name.c_str());
-
+    
+    TMXImageLayerInfo *imageLayerInfo = dynamic_cast<TMXImageLayerInfo *>(childInfo);
+    if (imageLayerInfo) {
+        TMXLayer *layer = TMXLayer::create(imageLayerInfo, this);
+        if (layer == nullptr) return nullptr;
+        layer->setVisible(imageLayerInfo->_visible);
+        return layer;
+    }
+    
+    TMXGroupInfo *groupInfo = dynamic_cast<TMXGroupInfo *>(childInfo);
+    if (groupInfo) {
+        TMXLayer *layer = TMXLayer::create(groupInfo, this);
+        if (layer == nullptr) return nullptr;
+        layer->setVisible(groupInfo->_visible);
+        for (const auto &child : groupInfo->_children) {
+            Node *n = createChild(child);
+            if (n) {
+                layer->addChild(n);
+            }
+        }
+        return layer;
+    }
+    
+    TMXObjectGroup *objectGroupInfo = dynamic_cast<TMXObjectGroup *>(childInfo);
+        if (objectGroupInfo) {
+        TMXLayer *layer = TMXLayer::create(objectGroupInfo, this);
+        if (layer == nullptr) return nullptr;
+        layer->setVisible(objectGroupInfo->isVisible());
+        return layer;
+    }
     return nullptr;
 }
 
@@ -169,66 +167,70 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
     _mapSize = mapInfo->getMapSize();
     _tileSize = mapInfo->getTileSize();
     _mapOrientation = mapInfo->getOrientation();
-
+    _staggerAxis = mapInfo->getStaggerAxis();
+    _staggerIndex = mapInfo->getStaggerIndex();
+    _hexSideLength = mapInfo->getHexSideLength();
     _objectGroups = mapInfo->getObjectGroups();
-
     _properties = mapInfo->getProperties();
-
     _tileProperties = mapInfo->getTileProperties();
-
-    int idx = 0;
-
-    auto& layers = mapInfo->getLayers();
-    for (const auto &layerInfo : layers) {
-        if (layerInfo->_visible) {
-            TMXLayer *child = parseLayer(layerInfo, mapInfo);
-            if (child == nullptr) {
-                idx++;
-                continue;
-            }
-            addChild(child, idx, idx);
-            // update content size with the max size
-            const Size& childSize = child->getContentSize();
-            Size currentSize = this->getContentSize();
-            currentSize.width = std::max(currentSize.width, childSize.width);
-            currentSize.height = std::max(currentSize.height, childSize.height);
-            this->setContentSize(currentSize);
-
-            idx++;
+    _tilesets = mapInfo->getTilesets();
+    
+    // preload textures
+    TextureCache *textureCache = Director::getInstance()->getTextureCache();
+    for (auto iter = _tilesets.crbegin(), iterCrend = _tilesets.crend(); iter != iterCrend; ++iter) {
+        TMXTilesetInfo* tilesetInfo = *iter;
+        if (tilesetInfo) {
+            Texture2D *texture = textureCache->addImage(tilesetInfo->_sourceImage);
+            CC_ASSERT(texture != nullptr);
+            // By default all the tiles are aliased, avoid black line.
+            texture->setAliasTexParameters();
+            tilesetInfo->_imageSize = texture->getContentSizeInPixels();
+            texture->retain();
         }
     }
-    _tmxLayerNum = idx;
+    
+    // load children
+    auto& children = mapInfo->getChildren();
+    for (const auto &child : children) {
+        Node *n = createChild(child);
+        if (n) {
+            addChild(n);
+        }
+    }
+}
+
+TMXLayer *TMXTiledMap::findLayer(const Node *parent, const std::string& layerName) const
+{
+    for (auto& child : parent->getChildren()) {
+        TMXLayer* layer = dynamic_cast<TMXLayer*>(child);
+        if (layer) {
+            if (layerName.compare(layer->getLayerName()) == 0) {
+                return layer;
+            }
+            if (layer->getLayerType() == TMX_LAYER_GROUP) {
+                TMXLayer* find = findLayer(layer, layerName);
+                if (find) {
+                    return find;
+                }
+            }
+        }
+    }
+    return nullptr;
 }
 
 // public
-TMXLayer * TMXTiledMap::getLayer(const std::string& layerName) const
+TMXLayer *TMXTiledMap::getLayer(const std::string& layerName) const
 {
     CCASSERT(layerName.size() > 0, "Invalid layer name!");
-    
-    for (auto& child : _children)
-    {
-        TMXLayer* layer = dynamic_cast<TMXLayer*>(child);
-        if(layer)
-        {
-            if(layerName.compare( layer->getLayerName()) == 0)
-            {
-                return layer;
-            }
-        }
-    }
-
-    // layer not found
-    return nullptr;
+    return findLayer(this, layerName);
 }
 
 TMXObjectGroup * TMXTiledMap::getObjectGroup(const std::string& groupName) const
 {
     CCASSERT(groupName.size() > 0, "Invalid group name!");
 
-    for (const auto objectGroup : _objectGroups)
-    {
-        if (objectGroup && objectGroup->getGroupName() == groupName)
-        {
+    for (const auto objectGroup : _objectGroups) {
+        if (objectGroup && objectGroup->getGroupName() == groupName) {
             return objectGroup;
         }
     }
@@ -253,24 +255,20 @@ Value TMXTiledMap::getPropertiesForGID(int GID) const
     return Value();
 }
 
-bool TMXTiledMap::getPropertiesForGID(int GID, Value** value)
+TMXTilesetInfo *TMXTiledMap::getTilesetByGID(uint32_t gid) const
 {
-    if (_tileProperties.find(GID) != _tileProperties.end()) {
-        *value = &_tileProperties.at(GID);
-        return true;
-    } else {
-        return false;
+    for (auto iter = _tilesets.crbegin(), end = _tilesets.crend(); iter != end; ++iter) {
+        TMXTilesetInfo *tileset = *iter;
+        if (tileset->_firstGid < 0 || (gid & kTMXFlippedMask) >= static_cast<uint32_t>(tileset->_firstGid)) {
+            return tileset;
+        }
     }
+    return nullptr;
 }
 
 std::string TMXTiledMap::getDescription() const
 {
     return StringUtils::format("<TMXTiledMap | Tag = %d, Layers = %d", _tag, static_cast<int>(_children.size()));
-}
-
-int TMXTiledMap::getLayerNum()
-{
-    return _tmxLayerNum;
 }
 
 NS_CC_END

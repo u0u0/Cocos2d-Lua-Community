@@ -59,9 +59,10 @@ Sprite* Sprite::createWithTexture(Texture2D *texture)
     return nullptr;
 }
 
-Sprite* Sprite::createWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
+Sprite* Sprite::createWithTexture(Texture2D *texture, const Rect& rect, bool rotated, bool fixArtifacts)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
+    sprite->_fixArtifacts = fixArtifacts;
     if (sprite && sprite->initWithTexture(texture, rect, rotated))
     {
         sprite->autorelease();
@@ -294,6 +295,7 @@ bool Sprite::initWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
 }
 
 Sprite::Sprite()
+: _fixArtifacts(false)
 {
 #if CC_SPRITE_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
@@ -867,18 +869,18 @@ void Sprite::setTextureCoords(const Rect& rectInPoints, V3F_C4B_T2F_Quad* outQua
     if (_rectRotated)
         std::swap(rw, rh);
 
-#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-    float left    = (2*rectInPixels.origin.x+1) / (2*atlasWidth);
-    float right   = left+(rw*2-2) / (2*atlasWidth);
-    float top     = (2*rectInPixels.origin.y+1) / (2*atlasHeight);
-    float bottom  = top+(rh*2-2) / (2*atlasHeight);
-#else
-    float left    = rectInPixels.origin.x / atlasWidth;
-    float right   = (rectInPixels.origin.x + rw) / atlasWidth;
-    float top     = rectInPixels.origin.y / atlasHeight;
-    float bottom  = (rectInPixels.origin.y + rh) / atlasHeight;
-#endif // CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-
+    float left, right, top, bottom;
+    if (_fixArtifacts) {
+        left    = (2*rectInPixels.origin.x+1) / (2*atlasWidth);
+        right   = left+(rw*2-2) / (2*atlasWidth);
+        top     = (2*rectInPixels.origin.y+1) / (2*atlasHeight);
+        bottom  = top+(rh*2-2) / (2*atlasHeight);
+    } else {
+        left    = rectInPixels.origin.x / atlasWidth;
+        right   = (rectInPixels.origin.x + rw) / atlasWidth;
+        top     = rectInPixels.origin.y / atlasHeight;
+        bottom  = (rectInPixels.origin.y + rh) / atlasHeight;
+    }
 
     if ((!_rectRotated && _flippedX) || (_rectRotated && _flippedY))
         std::swap(left, right);

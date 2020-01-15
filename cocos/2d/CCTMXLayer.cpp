@@ -3,7 +3,6 @@ Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -28,23 +27,40 @@ THE SOFTWARE.
 
 #include "2d/CCTMXLayer.h"
 #include "2d/CCTMXTiledMap.h"
+#include "2d/CCTMXXMLParser.h"
 #include "2d/CCSprite.h"
+#include "2d/CCLabel.h"
 #include "base/CCDirector.h"
-#include "base/ccUTF8.h"
 #include "renderer/CCTextureCache.h"
-#include "renderer/ccShaders.h"
-#include "renderer/backend/Program.h"
-#include "renderer/backend/ProgramState.h"
+//#include "renderer/backend/Program.h"
+#include "base/ccUTF8.h" // For StringUtils::format
 
 NS_CC_BEGIN
 
+TileAnimationData::TileAnimationData()
+:leftTime(0.0)
+,frameIndex(0)
+{}
 
-// TMXLayer - init & alloc & dealloc
+TileAnimationData::~TileAnimationData()
+{}
 
-TMXLayer * TMXLayer::create(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
+TMXLayer * TMXLayer::create(TMXLayerInfo *layerInfo, TMXTiledMap *tileMap)
+{
+	TMXLayer *ret = new (std::nothrow) TMXLayer();
+	if (ret->initWithLayerInfo(layerInfo, tileMap))
+	{
+		ret->autorelease();
+		return ret;
+	}
+	CC_SAFE_DELETE(ret);
+	return nullptr;
+}
+
+TMXLayer * TMXLayer::create(TMXImageLayerInfo *layerInfo, TMXTiledMap *tileMap)
 {
     TMXLayer *ret = new (std::nothrow) TMXLayer();
-    if (ret->initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo))
+    if (ret->initWithLayerInfo(layerInfo, tileMap))
     {
         ret->autorelease();
         return ret;
@@ -52,796 +68,817 @@ TMXLayer * TMXLayer::create(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *layerInfo
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
-bool TMXLayer::initWithTilesetInfo(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
-{    
-    // FIXME:: is 35% a good estimate ?
-    Size size = layerInfo->_layerSize;
-    float totalNumberOfTiles = size.width * size.height;
-    float capacity = totalNumberOfTiles * 0.35f + 1; // 35 percent is occupied ?
 
-    Texture2D *texture = nullptr;
-    if( tilesetInfo )
+TMXLayer * TMXLayer::create(TMXGroupInfo *layerInfo, TMXTiledMap *tileMap)
+{
+    TMXLayer *ret = new (std::nothrow) TMXLayer();
+    if (ret->initWithLayerInfo(layerInfo, tileMap))
     {
-        texture = Director::getInstance()->getTextureCache()->addImage(tilesetInfo->_sourceImage);
+        ret->autorelease();
+        return ret;
     }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
 
-    if (nullptr == texture)
-        return false;
-
-    if (SpriteBatchNode::initWithTexture(texture, static_cast<ssize_t>(capacity)))
+TMXLayer * TMXLayer::create(TMXObjectGroup *layerInfo, TMXTiledMap *tileMap)
+{
+    TMXLayer *ret = new (std::nothrow) TMXLayer();
+    if (ret->initWithLayerInfo(layerInfo, tileMap))
     {
-        // layerInfo
-        _layerName = layerInfo->_name;
-        _layerSize = size;
-        _tiles = layerInfo->_tiles;
-        _opacity = layerInfo->_opacity;
-        setProperties(layerInfo->getProperties());
-        _contentScaleFactor = Director::getInstance()->getContentScaleFactor(); 
+        ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
 
-        // tilesetInfo
-        _tileSet = tilesetInfo;
-        CC_SAFE_RETAIN(_tileSet);
+bool TMXLayer::initWithLayerInfo(TMXLayerInfo *layerInfo, TMXTiledMap *tileMap)
+{
+    _layerType = TMX_LAYER_TILE;
+	_layerName = layerInfo->_name;
+	_layerSize = layerInfo->_layerSize;
+	_tiles = layerInfo->_tiles;
+    // tell the layerinfo to release the ownership of the tiles map.
+    layerInfo->_ownTiles = false;
+	_opacity = layerInfo->_opacity;
+	setProperties(layerInfo->getProperties());
+    return initCommon(layerInfo->_offset, tileMap);
+}
 
-        // mapInfo
-        _mapTileSize = mapInfo->getTileSize();
-        _layerOrientation = mapInfo->getOrientation();
-        _staggerAxis = mapInfo->getStaggerAxis();
-        _staggerIndex = mapInfo->getStaggerIndex();
-        _hexSideLength = mapInfo->getHexSideLength();
+bool TMXLayer::initWithLayerInfo(TMXImageLayerInfo *layerInfo, TMXTiledMap *tileMap)
+{
+    _layerType = TMX_LAYER_IMAGE;
+    _layerName = layerInfo->_name;
+    _layerSize = tileMap->getMapSize();
+    _tiles = nullptr;
+    _opacity = layerInfo->_opacity;
+    setProperties(layerInfo->getProperties());
 
-        // offset (after layer orientation is set);
-        Vec2 offset = this->calculateLayerOffset(layerInfo->_offset);
-        this->setPosition(CC_POINT_PIXELS_TO_POINTS(offset));
+    initCommon(layerInfo->_offset, tileMap);
+    // after setContentSize create sprite of image layer
+    Sprite * sp = Sprite::create(layerInfo->_sourceImage);
+    sp->setOpacity(_opacity);
+    sp->setAnchorPoint(Vec2(0, 1));
+    sp->setPositionY(getContentSize().height);
+    addChild(sp);
+    return true;
+}
 
-        _atlasIndexArray = ccCArrayNew(totalNumberOfTiles);
+bool TMXLayer::initWithLayerInfo(TMXGroupInfo *layerInfo, TMXTiledMap *tileMap)
+{
+    _layerType = TMX_LAYER_GROUP;
+    _layerName = layerInfo->_name;
+    _layerSize = tileMap->getMapSize();
+    _tiles = nullptr;
+    _opacity = layerInfo->_opacity;
+    setProperties(layerInfo->getProperties());
+    return initCommon(layerInfo->_offset, tileMap);
+}
 
-        float width = 0;
-        float height = 0;
-        if (_layerOrientation == TMXOrientationHex) {
-            if (_staggerAxis == TMXStaggerAxis_X) {
-                height = _mapTileSize.height * (_layerSize.height + 0.5);
-                width = (_mapTileSize.width + _hexSideLength) * ((int)(_layerSize.width / 2)) + _mapTileSize.width * ((int)_layerSize.width % 2);
-            } else {
-                width = _mapTileSize.width * (_layerSize.width + 0.5);
-                height = (_mapTileSize.height + _hexSideLength) * ((int)(_layerSize.height / 2)) + _mapTileSize.height * ((int)_layerSize.height % 2);
+bool TMXLayer::initWithLayerInfo(TMXObjectGroup *layerInfo, TMXTiledMap *tileMap)
+{
+    _layerType = TMX_LAYER_OBJECT_GROUP;
+    _layerName = layerInfo->getGroupName();
+    _layerSize = tileMap->getMapSize();
+    _tiles = nullptr;
+    _opacity = layerInfo->getOpacity();
+    setProperties(layerInfo->getProperties());
+    
+    initCommon((Vec2 &)layerInfo->getPositionOffset(), tileMap);
+    
+    // init gid objects
+    Vec2 pos(0, 0);// fake a tile pos, make tile api happy
+    for (auto& obj : layerInfo->getObjects())
+    {
+        pos.x += 1;
+        ValueMap& dict = obj.asValueMap();
+        // convert object pos to cocos2d-x pos, then write back
+        Vec2 objPos(dict["x"].asFloat(), dict["y"].asFloat());
+        Vec2 xPos = getPositionForObject(objPos);
+        dict["x"] = xPos.x;
+        dict["y"] = xPos.y;
+        // convert object size to cocos2d-x size, then write back
+        Size objSize(0, 0);
+        if (dict.find("width") != dict.end()) {
+            objSize.width = dict["width"].asFloat();
+            objSize.height = dict["height"].asFloat();
+            objSize = CC_SIZE_PIXELS_TO_POINTS(objSize);
+            dict["width"] = objSize.width;
+            dict["height"] = objSize.height;
+        }
+        
+        std::string objectType = dict["objectType"].asString();
+        // draw image object
+        if ("tile" == objectType) {
+            int gid = dict["gid"].asUnsignedInt();
+            intptr_t z = getZForPos(pos);
+            Sprite *tile = createTileSprite(z, gid);
+            setupTileAnimation(tile, pos, gid);
+            tile->setTag(dict["id"].asUnsignedInt());
+            tile->setUserData((void *)&dict); //for sort
+            // fix size
+            Size textureSize = tile->getContentSize();
+            float scaleX = objSize.width / textureSize.width;
+            float scaleY = objSize.height / textureSize.height;
+            tile->setScaleX(scaleX);
+            tile->setScaleY(scaleY);
+            // fix rotation
+            if (dict.find("rotation") != dict.end()) {
+                tile->setRotation(dict["rotation"].asFloat());
             }
-        } else {
+            // fix AnchorPoint, set position
+            if (TMXOrientationIso == _layerOrientation) {
+                tile->setAnchorPoint(Vec2(0.5, 0));
+            }
+            tile->setPosition(xPos);
+            tile->setVisible(dict["visible"].asBool());
+        } else if ("text" == objectType) {
+            std::string text = dict["text"].asString();
+            
+            std::string font = "sans-serif";
+            if (dict.find("fontfamily") != dict.end()) {
+                font = dict["fontfamily"].asString();
+            }
+            
+            float fontSize = 16.0f;
+            if (dict.find("pixelsize") != dict.end()) {
+                fontSize = dict["pixelsize"].asFloat();
+            }
+            fontSize /= CC_CONTENT_SCALE_FACTOR();
+            
+            TextHAlignment hAlignment = TextHAlignment::LEFT;
+            if (dict.find("halign") != dict.end()) {
+                std::string v = dict["halign"].asString();
+                if (v == "center") {
+                    hAlignment = TextHAlignment::CENTER;
+                } else if (v == "right") {
+                    hAlignment = TextHAlignment::RIGHT;
+                }
+            }
+            
+            TextVAlignment vAlignment = TextVAlignment::TOP;
+            if (dict.find("valign") != dict.end()) {
+                std::string v = dict["valign"].asString();
+                if (v == "center") {
+                    vAlignment = TextVAlignment::CENTER;
+                } else if (v == "bottom") {
+                    vAlignment = TextVAlignment::BOTTOM;
+                }
+            }
+            
+            int r = 0, g = 0, b = 0;
+            if (dict.find("color") != dict.end()) {
+                std::string v = dict["color"].asString();
+                if (v.length() == 7) { // #ffffff
+                    sscanf(v.c_str(), "#%02x%02x%02x", &r, &g, &b);
+                }
+            }
+            Color3B color(r, g, b);
+            
+            float rotation = 0;
+            if (dict.find("rotation") != dict.end()) {
+                rotation = dict["rotation"].asFloat();
+            }
+            
+            Label *label = Label::createWithSystemFont(text, font, fontSize, objSize, hAlignment, vAlignment);
+            addChild(label);
+            label->setPosition(xPos);
+            label->setAnchorPoint(Vec2(0, 1));
+            label->setColor(color);
+            label->setRotation(rotation);
+            label->setVisible(dict["visible"].asBool());
+            label->setTag(dict["id"].asUnsignedInt());
+            label->setUserData((void *)&dict); // for sort
+        } else if ("rectangle" == objectType) {
+            if (TMXOrientationIso == _layerOrientation) {
+                // It's a prism in cocos2d-x, need convert to polygon.
+                Vec2 zero = getPositionForObject(Vec2(0, 0));
+                Vec2 p2 = getPositionForObject(Vec2(objSize.width, 0));
+                Vec2 p3 = getPositionForObject(Vec2(objSize.width, objSize.height));
+                Vec2 p4 = getPositionForObject(Vec2(0, objSize.height));
+
+                ValueVector pointsArray;
+                pointsArray.reserve(4);
+                ValueMap pd1;
+                pd1["x"] = 0.0f;
+                pd1["y"] = 0.0f;
+                pointsArray.push_back(Value(pd1));
+                ValueMap pd2;
+                pd2["x"] = p2.x - zero.x;
+                pd2["y"] = p2.y - zero.y;
+                pointsArray.push_back(Value(pd2));
+                ValueMap pd3;
+                pd3["x"] = p3.x - zero.x;
+                pd3["y"] = p3.y - zero.y;
+                pointsArray.push_back(Value(pd3));
+                ValueMap pd4;
+                pd4["x"] = p4.x - zero.x;
+                pd4["y"] = p4.y - zero.y;
+                pointsArray.push_back(Value(pd4));
+                
+                dict["points"] = Value(pointsArray);
+                dict["objectType"] = "polygon";
+            } else {
+                dict["y"] = xPos.y - objSize.height; // fix y for other _layerOrientation
+            }
+        } else if ("polygon" == objectType) {
+            // fix point position
+            ValueVector &pointsArray = dict["points"].asValueVector();
+            Vec2 zero = getPositionForObject(Vec2(0, 0));
+            for (auto& p : pointsArray) {
+                ValueMap &a = p.asValueMap();
+                Vec2 newP = getPositionForObject(Vec2(a["x"].asFloat(), a["y"].asFloat()));
+                a["x"] = newP.x - zero.x;
+                a["y"] = newP.y - zero.y;
+            }
+        } else if ("polyline" == objectType) {
+            // fix point position
+            ValueVector &pointsArray = dict["polylinePoints"].asValueVector();
+            Vec2 zero = getPositionForObject(Vec2(0, 0));
+            for (auto& p : pointsArray) {
+                ValueMap &a = p.asValueMap();
+                Vec2 newP = getPositionForObject(Vec2(a["x"].asFloat(), a["y"].asFloat()));
+                a["x"] = newP.x - zero.x;
+                a["y"] = newP.y - zero.y;
+            }
+        }
+    }
+    
+    // sort children
+    _reorderChildDirty = false;
+    std::stable_sort(std::begin(_children), std::end(_children), [](Node *a, Node *b) {
+        ValueMap *dicta = (ValueMap *)a->getUserData();
+        ValueMap *dictb = (ValueMap *)b->getUserData();
+        float ax = dicta->at("x").asFloat();
+        float ay = dicta->at("y").asFloat();
+        float bx = dictb->at("x").asFloat();
+        float by = dictb->at("y").asFloat();
+        if (ay == by) {
+            if (ax == bx) {
+                return dicta->at("id").asUnsignedInt() < dictb->at("id").asUnsignedInt();
+            }
+            return ax < bx;
+        }
+        return ay > by;
+    });
+    // unref
+    for(const auto &sp : _children) {
+        sp->setUserData(nullptr);
+    }
+    return true;
+}
+
+bool TMXLayer::initCommon(Vec2 &layerOffset, TMXTiledMap *tileMap)
+{
+    _contentScaleFactor = Director::getInstance()->getContentScaleFactor();
+    // mapInfo
+    _tileMap = tileMap;
+    _mapTileSize = tileMap->getTileSize();
+    _layerOrientation = tileMap->getMapOrientation();
+    _staggerAxis = tileMap->getStaggerAxis();
+    _staggerIndex = tileMap->getStaggerIndex();
+    _hexSideLength = tileMap->getHexSideLength();
+
+    // offset (after layer orientation is set);
+    Vec2 offset = calculateLayerOffset(layerOffset);
+    setPosition(offset);
+
+    float width = 0;
+    float height = 0;
+    switch (_layerOrientation) {
+        case TMXOrientationOrtho:
+        case TMXOrientationIso:
             width = _layerSize.width * _mapTileSize.width;
             height = _layerSize.height * _mapTileSize.height;
-        }
-        this->setContentSize(CC_SIZE_PIXELS_TO_POINTS(Size(width, height)));
-
-        _useAutomaticVertexZ = false;
-        _vertexZvalue = 0;
-        
-        return true;
+            break;
+        case TMXOrientationHex:
+            if (_staggerAxis == TMXStaggerAxis_X) {
+                width = (_mapTileSize.width + _hexSideLength) * ((int)(_layerSize.width / 2)) + _mapTileSize.width * ((int)_layerSize.width % 2);
+                height = (_layerSize.height + 0.5) * _mapTileSize.height;
+            } else {
+                width = (_layerSize.width + 0.5) * _mapTileSize.width;
+                height = (_mapTileSize.height + _hexSideLength) * ((int)(_layerSize.height / 2)) + _mapTileSize.height * ((int)_layerSize.height % 2);
+            }
+            break;
+        case TMXOrientationStaggered:
+            width = (_layerSize.width + 0.5) * _mapTileSize.width;
+            height = (_layerSize.height + 1) * _mapTileSize.height / 2.0f;
+            break;
     }
-    return false;
+    setContentSize(CC_SIZE_PIXELS_TO_POINTS(Size(width, height)));
+
+    return true;
 }
 
 TMXLayer::TMXLayer()
 :_layerName("")
 ,_opacity(0)
-,_vertexZvalue(0)
-,_useAutomaticVertexZ(false)
-,_reusedTile(nullptr)
-,_atlasIndexArray(nullptr)
 ,_contentScaleFactor(1.0f)
 ,_layerSize(Size::ZERO)
 ,_mapTileSize(Size::ZERO)
 ,_tiles(nullptr)
-,_tileSet(nullptr)
 ,_layerOrientation(TMXOrientationOrtho)
 ,_staggerAxis(TMXStaggerAxis_Y)
 ,_staggerIndex(TMXStaggerIndex_Even)
 ,_hexSideLength(0)
+,_tileMap(nullptr)
+,_layerType(TMX_LAYER_UNDEFINED)
 {}
 
 TMXLayer::~TMXLayer()
 {
-    CC_SAFE_RELEASE(_tileSet);
-    CC_SAFE_RELEASE(_reusedTile);
-
-    if (_atlasIndexArray)
-    {
-        ccCArrayFree(_atlasIndexArray);
-        _atlasIndexArray = nullptr;
-    }
-
-    CC_SAFE_FREE(_tiles);
-}
-
-void TMXLayer::releaseMap()
-{
-    if (_tiles)
-    {
-        free(_tiles);
-        _tiles = nullptr;
-    }
-
-    if (_atlasIndexArray)
-    {
-        ccCArrayFree(_atlasIndexArray);
-        _atlasIndexArray = nullptr;
+	CC_SAFE_FREE(_tiles);
+    for(auto it = _tilesAniData.begin(); it != _tilesAniData.end(); ++it) {
+        delete it->second;
     }
 }
 
 // TMXLayer - setup Tiles
 void TMXLayer::setupTiles()
-{    
-    // Optimization: quick hack that sets the image size on the tileset
-    _tileSet->_imageSize = _textureAtlas->getTexture()->getContentSizeInPixels();
-
-    // By default all the tiles are aliased
-    // pros:
-    //  - easier to render
-    // cons:
-    //  - difficult to scale / rotate / etc.
-    _textureAtlas->getTexture()->setAliasTexParameters();
-
-    //CFByteOrder o = CFByteOrderGetCurrent();
-
-    // Parse cocos2d properties
-    this->parseInternalProperties();
-
-    for (int y=0; y < _layerSize.height; y++)
-    {
-        for (int x=0; x < _layerSize.width; x++)
-        {
-            int newX = x;
-            // fix correct render ordering in Hexagonal maps when stagger axis == x
-            if (_staggerAxis == TMXStaggerAxis_X && _layerOrientation == TMXOrientationHex)
-            {
-                if (_staggerIndex == TMXStaggerIndex_Odd)
-                {
-                    if (x >= _layerSize.width/2)
-                        newX = (x - std::ceil(_layerSize.width/2)) * 2 + 1;
-                    else
-                        newX = x * 2;
-                } else {
-                    // TMXStaggerIndex_Even
-                    if (x >= static_cast<int>(_layerSize.width/2))
-                        newX = (x - static_cast<int>(_layerSize.width/2)) * 2;
-                    else
-                        newX = x * 2 + 1;
-                }
-            }
-
-            int pos = static_cast<int>(newX + _layerSize.width * y);
-            int gid = _tiles[ pos ];
-
-            // gid are stored in little endian.
-            // if host is big endian, then swap
-            //if( o == CFByteOrderBigEndian )
-            //    gid = CFSwapInt32( gid );
-            /* We support little endian.*/
-
-            // FIXME:: gid == 0 --> empty tile
-            if (gid != 0) 
-            {
-                this->appendTileForGID(gid, Vec2(newX, y));
-            }
-        }
-    }
+{
+    CCASSERT(_layerType == TMX_LAYER_TILE, "TMXLayer: invalid layer type");
+    
+	for (int y = 0; y < _layerSize.height; y++) {
+		for (int x = 0; x < _layerSize.width; x++) {
+            Vec2 pos(x, y);
+			intptr_t z = getZForPos(pos);
+			int gid = _tiles[z]; // Only support little endian stored gid
+			if (gid != 0) {
+				Sprite *tile = createTileSprite(z, gid);
+                setupTileAnimation(tile, pos, gid);
+			}
+		}
+	}
 }
 
 // TMXLayer - Properties
 Value TMXLayer::getProperty(const std::string& propertyName) const
 {
-    if (_properties.find(propertyName) != _properties.end())
-        return _properties.at(propertyName);
-    
-    return Value();
+	if (_properties.find(propertyName) != _properties.end())
+		return _properties.at(propertyName);
+
+	return Value();
 }
 
-void TMXLayer::parseInternalProperties()
+Sprite *TMXLayer::createTileSprite(intptr_t z, uint32_t gid)
 {
-    // if cc_vertex=automatic, then tiles will be rendered using vertexz
+	TMXTilesetInfo *tileset = _tileMap->getTilesetByGID(gid);
+	Texture2D *texture = Director::getInstance()->getTextureCache()->getTextureForKey(tileset->_sourceImage);
+	Rect rect = tileset->getRectForGID(gid);
+    rect = CC_RECT_PIXELS_TO_POINTS(rect);
+    // only apply fixArtifacts on TMXOrientationOrtho
+	Sprite *tile = Sprite::createWithTexture(texture, rect, false, _layerOrientation == TMXOrientationOrtho);
+    tile->setCameraMask(getCameraMask());
+    _tileSprites.insert(std::pair<intptr_t, Sprite *>(z, tile));
+    addChild(tile);
+	return tile;
+}
 
-    auto vertexz = getProperty("cc_vertexz");
-    if (!vertexz.isNull())
-    {
-        std::string vertexZStr = vertexz.asString();
-        // If "automatic" is on, then parse the "cc_alpha_func" too
-        if (vertexZStr == "automatic")
-        {
-            _useAutomaticVertexZ = true;
-            auto alphaFuncVal = getProperty("cc_alpha_func");
-            float alphaFuncValue = alphaFuncVal.asFloat();
-
-            auto& pipelineDescriptor = _quadCommand.getPipelineDescriptor();
-            auto& vertexShader = pipelineDescriptor.programState->getProgram()->getVertexShader();
-            updateShaders(vertexShader, positionTextureColorAlphaTest_frag);
-            auto alphaValueLocation = pipelineDescriptor.programState->getUniformLocation("u_alpha_value");
-            pipelineDescriptor.programState->setUniform(alphaValueLocation, &alphaFuncValue, sizeof(alphaFuncValue));
-        }
-        else
-        {
-            _vertexZvalue = vertexz.asInt();
-        }
-    }
+void TMXLayer::setTileTexture(Sprite* sprite, uint32_t gid)
+{
+    TMXTilesetInfo *tileset = _tileMap->getTilesetByGID(gid);
+    Texture2D *texture = Director::getInstance()->getTextureCache()->getTextureForKey(tileset->_sourceImage);
+    Rect rect = tileset->getRectForGID(gid);
+    sprite->setTexture(texture);
+    sprite->setTextureRect(rect, false, rect.size);
 }
 
 void TMXLayer::setupTileSprite(Sprite* sprite, const Vec2& pos, uint32_t gid)
 {
-    sprite->setPosition(getPositionAt(pos));
-    sprite->setPositionZ((float)getVertexZForPos(pos));
-    sprite->setAnchorPoint(Vec2::ZERO);
-    sprite->setOpacity(_opacity);
+    Vec2 spPos = getPositionAt(pos, gid);
+	sprite->setPosition(spPos);
+    sprite->setLocalZOrder(getLocalZForPos(pos));
+	sprite->setOpacity(_opacity);
 
-    //issue 1264, flip can be undone as well
-    sprite->setFlippedX(false);
-    sprite->setFlippedY(false);
-    sprite->setRotation(0.0f);
-    sprite->setAnchorPoint(Vec2(0,0));
+	//issue 1264, flip can be undone as well
+	sprite->setFlippedX(false);
+	sprite->setFlippedY(false);
+	sprite->setRotation(0.0f);
+	sprite->setAnchorPoint(Vec2::ZERO);
 
-    // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
-    if (gid & kTMXTileDiagonalFlag)
-    {
-        // put the anchor in the middle for ease of rotation.
-        sprite->setAnchorPoint(Vec2(0.5f,0.5f));
-        sprite->setPosition(getPositionAt(pos).x + sprite->getContentSize().height/2,
-           getPositionAt(pos).y + sprite->getContentSize().width/2 );
+	// Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
+	if (gid & kTMXTileDiagonalFlag) {
+		// put the anchor in the middle for ease of rotation.
+		sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+		sprite->setPosition(spPos.x + sprite->getContentSize().height / 2,
+				spPos.y + sprite->getContentSize().width / 2);
 
-        auto flag = gid & (kTMXTileHorizontalFlag | kTMXTileVerticalFlag );
+		auto flag = gid & (kTMXTileHorizontalFlag | kTMXTileVerticalFlag);
 
-        // handle the 4 diagonally flipped states.
-        if (flag == kTMXTileHorizontalFlag)
-        {
-            sprite->setRotation(90.0f);
-        }
-        else if (flag == kTMXTileVerticalFlag)
-        {
-            sprite->setRotation(270.0f);
-        }
-        else if (flag == (kTMXTileVerticalFlag | kTMXTileHorizontalFlag) )
-        {
-            sprite->setRotation(90.0f);
-            sprite->setFlippedX(true);
-        }
-        else
-        {
-            sprite->setRotation(270.0f);
-            sprite->setFlippedX(true);
+		// handle the 4 diagonally flipped states.
+		if (flag == kTMXTileHorizontalFlag) {
+			sprite->setRotation(90.0f);
+		} else if (flag == kTMXTileVerticalFlag) {
+			sprite->setRotation(270.0f);
+		} else if (flag == (kTMXTileVerticalFlag | kTMXTileHorizontalFlag)) {
+			sprite->setRotation(90.0f);
+			sprite->setFlippedX(true);
+		} else {
+			sprite->setRotation(270.0f);
+			sprite->setFlippedX(true);
+		}
+	} else {
+		if (gid & kTMXTileHorizontalFlag) {
+			sprite->setFlippedX(true);
+		}
+		if (gid & kTMXTileVerticalFlag) {
+			sprite->setFlippedY(true);
+		}
+	}
+}
+
+// init tile's animation
+void TMXLayer::setupTileAnimation(Sprite* sprite, const Vec2& pos, uint32_t gid)
+{
+    intptr_t z = getZForPos(pos);
+    auto it = _tilesAniData.find(z);
+    if (it != _tilesAniData.end()) { // remove old data
+        delete it->second;
+        _tilesAniData.erase(z);
+    }
+    Value prop = _tileMap->getPropertiesForGID(gid);
+    if (prop.getType() == Value::Type::MAP) {
+        Value& ani = prop.asValueMap()["animation"];
+        if (ani.getType() == Value::Type::VECTOR) { // add new data
+            TileAnimationData *data = new TileAnimationData();
+            data->frameIndex = 0;
+            data->pos = pos;
+            data->tile = sprite;
+            ValueVector &vector = ani.asValueVector();
+            for (size_t i = 0; i < vector.size(); i = i + 2) {
+                uint32_t tileid = vector[i].asUnsignedInt();
+                float duration = vector[i + 1].asUnsignedInt() / 1000.0f;//ms => s
+                data->gids.push_back(tileid);
+                data->durations.push_back(duration);
+                // init texture to first frame
+                if (0 == i) {
+                    data->leftTime = duration;
+                    setTileTexture(sprite, tileid);
+                    gid = tileid; // real render gid
+                }
+            }
+            _tilesAniData.insert(std::pair<intptr_t, TileAnimationData *>(z, data));
         }
     }
-    else
-    {
-        if (gid & kTMXTileHorizontalFlag)
-        {
-            sprite->setFlippedX(true);
-        }
-
-        if (gid & kTMXTileVerticalFlag)
-        {
-            sprite->setFlippedY(true);
-        }
+    setupTileSprite(sprite, pos, gid);// do for real gid
+    
+    // start or stop schedule
+    if (_tilesAniData.size() == 1) {
+        schedule(CC_SCHEDULE_SELECTOR(TMXLayer::tilesUpdate), 0);
+    } else if (_tilesAniData.size() == 0) {
+        unschedule(CC_SCHEDULE_SELECTOR(TMXLayer::tilesUpdate));
     }
 }
 
-Sprite* TMXLayer::reusedTileWithRect(const Rect& rect)
+void TMXLayer::tilesUpdate(float dt)
 {
-    if (! _reusedTile) 
-    {
-        _reusedTile = Sprite::createWithTexture(_textureAtlas->getTexture(), rect);
-        _reusedTile->setBatchNode(this);
-        _reusedTile->retain();
+    for(auto it = _tilesAniData.begin(); it != _tilesAniData.end(); ++it) {
+        TileAnimationData *data = it->second;
+        data->leftTime -= dt;
+        if (data->leftTime > 0) {
+            continue;
+        }
+        // display next frame
+        data->frameIndex++;
+        if (data->frameIndex == data->gids.size()) {
+            data->frameIndex = 0;
+        }
+        uint32_t gid = data->gids[data->frameIndex];
+        data->leftTime = data->durations[data->frameIndex];
+        setTileTexture(data->tile, gid);
+        setupTileSprite(data->tile, data->pos, gid);
     }
-    else
-    {
-        // FIXME: HACK: Needed because if "batch node" is nil,
-        // then the Sprite'squad will be reset
-        _reusedTile->setBatchNode(nullptr);
-        
-        // Re-init the sprite
-        _reusedTile->setTextureRect(rect, false, rect.size);
-        
-        // restore the batch node
-        _reusedTile->setBatchNode(this);
-    }
-
-    return _reusedTile;
 }
 
 // TMXLayer - obtaining tiles/gids
 Sprite * TMXLayer::getTileAt(const Vec2& pos)
 {
-    CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
-    CCASSERT(_tiles && _atlasIndexArray, "TMXLayer: the tiles map has been released");
+	CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
+	CCASSERT(_tiles, "TMXLayer: the tiles map has been released");
+    CCASSERT(_layerType == TMX_LAYER_TILE, "TMXLayer: invalid layer type");
 
-    Sprite *tile = nullptr;
-    int gid = this->getTileGIDAt(pos);
-
-    // if GID == 0, then no tile is present
-    if (gid) 
-    {
-        int z = (int)(pos.x + pos.y * _layerSize.width);
-        tile = static_cast<Sprite*>(this->getChildByTag(z));
-
-        // tile not created yet. create it
-        if (! tile) 
-        {
-            Rect rect = _tileSet->getRectForGID(gid);
-            rect = CC_RECT_PIXELS_TO_POINTS(rect);
-
-            tile = Sprite::createWithTexture(this->getTexture(), rect);
-            tile->setBatchNode(this);
-            tile->setPosition(getPositionAt(pos));
-            tile->setPositionZ((float)getVertexZForPos(pos));
-            tile->setAnchorPoint(Vec2::ZERO);
-            tile->setOpacity(_opacity);
-
-            ssize_t indexForZ = atlasIndexForExistantZ(z);
-            this->addSpriteWithoutQuad(tile, static_cast<int>(indexForZ), z);
+    intptr_t z = getZForPos(pos);
+    auto it = _tileSprites.find(z);
+    if (it == _tileSprites.end()) {
+        Sprite *tile = nullptr;
+        int gid = _tiles[z];
+        if (gid != 0) { // try create it
+            tile = createTileSprite(z, gid);
+            setupTileAnimation(tile, pos, gid);
         }
+        return tile;
     }
-    
-    return tile;
+    return it->second;
 }
 
 uint32_t TMXLayer::getTileGIDAt(const Vec2& pos, TMXTileFlags* flags/* = nullptr*/)
 {
-    CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
-    CCASSERT(_tiles && _atlasIndexArray, "TMXLayer: the tiles map has been released");
+	CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
+	CCASSERT(_tiles, "TMXLayer: the tiles map has been released");
+    CCASSERT(_layerType == TMX_LAYER_TILE, "TMXLayer: invalid layer type");
 
-    ssize_t idx = static_cast<int>(((int) pos.x + (int) pos.y * _layerSize.width));
-    // Bits on the far end of the 32-bit global tile ID are used for tile flags
-    uint32_t tile = _tiles[idx];
+	// Bits on the far end of the 32-bit global tile ID are used for tile flags
+	uint32_t tile = _tiles[getZForPos(pos)];
+	// issue1264, flipped tiles can be changed dynamically
+	if (flags) {
+		*flags = (TMXTileFlags)(tile & kTMXFlipedAll);
+	}
 
-    // issue1264, flipped tiles can be changed dynamically
-    if (flags) 
-    {
-        *flags = (TMXTileFlags)(tile & kTMXFlipedAll);
-    }
-    
-    return (tile & kTMXFlippedMask);
-}
-
-// TMXLayer - adding helper methods
-Sprite * TMXLayer::insertTileForGID(uint32_t gid, const Vec2& pos)
-{
-    if (gid != 0 && (static_cast<int>((gid & kTMXFlippedMask)) - _tileSet->_firstGid) >= 0)
-    {
-        Rect rect = _tileSet->getRectForGID(gid);
-        rect = CC_RECT_PIXELS_TO_POINTS(rect);
-        
-        intptr_t z = (intptr_t)((int) pos.x + (int) pos.y * _layerSize.width);
-        
-        Sprite *tile = reusedTileWithRect(rect);
-        
-        setupTileSprite(tile, pos, gid);
-        
-        // get atlas index
-        ssize_t indexForZ = atlasIndexForNewZ(static_cast<int>(z));
-        
-        // Optimization: add the quad without adding a child
-        this->insertQuadFromSprite(tile, indexForZ);
-        
-        // insert it into the local atlasindex array
-        ccCArrayInsertValueAtIndex(_atlasIndexArray, (void*)z, indexForZ);
-        
-        // update possible children
-        
-        for(const auto &child : _children) {
-            Sprite* sp = static_cast<Sprite*>(child);
-            auto ai = sp->getAtlasIndex();
-            if ( ai >= indexForZ )
-            {
-                sp->setAtlasIndex(ai+1);
-            }
-        }
-        
-        _tiles[z] = gid;
-        return tile;
-    }
-    
-    return nullptr;
-}
-
-Sprite * TMXLayer::updateTileForGID(uint32_t gid, const Vec2& pos)
-{
-    Rect rect = _tileSet->getRectForGID(gid);
-    rect = Rect(rect.origin.x / _contentScaleFactor, rect.origin.y / _contentScaleFactor, rect.size.width/ _contentScaleFactor, rect.size.height/ _contentScaleFactor);
-    int z = (int)((int) pos.x + (int) pos.y * _layerSize.width);
-
-    Sprite *tile = reusedTileWithRect(rect);
-
-    setupTileSprite(tile ,pos ,gid);
-
-    // get atlas index
-    auto indexForZ = atlasIndexForExistantZ(z);
-    tile->setAtlasIndex(static_cast<unsigned int>(indexForZ) );
-    tile->setDirty(true);
-    tile->updateTransform();
-    _tiles[z] = gid;
-
-    return tile;
+	return (tile & kTMXFlippedMask);
 }
 
 intptr_t TMXLayer::getZForPos(const Vec2& pos) const
 {
-    intptr_t z = -1;
+	intptr_t z = -1;
+    int newX = pos.x;
     // fix correct render ordering in Hexagonal maps when stagger axis == x
-    if (_staggerAxis == TMXStaggerAxis_X && _layerOrientation == TMXOrientationHex)
-    {
-        if (_staggerIndex == TMXStaggerIndex_Odd)
-        {
-            if (((int)pos.x % 2) == 0)
-                z = pos.x / 2 + pos.y * _layerSize.width;
+    if (_staggerAxis == TMXStaggerAxis_X && _layerOrientation == TMXOrientationHex) {
+        if (_staggerIndex == TMXStaggerIndex_Odd) {
+            if (pos.x >= _layerSize.width / 2)
+                newX = (pos.x - std::ceil(_layerSize.width / 2)) * 2 + 1;
             else
-                z = pos.x / 2 + std::ceil(_layerSize.width / 2) + pos.y * _layerSize.width;
+                newX = pos.x * 2;
         } else {
             // TMXStaggerIndex_Even
-            if (((int)pos.x % 2) == 1)
-                z = pos.x / 2 + pos.y * _layerSize.width;
+            if (pos.x >= static_cast<int>(_layerSize.width / 2))
+                newX = (pos.x - static_cast<int>(_layerSize.width / 2)) * 2;
             else
-                z = pos.x / 2 + std::floor(_layerSize.width / 2) + pos.y * _layerSize.width;
+                newX = pos.x * 2 + 1;
         }
     }
-    else
-    {
-        z = (pos.x + pos.y * _layerSize.width);
-    }
+    z = (newX + pos.y * _layerSize.width);
 
-    CCASSERT(z != -1, "Invalid Z");
-    return z;
-}
-
-// used only when parsing the map. useless after the map was parsed
-// since lot's of assumptions are no longer true
-Sprite * TMXLayer::appendTileForGID(uint32_t gid, const Vec2& pos)
-{
-    if (gid != 0 && (static_cast<int>((gid & kTMXFlippedMask)) - _tileSet->_firstGid) >= 0)
-    {
-        Rect rect = _tileSet->getRectForGID(gid);
-        rect = CC_RECT_PIXELS_TO_POINTS(rect);
-
-        // Z could be just an integer that gets incremented each time it is called.
-        // but that wouldn't work on layers with empty tiles.
-        // and it is IMPORTANT that Z returns an unique and bigger number than the previous one.
-        // since _atlasIndexArray must be ordered because `bsearch` is used to find the GID for
-        // a given Z. (github issue #16512)
-        intptr_t z = getZForPos(pos);
-
-        Sprite *tile = reusedTileWithRect(rect);
-        
-        setupTileSprite(tile ,pos ,gid);
-        
-        // optimization:
-        // The difference between appendTileForGID and insertTileforGID is that append is faster, since
-        // it appends the tile at the end of the texture atlas
-        ssize_t indexForZ = _atlasIndexArray->num;
-        
-        // don't add it using the "standard" way.
-        insertQuadFromSprite(tile, indexForZ);
-        
-        // append should be after addQuadFromSprite since it modifies the quantity values
-        ccCArrayInsertValueAtIndex(_atlasIndexArray, (void*)z, indexForZ);
-
-        // Validation for issue #16512
-        CCASSERT(_atlasIndexArray->num == 1 ||
-                 _atlasIndexArray->arr[_atlasIndexArray->num-1] > _atlasIndexArray->arr[_atlasIndexArray->num-2], "Invalid z for _atlasIndexArray");
-
-        return tile;
-    }
-    
-    return nullptr;
-}
-
-// TMXLayer - atlasIndex and Z
-static inline int compareInts(const void * a, const void * b)
-{
-    const int ia = *(int*)a;
-    const int ib = *(int*)b;
-    return (ia-ib);
-}
-
-ssize_t TMXLayer::atlasIndexForExistantZ(int z)
-{
-    int key=z;
-    int *item = (int*)bsearch((void*)&key, (void*)&_atlasIndexArray->arr[0], _atlasIndexArray->num, sizeof(void*), compareInts);
-
-    CCASSERT(item, "TMX atlas index not found. Shall not happen");
-
-    ssize_t index = ((size_t)item - (size_t)_atlasIndexArray->arr) / sizeof(void*);
-    return index;
-}
-
-ssize_t TMXLayer::atlasIndexForNewZ(int z)
-{
-    // FIXME:: This can be improved with a sort of binary search
-    ssize_t i=0;
-    for (i=0; i< _atlasIndexArray->num ; i++) 
-    {
-        ssize_t val = (size_t) _atlasIndexArray->arr[i];
-        if (z < val)
-        {
-            break;
-        }
-    } 
-    
-    return i;
+	CCASSERT(z != -1, "Invalid Z");
+	return z;
 }
 
 // TMXLayer - adding / remove tiles
-void TMXLayer::setTileGID(uint32_t gid, const Vec2& pos)
-{
-    setTileGID(gid, pos, (TMXTileFlags)0);
-}
-
 void TMXLayer::setTileGID(uint32_t gid, const Vec2& pos, TMXTileFlags flags)
 {
-    CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
-    CCASSERT(_tiles && _atlasIndexArray, "TMXLayer: the tiles map has been released");
-    CCASSERT(gid == 0 || (int)gid >= _tileSet->_firstGid, "TMXLayer: invalid gid" );
+	CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
+	CCASSERT(_tiles, "TMXLayer: the tiles map has been released");
+    CCASSERT(_layerType == TMX_LAYER_TILE, "TMXLayer: invalid layer type");
 
-    TMXTileFlags currentFlags;
-    uint32_t currentGID = getTileGIDAt(pos, &currentFlags);
+	if (gid <= 0) {
+		removeTileAt(pos);
+		return;
+	}
 
-    if (currentGID != gid || currentFlags != flags) 
-    {
-        uint32_t gidAndFlags = gid | flags;
-
-        // setting gid=0 is equal to remove the tile
-        if (gid == 0)
-        {
-            removeTileAt(pos);
+	TMXTileFlags currentFlags;
+	uint32_t currentGID = getTileGIDAt(pos, &currentFlags);
+	if (currentGID != gid || currentFlags != flags)
+	{
+		uint32_t gidAndFlags = gid | flags;
+		intptr_t z = getZForPos(pos);
+        Sprite *tile = nullptr;
+        auto it = _tileSprites.find(z);
+        if (it != _tileSprites.end()) {
+            tile = it->second;
         }
-        // empty tile. create a new one
-        else if (currentGID == 0)
-        {
-            insertTileForGID(gidAndFlags, pos);
+		if (tile) {
+            setTileTexture(tile, gidAndFlags);
+        } else {
+            tile = createTileSprite(z, gidAndFlags);
         }
-        // modifying an existing tile with a non-empty tile
-        else 
-        {
-            int z = (int) pos.x + (int) pos.y * _layerSize.width;
-            Sprite *sprite = static_cast<Sprite*>(getChildByTag(z));
-            if (sprite)
-            {
-                Rect rect = _tileSet->getRectForGID(gid);
-                rect = CC_RECT_PIXELS_TO_POINTS(rect);
+        setupTileAnimation(tile, pos, gidAndFlags);
+        _tiles[z] = gidAndFlags;
+	}
+}
 
-                sprite->setTextureRect(rect, false, rect.size);
-                if (flags) 
-                {
-                    setupTileSprite(sprite, sprite->getPosition(), gidAndFlags);
-                }
-                _tiles[z] = gidAndFlags;
-            } 
-            else 
-            {
-                updateTileForGID(gidAndFlags, pos);
-            }
+void TMXLayer::removeTileAt(const Vec2& pos, bool cleanGID)
+{
+	CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
+	CCASSERT(_tiles, "TMXLayer: the tiles map has been released");
+    CCASSERT(_layerType == TMX_LAYER_TILE, "TMXLayer: invalid layer type");
+
+	intptr_t z = getZForPos(pos);
+    auto it = _tileSprites.find(z);
+    if (it != _tileSprites.end()) {
+        it->second->removeFromParent();
+        _tileSprites.erase(z);
+    }
+    auto itdata = _tilesAniData.find(z);
+    if (itdata != _tilesAniData.end()) {
+        delete itdata->second;
+        _tilesAniData.erase(z);
+        if (_tilesAniData.size() == 0) {
+            unschedule(CC_SCHEDULE_SELECTOR(TMXLayer::tilesUpdate));
         }
     }
-}
-
-void TMXLayer::addChild(Node* /*child*/, int /*zOrder*/, int /*tag*/)
-{
-    CCASSERT(0, "addChild: is not supported on TMXLayer. Instead use setTileGID:at:/tileAt:");
-}
-
-void TMXLayer::removeChild(Node* node, bool cleanup)
-{
-    Sprite *sprite = (Sprite*)node;
-    // allows removing nil objects
-    if (! sprite)
-    {
-        return;
-    }
-
-    CCASSERT(_children.contains(sprite), "Tile does not belong to TMXLayer");
-
-    ssize_t atlasIndex = sprite->getAtlasIndex();
-    ssize_t zz = (ssize_t)_atlasIndexArray->arr[atlasIndex];
-    _tiles[zz] = 0;
-    ccCArrayRemoveValueAtIndex(_atlasIndexArray, atlasIndex);
-    SpriteBatchNode::removeChild(sprite, cleanup);
-}
-
-void TMXLayer::removeTileAt(const Vec2& pos)
-{
-    CCASSERT(pos.x < _layerSize.width && pos.y < _layerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
-    CCASSERT(_tiles && _atlasIndexArray, "TMXLayer: the tiles map has been released");
-
-    int gid = getTileGIDAt(pos);
-
-    if (gid) 
-    {
-        int z = pos.x + pos.y * _layerSize.width;
-        ssize_t atlasIndex = atlasIndexForExistantZ(z);
-
-        // remove tile from GID map
+    if (cleanGID) {
         _tiles[z] = 0;
-
-        // remove tile from atlas position array
-        ccCArrayRemoveValueAtIndex(_atlasIndexArray, atlasIndex);
-
-        // remove it from sprites and/or texture atlas
-        Sprite *sprite = (Sprite*)getChildByTag(z);
-        if (sprite)
-        {
-            SpriteBatchNode::removeChild(sprite, true);
-        }
-        else 
-        {
-            _textureAtlas->removeQuadAtIndex(atlasIndex);
-
-            // update possible children
-            for(const auto &obj : _children) {
-                Sprite* child = static_cast<Sprite*>(obj);
-                auto ai = child->getAtlasIndex();
-                if ( ai >= atlasIndex )
-                {
-                    child->setAtlasIndex(ai-1);
-                }
-            }
-        }
     }
 }
 
 //CCTMXLayer - obtaining positions, offset
 Vec2 TMXLayer::calculateLayerOffset(const Vec2& pos)
 {
-    Vec2 ret;
-    switch (_layerOrientation)
-    {
-        case TMXOrientationOrtho:
-            ret.set( pos.x * _mapTileSize.width, -pos.y *_mapTileSize.height);
-            break;
-        case TMXOrientationIso:
-            ret.set((_mapTileSize.width /2) * (pos.x - pos.y),
-                  (_mapTileSize.height /2 ) * (-pos.x - pos.y));
-            break;
-        case TMXOrientationHex:
-        {
-            if(_staggerAxis == TMXStaggerAxis_Y)
-            {
-                int diffX = (_staggerIndex == TMXStaggerIndex_Even) ? _mapTileSize.width/2 : 0;
-                ret.set(pos.x * _mapTileSize.width + diffX, -pos.y * (_mapTileSize.height - (_mapTileSize.width - _hexSideLength) / 2));
-            }
-            else if(_staggerAxis == TMXStaggerAxis_X)
-            {
-                int diffY = (_staggerIndex == TMXStaggerIndex_Odd) ? _mapTileSize.height/2 : 0;
-                ret.set(pos.x * (_mapTileSize.width - (_mapTileSize.width - _hexSideLength) / 2), -pos.y * _mapTileSize.height + diffY);
-            }
-            break;
-        }
-        case TMXOrientationStaggered:
-        {
-            float diffX = 0;
-            if ((int)std::abs(pos.y) % 2 == 1)
-            {
-                diffX = _mapTileSize.width/2;
-            }
-            ret.set(pos.x * _mapTileSize.width + diffX,
-                         (-pos.y) * _mapTileSize.height/2);
-        }
-        break;
-    }
-    return ret;    
+	Vec2 ret;
+	switch (_layerOrientation) {
+		case TMXOrientationOrtho:
+			ret.set(pos.x, -pos.y);
+			break;
+		case TMXOrientationIso:
+            ret.set(pos.x, -pos.y);
+			break;
+		case TMXOrientationHex:
+			{
+				if(_staggerAxis == TMXStaggerAxis_Y) {
+					int diffX = (_staggerIndex == TMXStaggerIndex_Even) ? _mapTileSize.width / 2 : 0;
+					ret.set(pos.x + diffX, -pos.y);
+				} else if(_staggerAxis == TMXStaggerAxis_X) {
+					int diffY = (_staggerIndex == TMXStaggerIndex_Odd) ? _mapTileSize.height / 2 : 0;
+					ret.set(pos.x, -pos.y + diffY);
+				}
+				break;
+			}
+		case TMXOrientationStaggered:
+			ret.set(pos.x, -pos.y);
+			break;
+	}
+    ret = CC_POINT_PIXELS_TO_POINTS(ret);
+	return ret;
 }
 
-Vec2 TMXLayer::getPositionAt(const Vec2& pos)
+Vec2 TMXLayer::getPositionAt(const Vec2& pos, uint32_t gid)
 {
-    Vec2 ret;
-    switch (_layerOrientation)
-    {
-    case TMXOrientationOrtho:
-        ret = getPositionForOrthoAt(pos);
-        break;
-    case TMXOrientationIso:
-        ret = getPositionForIsoAt(pos);
-        break;
-    case TMXOrientationHex:
-        ret = getPositionForHexAt(pos);
-        break;
-    case TMXOrientationStaggered:
-        ret = getPositionForStaggeredAt(pos);
-        break;
+    int newX = pos.x;
+    // fix correct render ordering in Hexagonal maps when stagger axis == x
+    if (_staggerAxis == TMXStaggerAxis_X && _layerOrientation == TMXOrientationHex) {
+        if (_staggerIndex == TMXStaggerIndex_Odd) {
+            if (pos.x >= _layerSize.width / 2)
+                newX = (pos.x - std::ceil(_layerSize.width / 2)) * 2 + 1;
+            else
+                newX = pos.x * 2;
+        } else {
+            // TMXStaggerIndex_Even
+            if (pos.x >= static_cast<int>(_layerSize.width / 2))
+                newX = (pos.x - static_cast<int>(_layerSize.width / 2)) * 2;
+            else
+                newX = pos.x * 2 + 1;
+        }
     }
-    ret = CC_POINT_PIXELS_TO_POINTS( ret );
-    return ret;
+    Vec2 newPos(newX, pos.y);
+    
+	Vec2 ret;
+	switch (_layerOrientation) {
+		case TMXOrientationOrtho:
+			ret = getPositionForOrthoAt(newPos);
+			break;
+		case TMXOrientationIso:
+			ret = getPositionForIsoAt(newPos);
+			break;
+		case TMXOrientationHex:
+			ret = getPositionForHexAt(newPos);
+			break;
+		case TMXOrientationStaggered:
+			ret = getPositionForStaggeredAt(newPos);
+			break;
+	}
+    
+    if (gid == 0) { // not a default value
+        gid = getTileGIDAt(pos);
+    }
+    if (gid > 0) { // apply tileset->_tileOffset
+        TMXTilesetInfo *tileset = _tileMap->getTilesetByGID(gid);
+        Vec2 offset = tileset->_tileOffset;
+        ret.x += offset.x;
+        ret.y -= offset.y;
+    }
+    
+	ret = CC_POINT_PIXELS_TO_POINTS(ret);
+	return ret;
 }
 
 Vec2 TMXLayer::getPositionForOrthoAt(const Vec2& pos)
 {
-    return Vec2(pos.x * _mapTileSize.width,
-                            (_layerSize.height - pos.y - 1) * _mapTileSize.height);
+	return Vec2(pos.x * _mapTileSize.width,
+			(_layerSize.height - pos.y - 1) * _mapTileSize.height);
 }
 
 Vec2 TMXLayer::getPositionForIsoAt(const Vec2& pos)
 {
-    return Vec2(_mapTileSize.width /2 * (_layerSize.width + pos.x - pos.y - 1),
-                             _mapTileSize.height /2 * ((_layerSize.height * 2 - pos.x - pos.y) - 2));
+	return Vec2(_mapTileSize.width / 2 * (_layerSize.width + pos.x - pos.y - 1),
+			_mapTileSize.height / 2 * ((_layerSize.height * 2 - pos.x - pos.y) - 2));
 }
 
 Vec2 TMXLayer::getPositionForHexAt(const Vec2& pos)
 {
-    Vec2 xy;
-    Vec2 offset = _tileSet->_tileOffset;
+	Vec2 xy;
 
-    int odd_even = (_staggerIndex == TMXStaggerIndex_Odd) ? 1 : -1;
-    switch (_staggerAxis)
-    {
-        case TMXStaggerAxis_Y:
-        {
-            float diffX = 0;
-            if ((int)pos.y % 2 == 1)
-            {
-                diffX = _mapTileSize.width/2 * odd_even;
-            }
-            xy = Vec2(pos.x * _mapTileSize.width+diffX+offset.x,
-                      (_layerSize.height - pos.y - 1) * (_mapTileSize.height-(_mapTileSize.height-_hexSideLength)/2)-offset.y);
-            break;
-        }
-            
-        case TMXStaggerAxis_X:
-        {
-            float diffY = 0;
-            if ((int)pos.x % 2 == 1)
-            {
-                diffY = _mapTileSize.height/2 * -odd_even;
-            }
-            
-            xy = Vec2(pos.x * (_mapTileSize.width-(_mapTileSize.width-_hexSideLength)/2)+offset.x,
-                      (_layerSize.height - pos.y - 1) * _mapTileSize.height + diffY-offset.y);
-            break;
-        }
-    }
-    return xy;
+	int odd_even = (_staggerIndex == TMXStaggerIndex_Odd) ? 1 : -1;
+	switch (_staggerAxis) {
+		case TMXStaggerAxis_Y:
+			{
+				float diffX = 0;
+				if ((int)pos.y % 2 == 1) {
+					diffX = _mapTileSize.width / 2 * odd_even;
+				}
+				xy = Vec2(pos.x * _mapTileSize.width + diffX,
+						(_layerSize.height - pos.y - 1) * (_mapTileSize.height - (_mapTileSize.height-_hexSideLength) / 2));
+				break;
+			}
+
+		case TMXStaggerAxis_X:
+			{
+				float diffY = 0;
+				if ((int)pos.x % 2 == 1) {
+					diffY = _mapTileSize.height / 2 * -odd_even;
+				}
+				xy = Vec2(pos.x * (_mapTileSize.width - (_mapTileSize.width - _hexSideLength) / 2),
+						(_layerSize.height - pos.y - 1) * _mapTileSize.height + diffY);
+				break;
+			}
+	}
+	return xy;
 }
 
 Vec2 TMXLayer::getPositionForStaggeredAt(const Vec2 &pos)
 {
-    float diffX = 0;
-    if ((int)pos.y % 2 == 1)
-    {
-        diffX = _mapTileSize.width/2;
-    }
-    return Vec2(pos.x * _mapTileSize.width + diffX,
-                (_layerSize.height - pos.y - 1) * _mapTileSize.height/2);
+	float diffX = 0;
+	if ((int)pos.y % 2 == 1) {
+		diffX = _mapTileSize.width / 2;
+	}
+	return Vec2(pos.x * _mapTileSize.width + diffX,
+			(_layerSize.height - pos.y - 1) * _mapTileSize.height / 2);
 }
 
-int TMXLayer::getVertexZForPos(const Vec2& pos)
+Vec2 TMXLayer::getPositionForObject(const Vec2& pos)
+{
+    Vec2 ret(0, 0);
+    switch (_layerOrientation) {
+        case TMXOrientationOrtho:
+            ret.x = pos.x;
+            ret.y = _layerSize.height * _mapTileSize.height - pos.y;
+            break;
+        case TMXOrientationIso:
+        {
+            float min = std::min(_mapTileSize.width, _mapTileSize.height);
+            ret.x = (_layerSize.width * 2 + (pos.x - pos.y) / min) * _mapTileSize.width / 2;
+            ret.y = (ret.x / _mapTileSize.width - pos.x / min) * _mapTileSize.height;
+            ret.x -= _layerSize.width * _mapTileSize.width / 2;
+            break;
+        }
+        case TMXOrientationHex:
+            {
+                float offsetx = 0;
+                float height = 0;
+                if (_staggerAxis == TMXStaggerAxis_X) {
+                    height = _mapTileSize.height * _layerSize.height;
+                    if (_staggerIndex == TMXStaggerIndex_Even) {
+                        height +=  _mapTileSize.height / 2;
+                    }
+                 } else {
+                     if (_staggerIndex == TMXStaggerIndex_Even) {
+                         offsetx = -_mapTileSize.width / 2;
+                     }
+                     height = (_mapTileSize.height + _hexSideLength) * ((int)(_layerSize.height / 2)) + _mapTileSize.height * ((int)_layerSize.height % 2);
+                     height += _hexSideLength / 2; // need special fix ??
+                 }
+                ret.x = pos.x + offsetx;
+                ret.y = height - pos.y;
+                break;
+            }
+        case TMXOrientationStaggered:
+            ret.x = pos.x;
+            ret.y = (_layerSize.height + 1) * _mapTileSize.height / 2.0f - pos.y;
+            break;
+    }
+    ret = CC_POINT_PIXELS_TO_POINTS(ret);
+    return ret;
+}
+
+int TMXLayer::getLocalZForPos(const Vec2& pos) const
 {
     int ret = 0;
     int maxVal = 0;
-    if (_useAutomaticVertexZ)
-    {
-        switch (_layerOrientation) 
-        {
+    switch (_layerOrientation) {
+        case TMXOrientationOrtho:
+            ret = static_cast<int>(-(_layerSize.height - pos.y));
+            break;
         case TMXOrientationIso:
             maxVal = static_cast<int>(_layerSize.width + _layerSize.height);
             ret = static_cast<int>(-(maxVal - (pos.x + pos.y)));
             break;
-        case TMXOrientationOrtho:
-            ret = static_cast<int>(-(_layerSize.height-pos.y));
-            break;
         case TMXOrientationStaggered:
-            ret = static_cast<int>(-(_layerSize.height-pos.y));
+            ret = static_cast<int>(-(_layerSize.height - pos.y));
             break;
         case TMXOrientationHex:
-            ret = static_cast<int>(-(_layerSize.height-pos.y));
+            ret = static_cast<int>(-(_layerSize.height - pos.y));
             break;
         default:
             CCASSERT(0, "TMX invalid value");
             break;
-        }
-    } 
-    else
-    {
-        ret = _vertexZvalue;
     }
     
+//    printf("x:%d, y:%d, z:%d\n", (int)pos.x, (int)pos.y, ret);
     return ret;
 }
 
 std::string TMXLayer::getDescription() const
 {
-    return StringUtils::format("<TMXLayer | tag = %d, size = %d,%d>", _tag, (int)_mapTileSize.width, (int)_mapTileSize.height);
+	return StringUtils::format("<TMXLayer | tag = %d, size = %d,%d>", _tag, (int)_mapTileSize.width, (int)_mapTileSize.height);
 }
-
 
 NS_CC_END
