@@ -29,10 +29,10 @@ add_library(external empty.cpp)
 add_subdirectory(OpenAL)
 target_link_libraries(external ext_OpenAL)
 # OGG
+add_subdirectory(libvorbis)
+target_link_libraries(external ext_libvorbis) # before ogg, make android link happy
 add_subdirectory(libogg)
 target_link_libraries(external ext_libogg)
-add_subdirectory(libvorbis)
-target_link_libraries(external ext_libvorbis)
 
 if(BUILD_EXT_BOX2D)
     add_subdirectory(Box2D)
@@ -130,37 +130,18 @@ if(NOT LINUX)
         ext_png
     )
 endif(NOT LINUX)
-    
-if(LINUX)
-    add_subdirectory(linux-specific/fmod)
-    target_link_libraries(external 
-        ext_fmod
-    )
-endif()
 
 if(ANDROID)
     add_subdirectory(android-specific/cpufeatures)
-    add_subdirectory(android-specific/pvmp3dec)
-    add_subdirectory(android-specific/tremolo)
-    target_link_libraries(external 
-        ext_cpufeatures 
-        ext_pvmp3dec 
-        ext_tremolo
-    )
+    target_link_libraries(external ext_cpufeatures)
 endif()
 
 if(WINDOWS)
     add_subdirectory(win32-specific/gles)
     add_subdirectory(win32-specific/icon)
-    add_subdirectory(win32-specific/MP3Decoder)
-    add_subdirectory(win32-specific/OggDecoder)
-    add_subdirectory(win32-specific/OpenalSoft)
     target_link_libraries(external 
         ext_gles
         ext_icon
-        ext_MP3Decoder
-        ext_OggDecoder
-        ext_OpenalSoft
     )
 endif()
 
