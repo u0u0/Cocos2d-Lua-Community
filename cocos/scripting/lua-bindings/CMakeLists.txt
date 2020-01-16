@@ -13,6 +13,7 @@ set(lua_bindings_manual_headers
     manual/spine/lua_cocos2dx_spine_manual.hpp
     manual/spine/lua_spSkeletonData.hpp
     manual/spine/LuaSkeletonAnimation.h
+    manual/dragonBones/lua_dragonBones.hpp
     manual/platform/ios/CCLuaObjcBridge.h
     manual/network/lua_cocos2dx_network_manual.h
     manual/network/lua_xml_http_request.h
@@ -63,6 +64,7 @@ set(lua_bindings_manual_files
     manual/spine/lua_cocos2dx_spine_manual.cpp
     manual/spine/lua_spSkeletonData.cpp
     manual/spine/LuaSkeletonAnimation.cpp
+    manual/dragonBones/lua_dragonBones.cpp
     manual/ui/lua_cocos2dx_ui_manual.cpp
     manual/physics3d/lua_cocos2dx_physics3d_manual.cpp
     manual/navmesh/lua_cocos2dx_navmesh_conversions.cpp
@@ -165,6 +167,7 @@ target_link_libraries(luacocos2d ${lua_ext_depend})
 target_include_directories(luacocos2d
     PRIVATE manual/platform/android
     PRIVATE manual/platform/android/jni
+    PRIVATE ${cocos_root}/cocos/editor-support/dragonBones
     INTERFACE ${cocos_root}/cocos/scripting/lua-bindings/auto
     INTERFACE ${cocos_root}/cocos/scripting/lua-bindings/manual
 )

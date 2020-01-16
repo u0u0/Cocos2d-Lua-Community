@@ -50,6 +50,7 @@ include(audio/CMakeLists.txt)
 # default value for cocos2dx extensions modules build
 option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
+option(BUILD_EDITOR_DRAGONBONES "Build editor support for dragonBones" ON)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 
 if(BUILD_EDITOR_COCOSTUDIO)
@@ -58,13 +59,14 @@ if(BUILD_EDITOR_COCOSTUDIO)
 endif(BUILD_EDITOR_COCOSTUDIO)
 
 if(BUILD_EDITOR_SPINE)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/editor-support/spine/CMakeLists.txt")
-        include(editor-support/spine/CMakeLists.txt)
-    else()
-        message(WARNING "${CMAKE_CURRENT_SOURCE_DIR}/editor-support/spine/CMakeLists.txt not found!")
-    endif()
+    include(editor-support/spine/CMakeLists.txt)
     set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_SPINE_SRC} ${COCOS_SPINE_HEADER})
 endif(BUILD_EDITOR_SPINE)
+
+if(BUILD_EDITOR_DRAGONBONES)
+    include(editor-support/dragonBones/CMakeLists.txt)
+    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_DRAGONBONES_SRC} ${COCOS_DRAGONBONES_HEADER})
+endif(BUILD_EDITOR_DRAGONBONES)
 
 if(BUILD_EXTENSIONS)
     include(../extensions/CMakeLists.txt)

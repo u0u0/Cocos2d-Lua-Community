@@ -342,6 +342,7 @@ int register_downloader(lua_State* L)
 
     luaL_openlib(L, nullptr, downloaderMemberFns, 0);
     luaL_openlib(L, "cc.Downloader", downloaderStaticFns, 0);
+    lua_pop(L, 2);
     return 1;
 }
 
