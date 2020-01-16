@@ -162,7 +162,7 @@ public:
     /**
      *  Gets string from a file.
      */
-    virtual std::string getStringFromFile(const std::string& filename) const;
+    std::string getStringFromFile(const std::string& filename) const;
     
     /**
      * Gets string from a file, async off the main cocos thread
@@ -171,13 +171,13 @@ public:
      * @param callback Function that will be called when file is read. Will be called 
      * on the main cocos thread.
      */
-    virtual void getStringFromFile(const std::string& path, std::function<void(std::string)> callback) const;
+    void getStringFromFile(const std::string& path, std::function<void(std::string)> callback) const;
 
     /**
      *  Creates binary data from a file.
      *  @return A data object.
      */
-    virtual Data getDataFromFile(const std::string& filename) const;
+    Data getDataFromFile(const std::string& filename) const;
     
 
     /**
@@ -187,7 +187,7 @@ public:
      * @param callback Function that will be called when file is read. Will be called 
      * on the main cocos thread.
      */
-    virtual void getDataFromFile(const std::string& filename, std::function<void(Data)> callback) const;
+    void getDataFromFile(const std::string& filename, std::function<void(Data)> callback) const;
 
     enum class Status
     {
@@ -276,7 +276,7 @@ public:
      *  @return Upon success, a pointer to the data is returned, otherwise nullptr.
      *  @warning Recall: you are responsible for calling free() on any Non-nullptr pointer returned.
      */
-    virtual unsigned char* getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t *size) const;
+    unsigned char* getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t *size) const;
 
 
     /** Returns the fullpath for a given filename.
@@ -475,16 +475,6 @@ public:
      *  Sets writable path.
      */
     virtual void setWritablePath(const std::string& writablePath);
-
-    /**
-     *  Sets whether to pop-up a message box when failed to load an image.
-     */
-    virtual void setPopupNotify(bool notify);
-
-    /** Checks whether to pop up a message box when failed to load an image.
-     *  @return True if pop up a message box when failed to load an image, false if not.
-     */
-    virtual bool isPopupNotify() const;
 
     /**
      *  Converts the contents of a file to a ValueMap.
@@ -963,12 +953,6 @@ protected:
      *  The singleton pointer of FileUtils.
      */
     static FileUtils* s_sharedFileUtils;
-
-    /**
-     *  Remove null value key (for iOS)
-     */
-    virtual void valueMapCompact(ValueMap& valueMap) const;
-    virtual void valueVectorCompact(ValueVector& valueVector) const;
 
     template<typename T, typename R, typename ...ARGS>
     static void performOperationOffthread(T&& action, R&& callback, ARGS&& ...args)

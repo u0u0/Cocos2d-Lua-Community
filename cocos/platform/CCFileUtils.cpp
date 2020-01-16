@@ -48,8 +48,6 @@ NS_CC_BEGIN
 
 // Implement DictMaker
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
-
 typedef enum
 {
     SAX_NONE = 0,
@@ -527,16 +525,6 @@ static tinyxml2::XMLElement* generateElementForArray(const ValueVector& array, t
     return rootNode;
 }
 
-#else
-
-/* The subclass FileUtilsApple should override these two method. */
-ValueMap FileUtils::getValueMapFromFile(const std::string& /*filename*/) const {return ValueMap();}
-ValueMap FileUtils::getValueMapFromData(const char* /*filedata*/, int /*filesize*/) const {return ValueMap();}
-ValueVector FileUtils::getValueVectorFromFile(const std::string& /*filename*/) const {return ValueVector();}
-bool FileUtils::writeToFile(const ValueMap& /*dict*/, const std::string &/*fullPath*/) const {return false;}
-
-#endif /* (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) */
-
 // Implement FileUtils
 FileUtils* FileUtils::s_sharedFileUtils = nullptr;
 
@@ -845,14 +833,9 @@ std::string FileUtils::fullPathForFilename(const std::string &filename) const
         }
     }
 
-    if(isPopupNotify()){
-        CCLOG("cocos2d: fullPathForFilename: No file found at %s. Possible missing file.", filename.c_str());
-    }
-
     // The file wasn't found, return empty string.
     return "";
 }
-
 
 std::string FileUtils::fullPathForDirectory(const std::string &dir) const
 {
@@ -897,10 +880,6 @@ std::string FileUtils::fullPathForDirectory(const std::string &dir) const
             }
 
         }
-    }
-
-    if(isPopupNotify()){
-        CCLOG("cocos2d: fullPathForDirectory: No directory found at %s. Possible missing directory.", dir.c_str());
     }
 
     // The file wasn't found, return empty string.
@@ -1569,21 +1548,6 @@ void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std
 
 #endif
 
-//////////////////////////////////////////////////////////////////////////
-// Notification support when getFileData from invalid file path.
-//////////////////////////////////////////////////////////////////////////
-static bool s_popupNotify = true;
-
-void FileUtils::setPopupNotify(bool notify)
-{
-    s_popupNotify = notify;
-}
-
-bool FileUtils::isPopupNotify() const
-{
-    return s_popupNotify;
-}
-
 std::string FileUtils::getFileExtension(const std::string& filePath) const
 {
     std::string fileExtension;
@@ -1596,14 +1560,6 @@ std::string FileUtils::getFileExtension(const std::string& filePath) const
     }
 
     return fileExtension;
-}
-
-void FileUtils::valueMapCompact(ValueMap& /*valueMap*/) const
-{
-}
-
-void FileUtils::valueVectorCompact(ValueVector& /*valueVector*/) const
-{
 }
 
 NS_CC_END
