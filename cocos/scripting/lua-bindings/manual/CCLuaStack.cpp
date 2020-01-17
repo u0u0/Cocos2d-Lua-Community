@@ -27,7 +27,6 @@
 #include "scripting/lua-bindings/manual/CCLuaStack.h"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include <string.h>
-#include "external/xxtea/xxtea.h"
 extern "C" {
 #include "lua.h"
 #include "tolua++.h"
