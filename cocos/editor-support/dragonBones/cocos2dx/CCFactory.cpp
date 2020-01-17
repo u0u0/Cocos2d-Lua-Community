@@ -136,17 +136,11 @@ DragonBonesData* CCFactory::loadDragonBonesData(const std::string& filePath, con
         if (pos != std::string::npos)
         {
             const auto data = cocos2d::FileUtils::getInstance()->getStringFromFile(filePath);
-
             return parseDragonBonesData(data.c_str(), name, scale);
         }
         else
         {
-#if COCOS2D_VERSION >= 0x00031200
-            cocos2d::Data cocos2dData;
-            cocos2d::FileUtils::getInstance()->getContents(fullpath, &cocos2dData);
-#else
             const auto cocos2dData = cocos2d::FileUtils::getInstance()->getDataFromFile(fullpath);
-#endif
             const auto binary = (unsigned char*)malloc(sizeof(unsigned char)* cocos2dData.getSize());
             memcpy(binary, cocos2dData.getBytes(), cocos2dData.getSize());
             const auto data = parseDragonBonesData((char*)binary, name, scale);

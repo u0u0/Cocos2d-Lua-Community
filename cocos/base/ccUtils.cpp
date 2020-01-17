@@ -159,7 +159,6 @@ void captureScreen(const std::function<void(bool, const std::string&)>& afterCap
         director->getRenderer()->addCommand(&s_captureScreenCommand);
         director->getRenderer()->render();
     });
-
 }
 
 static std::unordered_map<Node*, EventListenerCustom*> s_captureNodeListener;
@@ -409,9 +408,7 @@ Node* findChild(Node* levelRoot, int tag)
 
 std::string getFileMD5Hash(const std::string &filename)
 {
-    Data data;
-    FileUtils::getInstance()->getContents(filename, &data);
-
+    Data data = FileUtils::getInstance()->getDataFromFile(filename);
     return getDataMD5Hash(data);
 }
 

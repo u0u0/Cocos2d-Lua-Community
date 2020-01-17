@@ -609,44 +609,6 @@ int LuaStack::reload(const char* moduleFileName)
     return executeString(require.c_str());
 }
 
-void LuaStack::setXXTEAKeyAndSign(const char *key, int keyLen, const char *sign, int signLen)
-{
-    cleanupXXTEAKeyAndSign();
-
-    if (key && keyLen && sign && signLen)
-    {
-        _xxteaKey = (char*)malloc(keyLen);
-        memcpy(_xxteaKey, key, keyLen);
-        _xxteaKeyLen = keyLen;
-
-        _xxteaSign = (char*)malloc(signLen);
-        memcpy(_xxteaSign, sign, signLen);
-        _xxteaSignLen = signLen;
-
-        _xxteaEnabled = true;
-    }
-    else
-    {
-        _xxteaEnabled = false;
-    }
-}
-
-void LuaStack::cleanupXXTEAKeyAndSign()
-{
-    if (_xxteaKey)
-    {
-        free(_xxteaKey);
-        _xxteaKey = nullptr;
-        _xxteaKeyLen = 0;
-    }
-    if (_xxteaSign)
-    {
-        free(_xxteaSign);
-        _xxteaSign = nullptr;
-        _xxteaSignLen = 0;
-    }
-}
-
 int LuaStack::loadChunksFromZIP(const char *zipFilePath)
 {
     pushString(zipFilePath);
@@ -668,37 +630,21 @@ int LuaStack::luaLoadChunksFromZIP(lua_State *L)
     FileUtils *utils = FileUtils::getInstance();
     std::string zipFilePath = utils->fullPathForFilename(zipFilename);
 
-    LuaStack *stack = this;
-
     do {
-        void *buffer = nullptr;
         ZipFile *zip = nullptr;
         Data zipFileData(utils->getDataFromFile(zipFilePath));
         unsigned char* bytes = zipFileData.getBytes();
         ssize_t size = zipFileData.getSize();
 
-        bool isXXTEA = stack && stack->_xxteaEnabled && size >= stack->_xxteaSignLen
-            && memcmp(stack->_xxteaSign, bytes, stack->_xxteaSignLen) == 0;
-
-
-        if (isXXTEA) { // decrypt XXTEA
-            xxtea_long len = 0;
-            buffer = xxtea_decrypt(bytes + stack->_xxteaSignLen,
-                                   (xxtea_long)size - (xxtea_long)stack->_xxteaSignLen,
-                                   (unsigned char*)stack->_xxteaKey,
-                                   (xxtea_long)stack->_xxteaKeyLen,
-                                   &len);
-            zip = ZipFile::createWithBuffer(buffer, len);
-        } else {
-            if (size > 0) {
-                zip = ZipFile::createWithBuffer(bytes, (unsigned long)size);
-            }
+        if (size > 0) {
+            zip = ZipFile::createWithBuffer(bytes, (unsigned long)size);
         }
 
         if (zip) {
-            CCLOG("lua_loadChunksFromZIP() - load zip file: %s%s", zipFilePath.c_str(), isXXTEA ? "*" : "");
+            CCLOG("lua_loadChunksFromZIP() - load zip file: %s", zipFilePath.c_str());
             lua_getglobal(L, "package");
             lua_getfield(L, -1, "preload");
+            lua_getfield(L, -2, "loaded");
 
             int count = 0;
             std::string filename = zip->getFirstFilename();
@@ -706,23 +652,10 @@ int LuaStack::luaLoadChunksFromZIP(lua_State *L)
                 ssize_t bufferSize = 0;
                 unsigned char *zbuffer = zip->getFileData(filename.c_str(), &bufferSize);
                 if (bufferSize) {
-                    // remove .lua or .luac extension
-                    size_t pos = filename.find_last_of('.');
-                    if (pos != std::string::npos)
-                    {
-                        std::string suffix = filename.substr(pos, filename.length());
-                        if (suffix == NOT_BYTECODE_FILE_EXT || suffix == BYTECODE_FILE_EXT) {
-                            filename.erase(pos);
-                        }
-                    }
-                    // replace path separator '/' '\' to '.'
-                    for (auto & character : filename) {
-                        if (character == '/' || character == '\\') {
-                            character = '.';
-                        }
-                    }
-                    CCLOG("[luaLoadChunksFromZIP] add %s to preload", filename.c_str());
-                    if (stack->luaLoadBuffer(L, (char*)zbuffer, (int)bufferSize, filename.c_str()) == 0) {
+                    if (luaLoadBuffer(L, (char*)zbuffer, (int)bufferSize, filename.c_str()) == 0) {
+                        lua_setfield(L, -3, filename.c_str());
+                        // clear loaded, make the next require run the new module.
+                        lua_pushnil(L);
                         lua_setfield(L, -2, filename.c_str());
                         ++count;
                     }
@@ -731,18 +664,13 @@ int LuaStack::luaLoadChunksFromZIP(lua_State *L)
                 filename = zip->getNextFilename();
             }
             CCLOG("lua_loadChunksFromZIP() - loaded chunks count: %d", count);
-            lua_pop(L, 2);
+            lua_pop(L, 3);
             lua_pushboolean(L, 1);
 
             delete zip;
         } else {
             CCLOG("lua_loadChunksFromZIP() - not found or invalid zip file: %s", zipFilePath.c_str());
             lua_pushboolean(L, 0);
-        }
-
-
-        if (buffer) {
-            free(buffer);
         }
     } while (0);
 
@@ -768,27 +696,8 @@ void skipBOM(const char*& chunk, int& chunkSize)
 int LuaStack::luaLoadBuffer(lua_State *L, const char *chunk, int chunkSize, const char *chunkName)
 {
     int r = 0;
-
-    if (_xxteaEnabled && strncmp(chunk, _xxteaSign, _xxteaSignLen) == 0)
-    {
-        // decrypt XXTEA
-        xxtea_long len = 0;
-        unsigned char* result = xxtea_decrypt((unsigned char*)chunk + _xxteaSignLen,
-                                              (xxtea_long)chunkSize - _xxteaSignLen,
-                                              (unsigned char*)_xxteaKey,
-                                              (xxtea_long)_xxteaKeyLen,
-                                              &len);
-        unsigned char* content = result;
-        xxtea_long contentSize = len;
-        skipBOM((const char*&)content, (int&)contentSize);
-        r = luaL_loadbuffer(L, (char*)content, contentSize, chunkName);
-        free(result);
-    }
-    else
-    {
-        skipBOM(chunk, chunkSize);
-        r = luaL_loadbuffer(L, chunk, chunkSize, chunkName);
-    }
+    skipBOM(chunk, chunkSize);
+    r = luaL_loadbuffer(L, chunk, chunkSize, chunkName);
 
 #if defined(COCOS2D_DEBUG) && COCOS2D_DEBUG > 0
     if (r)

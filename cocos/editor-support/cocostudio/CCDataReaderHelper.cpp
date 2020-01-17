@@ -145,10 +145,12 @@ static const char *CONTENT_SCALE = "content_scale";
 static std::string readFileContent(const std::string& filename, bool binary) {
     auto fs = FileUtils::getInstance();
     std::string s;
-    if (binary)
-        fs->getContents(filename, &s);
-    else
+    if (binary) {
+        auto data = fs->getDataFromFile(filename);
+        s = std::string((char *)data.getBytes(), data.getSize());
+    } else {
         s = fs->getStringFromFile(filename);
+    }
     return s;
 };
 
