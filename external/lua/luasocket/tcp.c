@@ -21,6 +21,7 @@ static int global_create(lua_State *L);
 static int global_create6(lua_State *L);
 static int global_connect(lua_State *L);
 static int meth_connect(lua_State *L);
+int asyn_connect(lua_State *L);
 static int meth_listen(lua_State *L);
 static int meth_getfamily(lua_State *L);
 static int meth_bind(lua_State *L);
@@ -48,6 +49,7 @@ static luaL_Reg tcp_methods[] = {
     {"bind",        meth_bind},
     {"close",       meth_close},
     {"connect",     meth_connect},
+    {"connectAsyn", asyn_connect},
     {"dirty",       meth_dirty},
     {"getfamily",   meth_getfamily},
     {"getfd",       meth_getfd},

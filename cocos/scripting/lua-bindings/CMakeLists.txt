@@ -61,6 +61,7 @@ set(lua_bindings_manual_files
     manual/network/Lua_web_socket.cpp
     manual/network/lua_xml_http_request.cpp
     manual/network/lua_downloader.cpp
+    manual/network/LuasocketAsyn.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp
     manual/spine/lua_spSkeletonData.cpp
     manual/spine/LuaSkeletonAnimation.cpp
@@ -168,6 +169,7 @@ target_include_directories(luacocos2d
     PRIVATE manual/platform/android
     PRIVATE manual/platform/android/jni
     PRIVATE ${cocos_root}/cocos/editor-support/dragonBones
+    PRIVATE ${cocos_root}/external/lua/luasocket
     INTERFACE ${cocos_root}/cocos/scripting/lua-bindings/auto
     INTERFACE ${cocos_root}/cocos/scripting/lua-bindings/manual
 )

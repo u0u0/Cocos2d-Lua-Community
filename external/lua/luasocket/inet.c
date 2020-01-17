@@ -20,11 +20,13 @@ static int inet_global_tohostname(lua_State *L);
 static int inet_global_getnameinfo(lua_State *L);
 static void inet_pushresolved(lua_State *L, struct hostent *hp);
 static int inet_global_gethostname(lua_State *L);
+int inet_isIpv6_asyn(lua_State *L);
 
 /* DNS functions */
 static luaL_Reg func[] = {
     { "toip", inet_global_toip},
     { "getaddrinfo", inet_global_getaddrinfo},
+    { "isIpv6", inet_isIpv6_asyn},
     { "tohostname", inet_global_tohostname},
     { "getnameinfo", inet_global_getnameinfo},
     { "gethostname", inet_global_gethostname},
@@ -183,6 +185,8 @@ static int inet_global_getaddrinfo(lua_State *L)
         ret = getnameinfo(iterator->ai_addr, (socklen_t) iterator->ai_addrlen, 
             hbuf, (socklen_t) sizeof(hbuf), NULL, 0, NI_NUMERICHOST);
         if (ret){
+          freeaddrinfo(resolved);
+          lua_pop(L, 1);// pop table
           lua_pushnil(L);
           lua_pushstring(L, socket_gaistrerror(ret));
           return 2;
