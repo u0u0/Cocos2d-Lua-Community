@@ -23,36 +23,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
-extern "C" {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "scripting/lua-bindings/manual/network/lua_extensions.h"
-#endif
-}
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "scripting/lua-bindings/manual/network/Lua_web_socket.h"
-#endif
-
-#include "scripting/lua-bindings/manual/network/lua_xml_http_request.h"
-#include "scripting/lua-bindings/manual/network/lua_downloader.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
-
 
 int register_network_module(lua_State* L)
 {
     lua_getglobal(L, "_G");
     if (lua_istable(L,-1))//stack:...,_G,
     {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
         luaopen_lua_extensions(L);
-#endif
-        
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
         tolua_web_socket_open(L);
         register_web_socket_manual(L);
-#endif
-        
-        register_xml_http_request(L);
-        register_downloader(L);
     }
     lua_pop(L, 1);
     

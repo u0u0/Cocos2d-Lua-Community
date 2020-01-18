@@ -16,10 +16,8 @@ set(lua_bindings_manual_headers
     manual/dragonBones/lua_dragonBones.hpp
     manual/platform/ios/CCLuaObjcBridge.h
     manual/network/lua_cocos2dx_network_manual.h
-    manual/network/lua_xml_http_request.h
     manual/network/Lua_web_socket.h
     manual/network/lua_extensions.h
-    manual/network/lua_downloader.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
     manual/navmesh/lua_cocos2dx_navmesh_manual.h
@@ -61,8 +59,6 @@ set(lua_bindings_manual_files
     manual/network/lua_extensions.c
     manual/network/lua_cocos2dx_network_manual.cpp
     manual/network/Lua_web_socket.cpp
-    manual/network/lua_xml_http_request.cpp
-    manual/network/lua_downloader.cpp
     manual/network/LuasocketAsyn.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp
     manual/spine/lua_spSkeletonData.cpp
