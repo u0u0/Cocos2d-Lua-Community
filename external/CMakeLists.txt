@@ -114,9 +114,18 @@ endif(BUILD_EXT_MD5)
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/luajit)
     add_subdirectory(lua/tolua)
+    add_subdirectory(lua/cjson)
+    add_subdirectory(lua/lfs)
+    add_subdirectory(lua/lpack)
+    add_subdirectory(lua/lpeg)
+    add_subdirectory(lua/lsproto)
+    add_subdirectory(lua/lsqlite3)
     add_subdirectory(lua/luasocket)
+    add_subdirectory(lua/lunqlite)
+    add_subdirectory(lua/lzlib)
+    add_subdirectory(lua/protobuf)
     set_property(TARGET external APPEND PROPERTY 
-        CC_LUA_DEPEND ext_luajit ext_tolua ext_luasocket
+        CC_LUA_DEPEND ext_luajit ext_tolua ext_cjson ext_lfs ext_lpack ext_lpeg ext_lsproto ext_lsqlite3 ext_luasocket ext_lunqlite ext_lzlib ext_protobuf
     )
 endif()
 

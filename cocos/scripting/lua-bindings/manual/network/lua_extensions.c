@@ -32,10 +32,36 @@ extern "C" {
 #include "luasocket/luasocket.h"
 #include "luasocket/luasocket_scripts.h"
 #include "luasocket/mime.h"
+// cjson
+#include "cjson/lua_cjson.h"
+// filesystem
+#include "lfs/lfs.h"
+// lpack
+#include "lpack/lpack.h"
+// zlib
+#include "lzlib/lua_zlib.h"
+// lsqlite3
+#include "lsqlite3/lsqlite3.h"
+// lunqlite3
+#include "lunqlite/lunqlite.h"
+// protoc-gen-lua
+#include "protobuf/pb.h"
+// sproto
+LUALIB_API int luaopen_lpeg (lua_State *L);
+LUALIB_API int luaopen_sproto_core(lua_State *L);
 
 static luaL_Reg luax_exts[] = {
-    {"socket.core", luaopen_socket_core},
-    {"mime.core", luaopen_mime_core},
+    {"socket.core", luaopen_socket_core}, // luasocket
+    {"mime.core", luaopen_mime_core}, // luasocket
+    {"cjson", luaopen_cjson_safe}, // cjson
+    {"lfs", luaopen_lfs}, // lfs
+    {"pack", luaopen_pack}, // lpack
+    {"zlib", luaopen_zlib}, // lzlib
+    {"lsqlite3", luaopen_lsqlite3}, // lsqlite3
+    {"unqlite", luaopen_lunqlite}, // lunqlite
+    {"pb", luaopen_pb}, // protoc-gen-lua
+    {"lpeg", luaopen_lpeg}, // sproto
+    {"sproto.core", luaopen_sproto_core}, // sproto
     {NULL, NULL}
 };
 
