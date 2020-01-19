@@ -5,9 +5,7 @@
 #include <sstream>
 
 #include "scripting/lua-bindings/manual/network/CCHTTPRequest.h"
-#include "openssl/crypto.h"
 
-static std::mutex **mutexArray = nullptr;
 static bool isCurlInited = false;
 unsigned int HTTPRequest::s_id = 0;
 
@@ -27,15 +25,6 @@ bool HTTPRequest::initWithListener(LUA_FUNCTION listener, const char *url, int m
     return initWithUrl(url, method);
 }
 
-static void crypto_lock_cb(int mode, int type, const char *file, int line)
-{
-    if(mode & CRYPTO_LOCK) {
-        mutexArray[type]->lock();
-    } else {
-        mutexArray[type]->unlock();
-    }
-}
-
 bool HTTPRequest::initWithUrl(const char *url, int method)
 {
     CCAssert(url, "HTTPRequest::initWithUrl() - invalid url");
@@ -44,14 +33,6 @@ bool HTTPRequest::initWithUrl(const char *url, int method)
     if (!isCurlInited) {
         curl_global_init(CURL_GLOBAL_ALL);
         isCurlInited = true;
-    }
-    // HTTPS thread safe for OpenSSL
-    if (!CRYPTO_get_locking_callback()) {
-        mutexArray = (std::mutex **)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(std::mutex *));
-        for(int i = 0; i < CRYPTO_num_locks(); i++) {
-            mutexArray[i] = new std::mutex;
-        }
-        CRYPTO_set_locking_callback(crypto_lock_cb);
     }
     
     m_curl = curl_easy_init();
