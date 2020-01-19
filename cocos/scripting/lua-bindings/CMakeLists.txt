@@ -18,6 +18,8 @@ set(lua_bindings_manual_headers
     manual/network/lua_cocos2dx_network_manual.h
     manual/network/Lua_web_socket.h
     manual/network/lua_extensions.h
+    manual/network/lua_http_manual.h
+    manual/network/CCHTTPRequest.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
     manual/navmesh/lua_cocos2dx_navmesh_manual.h
@@ -60,6 +62,8 @@ set(lua_bindings_manual_files
     manual/network/lua_cocos2dx_network_manual.cpp
     manual/network/Lua_web_socket.cpp
     manual/network/LuasocketAsyn.cpp
+    manual/network/lua_http_manual.cpp
+    manual/network/CCHTTPRequest.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp
     manual/spine/lua_spSkeletonData.cpp
     manual/spine/LuaSkeletonAnimation.cpp

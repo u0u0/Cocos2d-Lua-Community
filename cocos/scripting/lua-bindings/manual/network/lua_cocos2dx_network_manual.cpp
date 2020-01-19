@@ -25,6 +25,7 @@
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
 #include "scripting/lua-bindings/manual/network/lua_extensions.h"
 #include "scripting/lua-bindings/manual/network/Lua_web_socket.h"
+#include "scripting/lua-bindings/manual/network/lua_http_manual.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 
 int register_network_module(lua_State* L)
@@ -35,6 +36,7 @@ int register_network_module(lua_State* L)
         luaopen_lua_extensions(L);
         tolua_web_socket_open(L);
         register_web_socket_manual(L);
+        register_http_manual(L);
     }
     lua_pop(L, 1);
     
