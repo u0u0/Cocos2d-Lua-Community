@@ -514,4 +514,9 @@ void Device::vibrate(float /*duration*/)
 {
 }
 
+const std::string Device::getOpenUDID(void)
+{
+    return std::string("");
+}
+
 NS_CC_END

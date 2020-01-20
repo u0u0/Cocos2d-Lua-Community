@@ -51,6 +51,7 @@ import android.annotation.TargetApi;
 
 import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
 import org.cocos2dx.utils.PSNetwork;
+import org.cocos2dx.utils.PSDevice;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -430,6 +431,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         }
         // final, can safe init PS module
         PSNetwork.init(this);
+        PSDevice.init(this);
     }
 
     @TargetApi(Build.VERSION_CODES.M)

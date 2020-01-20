@@ -91169,6 +91169,34 @@ int lua_cocos2dx_Device_getDPI(lua_State* tolua_S)
 #endif
     return 0;
 }
+int lua_cocos2dx_Device_getOpenUDID(lua_State* tolua_S)
+{
+    int argc = 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertable(tolua_S,1,"cc.Device",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+
+    if (argc == 0)
+    {
+        std::string ret = cocos2d::Device::getOpenUDID();
+        lua_pushlstring(tolua_S,ret.c_str(),ret.length());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.Device:getOpenUDID",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Device_getOpenUDID'.",&tolua_err);
+#endif
+    return 0;
+}
 static int lua_cocos2dx_Device_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Device)");
@@ -91186,6 +91214,7 @@ int lua_register_cocos2dx_Device(lua_State* tolua_S)
         tolua_function(tolua_S,"setKeepScreenOn", lua_cocos2dx_Device_setKeepScreenOn);
         tolua_function(tolua_S,"vibrate", lua_cocos2dx_Device_vibrate);
         tolua_function(tolua_S,"getDPI", lua_cocos2dx_Device_getDPI);
+        tolua_function(tolua_S,"getOpenUDID", lua_cocos2dx_Device_getOpenUDID);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Device).name();
     g_luaType[typeName] = "cc.Device";

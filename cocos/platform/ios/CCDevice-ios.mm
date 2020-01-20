@@ -40,6 +40,7 @@
 #import <CoreText/CoreText.h>
 // Vibrate
 #import <AudioToolbox/AudioToolbox.h>
+#import "platform/ios/openudid/OpenUDIDIOS.h"
 
 const float MAX_MEASURE_HEIGHT = 10000;
 
@@ -622,6 +623,11 @@ void Device::vibrate(float duration)
         // play the less annoying tick noise or one of your own
         AudioServicesPlayAlertSound (kSystemSoundID_Vibrate);
     }
+}
+
+const std::string Device::getOpenUDID(void)
+{
+    return std::string([[OpenUDIDIOS value] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
 
 NS_CC_END

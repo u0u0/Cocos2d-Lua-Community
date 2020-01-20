@@ -552,4 +552,9 @@ void Device::vibrate(float duration)
     CC_UNUSED_PARAM(duration);
 }
 
+const std::string Device::getOpenUDID(void)
+{
+    return std::string("");
+}
+
 NS_CC_END

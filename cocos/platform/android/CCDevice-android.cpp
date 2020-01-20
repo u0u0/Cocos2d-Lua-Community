@@ -178,6 +178,22 @@ void Device::vibrate(float duration)
     JniHelper::callStaticVoidMethod(helperClassName, "vibrate", duration);
 }
 
+const std::string Device::getOpenUDID(void)
+{
+	JniMethodInfo methodInfo;
+    if (JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/utils/PSDevice", "getOpenUDID",
+        "()Ljava/lang/String;"))
+    {
+        jstring judid = (jstring)methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID);
+		char* udid = (char*)methodInfo.env->GetStringUTFChars(judid, 0);
+		std::string ret = udid;
+		methodInfo.env->ReleaseStringUTFChars(judid, udid);
+		methodInfo.env->DeleteLocalRef(methodInfo.classID);
+		return ret;
+    }
+    return std::string("");
+}
+
 NS_CC_END
 
 // this method is called by Cocos2dxBitmap
