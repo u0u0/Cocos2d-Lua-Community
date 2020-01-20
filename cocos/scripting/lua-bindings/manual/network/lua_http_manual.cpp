@@ -695,8 +695,6 @@ tolua_lerror:
 /* Open function */
 TOLUA_API int register_http_manual(lua_State* tolua_S)
 {
-    int a = lua_gettop(tolua_S);
-    
 	tolua_open(tolua_S);
 	tolua_usertype(tolua_S, "HTTPRequest");
 	tolua_module(tolua_S, "cc", 0);
@@ -729,6 +727,5 @@ TOLUA_API int register_http_manual(lua_State* tolua_S)
 	tolua_endmodule(tolua_S);
 	tolua_endmodule(tolua_S);
     
-    a = lua_gettop(tolua_S);
 	return 1;
 }

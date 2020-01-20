@@ -61,7 +61,6 @@ set(lua_bindings_manual_files
     manual/network/lua_extensions.c
     manual/network/lua_cocos2dx_network_manual.cpp
     manual/network/Lua_web_socket.cpp
-    manual/network/LuasocketAsyn.cpp
     manual/network/lua_http_manual.cpp
     manual/network/CCHTTPRequest.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp

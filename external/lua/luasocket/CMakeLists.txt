@@ -6,6 +6,7 @@ set(target_name ext_${lib_name})
 project(${lib_name})
 
 set(${target_name}_src
+  asynconnect.cpp
   buffer.c
   io.c
   timeout.c

@@ -24,3 +24,7 @@ cc.kCCHTTPRequestStateInProgress = 2
 cc.kCCHTTPRequestStateCompleted  = 3
 cc.kCCHTTPRequestStateCancelled  = 4
 cc.kCCHTTPRequestStateFailed     = 5
+
+cc.kCCNetworkStatusNotReachable = 0
+cc.kCCNetworkStatusReachableViaWiFi = 1
+cc.kCCNetworkStatusReachableViaWWAN = 2

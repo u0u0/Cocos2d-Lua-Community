@@ -30,6 +30,7 @@ if(ANDROID)
         platform/android/CCGLViewImpl-android.cpp
         platform/android/CCFileUtils-android.cpp
         platform/android/CCEnhanceAPI-android.cpp
+        platform/android/CCNetwork-Android.cpp
     )
 elseif(WINDOWS)
     set(COCOS_PLATFORM_SPECIFIC_HEADER
@@ -52,16 +53,20 @@ elseif(WINDOWS)
         platform/win32/CCDevice-win32.cpp
         platform/win32/inet_pton_mingw.cpp
         platform/desktop/CCGLViewImpl-desktop.cpp
+        platform/CCNetwork.cpp
         )
 
 elseif(APPLE)
     set(COCOS_PLATFORM_SPECIFIC_HEADER
         platform/apple/CCFileUtils-apple.h
         platform/apple/CCDevice-apple.h
+        platform/apple/ReachabilityIOSMac.h
         )
     set(COCOS_PLATFORM_SPECIFIC_SRC
         platform/apple/CCFileUtils-apple.mm
         platform/apple/CCDevice-apple.mm
+        platform/apple/ReachabilityIOSMac.m
+        platform/apple/CCNetwork-apple.mm
         )
     if(MACOSX)
         set(COCOS_PLATFORM_SPECIFIC_HEADER
@@ -70,7 +75,6 @@ elseif(APPLE)
             platform/mac/CCGLViewImpl-mac.h
             platform/mac/CCPlatformDefine-mac.h
             platform/mac/CCApplication-mac.h
-           # platform/desktop/CCGLViewImpl-desktop.h
             )
         set(COCOS_PLATFORM_SPECIFIC_SRC
             ${COCOS_PLATFORM_SPECIFIC_SRC}
@@ -78,7 +82,6 @@ elseif(APPLE)
             platform/mac/CCGLViewImpl-mac.mm
             platform/mac/CCCommon-mac.mm
             platform/mac/CCDevice-mac.mm
-           # platform/desktop/CCGLViewImpl-desktop.cpp
             )
     elseif(IOS)
         set(COCOS_PLATFORM_SPECIFIC_HEADER
@@ -128,6 +131,7 @@ elseif(LINUX)
         platform/linux/CCApplication-linux.cpp
         platform/linux/CCDevice-linux.cpp
         platform/desktop/CCGLViewImpl-desktop.cpp
+        platform/CCNetwork.cpp
         )
 endif()
 
@@ -146,6 +150,7 @@ set(COCOS_PLATFORM_HEADER
     platform/CCPlatformMacros.h
     platform/CCSAXParser.h
     platform/CCStdC.h
+    platform/CCNetwork.h
     )
 
 set(COCOS_PLATFORM_SRC
