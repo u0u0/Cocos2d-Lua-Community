@@ -17,6 +17,9 @@ public class PSDevice {
 	}
 
 	private static String getMacAddress() {
+		if (mContext == null) {
+			return null;
+		}
 		WifiManager wifi = (WifiManager) mContext.getApplicationContext()
 				.getSystemService(Context.WIFI_SERVICE);
 		WifiInfo info = wifi.getConnectionInfo();
