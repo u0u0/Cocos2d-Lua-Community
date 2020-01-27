@@ -35,7 +35,7 @@
 #define LWS_LIBRARY_VERSION_NUMBER (LWS_LIBRARY_VERSION_MAJOR*1000000)+(LWS_LIBRARY_VERSION_MINOR*1000)+LWS_LIBRARY_VERSION_PATCH
 
 /* The current git commit hash that we're building from */
-#define LWS_BUILD_HASH "desktop-s54jiqa\\serveryjx@DESKTOP-S54JIQA-v2.0.0-640-g8964ce9d"
+/* #undef LWS_BUILD_HASH */
 
 /* Build with OpenSSL support */
 #define LWS_OPENSSL_SUPPORT
@@ -53,13 +53,13 @@
 /* #undef LWS_WITH_LIBEV */
 
 /* Enable libuv io loop */
-#define LWS_WITH_LIBUV
+/* #undef LWS_WITH_LIBUV */
 
 /* Enable libevent io loop */
 /* #undef LWS_WITH_LIBEVENT */
 
 /* Build with support for ipv6 */
-/* #undef LWS_WITH_IPV6 */
+#define LWS_WITH_IPV6
 
 /* Build with support for UNIX domain socket */
 /* #undef LWS_WITH_UNIX_SOCK */
@@ -90,7 +90,7 @@
 
 /* SSL server using ECDH certificate */
 /* #undef LWS_SSL_SERVER_WITH_ECDH_CERT */
-/* #undef LWS_HAVE_SSL_CTX_set1_param */
+#define LWS_HAVE_SSL_CTX_set1_param
 #define LWS_HAVE_X509_VERIFY_PARAM_set1_host
 #define LWS_HAVE_RSA_SET0_KEY
 
@@ -133,7 +133,7 @@
 
 /* #undef LWS_AVOID_SIGPIPE_IGN */
 
-#define LWS_FALLBACK_GETHOSTBYNAME
+/* #undef LWS_FALLBACK_GETHOSTBYNAME */
 
 /* #undef LWS_WITH_STATS */
 /* #undef LWS_WITH_SOCKS5 */
