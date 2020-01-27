@@ -126,7 +126,7 @@ def createProject(packageName, outputDir, isLandscape, needCopyCocos2d):
     lastName = names[2]
     initDict(names, isLandscape)
 
-    templateRoot = joinDir(engineRoot, "templates", "lua-template-default")
+    templateRoot = joinDir(engineRoot, "templates")
     outputDir = joinDir(outputDir, lastName)
 
     print("====> Copying template.")
