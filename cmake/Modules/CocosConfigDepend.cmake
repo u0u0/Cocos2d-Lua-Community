@@ -16,8 +16,8 @@ macro(cocos2dx_depend)
         cocos_find_package(OpenGL OPENGL REQUIRED)
         cocos_find_package(CURL CURL REQUIRED)
         cocos_find_package(SQLite3 SQLITE3 REQUIRED)
-        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)	
-        find_package(Threads REQUIRED)	
+        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+        find_package(Threads REQUIRED)
         set(THREADS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
     elseif(ANDROID)
         list(APPEND PLATFORM_SPECIFIC_LIBS GLESv2 EGL log android OpenSLES)
@@ -83,7 +83,6 @@ macro(cocos2dx_depend)
                  ${AV_FOUNDATION_LIBRARY}
                  ${WEBKIT_LIBRARY}
                  ${COCOS_APPLE_LIBS}
-                 "/usr/lib/libz.dylib"
                  "/usr/lib/libiconv.dylib"
                  )
         endif()
