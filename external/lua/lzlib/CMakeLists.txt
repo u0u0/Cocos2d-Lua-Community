@@ -15,6 +15,7 @@ add_library(${target_name} STATIC
 
 target_include_directories(${target_name}
   PRIVATE ../luajit/include
+  PRIVATE ../../zlib/include
 )
 
 set_target_properties(${target_name}

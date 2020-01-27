@@ -127,6 +127,9 @@ void ProgramGL::compileProgram()
     glGetProgramiv(_program, GL_LINK_STATUS, &status);
     if (GL_FALSE == status)
     {
+        GLchar messages[256] = {0};
+        glGetProgramInfoLog(_program, sizeof(messages), 0, &messages[0]);
+        printf("glGetProgramiv ERROR: %s\n", messages);
         printf("cocos2d: ERROR: %s: failed to link program ", __FUNCTION__);
         glDeleteProgram(_program);
         _program = 0;

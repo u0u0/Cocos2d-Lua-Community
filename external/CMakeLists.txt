@@ -8,7 +8,6 @@ option(BUILD_EXT_RECAST "Build with internal recast support" ON)
 option(BUILD_EXT_BULLET "Build with internal bullet support" ON)
 option(BUILD_EXT_JPEG "Build with internal jpeg support" ON)
 option(BUILD_EXT_OPENSSL "Build with internal openssl support" ON)
-option(BUILD_EXT_UV "Build with internal uv support" ON)
 option(BUILD_EXT_WEBP "Build with internal webp support" ON)
 option(BUILD_EXT_WEBSOCKETS "Build with internal websockets support" ON)
 option(BUILD_EXT_TINYXML2 "Build with internal tinyxml2 support" ON)
@@ -58,10 +57,6 @@ if(BUILD_EXT_JPEG)
     add_subdirectory(jpeg)
     target_link_libraries(external ext_jpeg)
 endif(BUILD_EXT_JPEG)
-if(BUILD_EXT_UV)
-    add_subdirectory(uv)
-    target_link_libraries(external ext_uv)
-endif(BUILD_EXT_UV)
 if(BUILD_EXT_WEBP)
     add_subdirectory(webp)
     target_link_libraries(external ext_webp)
@@ -139,29 +134,19 @@ if(ANDROID)
 endif()
 
 if(WINDOWS)
-    add_subdirectory(win32-specific/gles)
-    add_subdirectory(win32-specific/icon)
-    target_link_libraries(external 
-        ext_gles
-        ext_icon
-    )
+    add_subdirectory(glew)
+    target_link_libraries(external ext_glew)
 endif()
 
 if(WINDOWS OR MACOSX OR LINUX)
     add_subdirectory(glfw3)
-    target_link_libraries(external 
-        ext_glfw3
-    )
+    target_link_libraries(external ext_glfw3)
 endif()
 
-if(MACOSX OR ANDROID OR WINDOWS)
-    if(BUILD_EXT_ZLIB)
-        add_subdirectory(zlib)
-        target_link_libraries(external 
-            ext_zlib
-        )
-    endif(BUILD_EXT_ZLIB)
-endif()
+if(BUILD_EXT_ZLIB)
+    add_subdirectory(zlib)
+    target_link_libraries(external ext_zlib)
+endif(BUILD_EXT_ZLIB)
 
 # unzip depend on zlib
 if(BUILD_EXT_UNZIP)
@@ -176,7 +161,6 @@ set_target_properties(external
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     FOLDER "External"
 )
-
 
 if(MACOSX OR IOS)
     add_subdirectory(glsl-optimizer)
