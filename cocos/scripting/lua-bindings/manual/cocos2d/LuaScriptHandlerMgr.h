@@ -130,22 +130,7 @@ public:
     enum class HandlerType: int
     {
         NODE = 0,
-        MENU_CLICKED,
         CALLFUNC,
-        SCHEDULE,
-        TOUCHES,
-        KEYPAD,
-        ACCELEROMETER,
-        
-        CONTROL_TOUCH_DOWN,
-        CONTROL_TOUCH_DRAG_INSIDE,
-        CONTROL_TOUCH_DRAG_OUTSIDE,
-        CONTROL_TOUCH_DRAG_ENTER,
-        CONTROL_TOUCH_DRAG_EXIT,
-        CONTROL_TOUCH_UP_INSIDE,
-        CONTROL_TOUCH_UP_OUTSIDE,
-        CONTROL_TOUCH_UP_CANCEL,
-        CONTROL_VALUE_CHANGED,
         
         WEBSOCKET_OPEN,
         WEBSOCKET_MESSAGE,
@@ -154,24 +139,6 @@ public:
         
         LUANODE_DRAW,
         
-        SCROLLVIEW_SCROLL,
-        SCROLLVIEW_ZOOM,
-        
-        TABLECELL_TOUCHED,
-        TABLECELL_HIGHLIGHT,
-        TABLECELL_UNHIGHLIGHT,
-        TABLECELL_WILL_RECYCLE,
-        TABLECELL_SIZE_FOR_INDEX,
-        TABLECELL_AT_INDEX,
-        TABLEVIEW_NUMS_OF_CELLS,
-        
-        XMLHTTPREQUEST_READY_STATE_CHANGE,
-        
-        ASSETSMANAGER_PROGRESS,
-        ASSETSMANAGER_SUCCESS,
-        ASSETSMANAGER_ERROR,
-        
-        STUDIO_EVENT_LISTENER,
         ARMATURE_EVENT,
         
         EVENT_ACC,
@@ -194,8 +161,6 @@ public:
         EVENT_MOUSE_UP,
         EVENT_MOUSE_MOVE,
         EVENT_MOUSE_SCROLL,
-        
-        EVENT_SPINE,
         
         EVENT_PHYSICS_CONTACT_BEGIN,
         EVENT_PHYSICS_CONTACT_PRESOLVE,

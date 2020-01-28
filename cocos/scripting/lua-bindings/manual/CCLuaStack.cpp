@@ -621,7 +621,8 @@ int LuaStack::luaLoadChunksFromZIP(lua_State *L)
 {
     if (lua_gettop(L) < 1) {
         CCLOG("luaLoadChunksFromZIP() - invalid arguments");
-        return 0;
+        lua_pushboolean(L, 0);
+        return 1;
     }
 
     const char *zipFilename = lua_tostring(L, -1);

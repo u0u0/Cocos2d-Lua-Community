@@ -210,22 +210,6 @@ int register_luanode_manual(lua_State* tolua_S)
     return 1;
 }
 
-static int executeScriptTouchHandler(Layer* layer, EventTouch::EventCode eventType, Touch* touch, Event* event)
-{
-    TouchScriptData data(eventType, layer, touch, event);
-    ScriptEvent scriptEvent(kTouchEvent, &data);
-    return ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-}
-
-static int executeScriptTouchesHandler(Layer* layer, EventTouch::EventCode eventType, const std::vector<Touch*>& touches, Event* event)
-{
-    TouchesScriptData data(eventType, layer, touches, event);
-    ScriptEvent scriptEvent(kTouchesEvent, &data);
-    return ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-}
-
-
-
 static int tolua_cocos2d_Scheduler_scheduleScriptFunc(lua_State* tolua_S)
 {
     if (NULL == tolua_S)
@@ -275,7 +259,6 @@ tolua_lerror:
     return 0;
 #endif
 }
-
 
 static int tolua_cocos2d_Scheduler_unscheduleScriptEntry(lua_State* tolua_S)
 {

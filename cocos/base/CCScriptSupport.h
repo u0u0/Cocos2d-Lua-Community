@@ -56,8 +56,7 @@ class Action;
 
 enum ccScriptType {
     kScriptTypeNone = 0,
-    kScriptTypeLua,
-    kScriptTypeJavascript
+    kScriptTypeLua
 };
 
 /**
@@ -253,14 +252,7 @@ enum ScriptEventType
     kNodeEvent = 0,
     kCallFuncEvent,
     kScheduleEvent,
-    kTouchEvent,
-    kTouchesEvent,
-    kKeypadEvent,
-    kAccelerometerEvent,
-    kCommonEvent,
-    kComponentEvent,
-    kRestartGame,
-    kScriptActionEvent
+    kCommonEvent
 };
 
 /**
@@ -293,48 +285,6 @@ struct BasicScriptData
      */
     BasicScriptData(void* inObject,void* inValue = nullptr)
     : nativeObject(inObject),value(inValue)
-    {
-    }
-};
-
-/**
- * For Lua, Wrapper the script data that should be used to find the handler corresponding to the Lua function by the nativeobject pointer and store the value pointer which would be converted concretely by the different events,then the converted data would be passed into the Lua stack.
- * @js NA
- */
-struct ActionObjectScriptData
-{
-    /**
-     * For Lua, nativeobject is used to get handler corresponding to the Lua function.
-     *
-     * @js NA
-     * @lua NA
-     */
-    void* nativeObject;
-    
-    /**
-     * A pointer point to the value data which event action
-     *
-     * @js NA
-     * @lua NA
-     */
-    int* eventType;
-    
-    /**
-     * A pointer point to the value data which would be converted by different events.
-     *
-     * @js NA
-     * @lua NA
-     */
-    void* param;
-    
-    /**
-     * Constructor of BasicScriptData.
-     *
-     * @js NA
-     * @lua NA
-     */
-    ActionObjectScriptData(void* inObject,int* inValue = nullptr, void* inParam = nullptr)
-    : nativeObject(inObject),eventType(inValue), param(inParam)
     {
     }
 };
@@ -375,141 +325,6 @@ struct SchedulerScriptData
     {
     }
 };
-
-/**
- * For Lua, the TouchesScriptData is used to find the Lua function pointer by the nativeObject, then call the Lua function by push touches data and actionType into the Lua stack as the parameters when the touches event is triggered.
- * @js NA
- */
-struct TouchesScriptData
-{
-    /** 
-     * The EventTouch::EventCode type. 
-     *
-     * @lua NA
-     * @js NA
-     */
-    EventTouch::EventCode actionType;
-    /** 
-     * For Lua, it Used to find the Lua function pointer by the ScriptHandlerMgr.
-     *
-     * @lua NA
-     * @js NA
-     */
-    void* nativeObject;
-    /** 
-     * The vector of Touch.For Lua, it would be convert to the Lua table form to be pushed into the Lua stack. 
-     *
-     * @lua NA
-     * @js NA
-     */
-    const std::vector<Touch*>& touches;
-    /** 
-     * event information, it is useless for Lua.
-     *
-     * @lua NA
-     * @js NA
-     */
-    Event* event;
-    
-    /**
-     * Constructor of TouchesScriptData.
-     *
-     * @lua NA
-     * @js NA
-     */
-    TouchesScriptData(EventTouch::EventCode inActionType, void* inNativeObject, const std::vector<Touch*>& inTouches, Event* evt)
-    : actionType(inActionType),
-      nativeObject(inNativeObject),
-      touches(inTouches),
-      event(evt)
-    {
-    }
-};
-
-/**
- * For Lua, the TouchScriptData is used to find the Lua function pointer by the nativeObject, then call the Lua function by push touch data and actionType converted to string type into the Lua stack as the parameters when the touch event is triggered.
- * @js NA
- */
-struct TouchScriptData
-{
-    /** 
-     * The EventTouch::EventCode type.
-     *
-     * @lua NA
-     * @js NA
-     */
-    EventTouch::EventCode actionType;
-    /** 
-     * For Lua, it Used to find the Lua function pointer by the ScriptHandlerMgr.
-     *
-     * @lua NA
-     * @js NA
-     */
-    void* nativeObject;
-    /** 
-     * touch information. it would be in x,y form to push into the Lua stack.
-     *
-     * @lua NA
-     * @js NA
-     */
-    Touch* touch;
-    /**
-     * event information,it is useless for Lua.
-     *
-     * @lua NA
-     * @js NA
-     */
-    Event* event;
-    
-    /** 
-     * Constructor of TouchScriptData.
-     *
-     * @lua NA
-     * @js NA
-     */
-    TouchScriptData(EventTouch::EventCode inActionType, void* inNativeObject, Touch* inTouch, Event* evt)
-    : actionType(inActionType),
-      nativeObject(inNativeObject),
-      touch(inTouch),
-      event(evt)
-    {
-    }
-};
-
-
-/**
- * For Lua, the KeypadScriptData is used to find the Lua function pointer by the nativeObject, then call the Lua function by push the actionType converted to string type into the Lua stack as the parameters when the Keypad event is triggered.
- * @js NA
- */
-struct KeypadScriptData
-{
-    /** 
-     * The specific type of EventKeyboard::KeyCode
-     *
-     * @lua NA
-     * @js NA
-     */
-    EventKeyboard::KeyCode actionType;
-    /** 
-     * For Lua, it Used to find the Lua function pointer by the ScriptHandlerMgr.
-     *
-     * @lua NA
-     * @js NA
-     */
-    void* nativeObject;
-    
-    /**
-     * Constructor of KeypadScriptData.
-     *
-     * @lua NA
-     * @js NA
-     */
-    KeypadScriptData(EventKeyboard::KeyCode inActionType,void* inNativeObject)
-    : actionType(inActionType),nativeObject(inNativeObject)
-    {
-    }
-};
-
 
 /**
  * For Lua, the CommonScriptData is used to find the Lua function pointer by the handler, then call the Lua function by push the eventName, eventSource(if it not nullptr), eventSourceClassName(if it is nullptr or "", and the eventSource is not nullptr,would give the default string "cc.Ref") into the Lua stack as the parameter when the common event such as is triggered.

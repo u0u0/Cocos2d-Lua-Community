@@ -1062,12 +1062,6 @@ void Director::restartDirector()
 
     // Restart animation
     startAnimation();
-    
-    // Real restart in script level
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEvent scriptEvent(kRestartGame, nullptr);
-    ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-#endif
 }
 
 void Director::setNextScene()
