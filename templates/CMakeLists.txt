@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # ****************************************************************************/
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.16)
 
 set(APP_NAME __PROJECT_COCOS_NAME__)
 
@@ -147,6 +147,6 @@ endif()
 # copy resource on linux or WINDOWS
 if(LINUX OR WINDOWS)
     cocos_get_resource_path(APP_RES_DIR ${APP_NAME})
-    cocos_copy_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR}/res FOLDERS ${res_res_folders})
-    cocos_copy_lua_scripts(${APP_NAME} ${res_src_folders} ${APP_RES_DIR}/src )
+    cocos_sync_folder(${APP_NAME} ${res_res_folders} ${APP_RES_DIR}/res)
+    cocos_sync_folder(${APP_NAME} ${res_src_folders} ${APP_RES_DIR}/src)
 endif()
