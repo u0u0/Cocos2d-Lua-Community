@@ -57,6 +57,16 @@ static int register_all_packages()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+    // initialize director
+    auto director = Director::getInstance();
+    auto glview = director->getOpenGLView();
+    if (!glview) {
+        string title = "__PROJECT_COCOS_NAME__";
+        glview = cocos2d::GLViewImpl::create(title.c_str());
+        director->setOpenGLView(glview);
+        director->startAnimation();
+    }
+    
     // set default FPS
     Director::getInstance()->setAnimationInterval(1.0 / 60.0f);
 
@@ -73,14 +83,9 @@ bool AppDelegate::applicationDidFinishLaunching()
     //register_custom_function(stack->getLuaState());
     
 #if CC_64BITS
-    FileUtils::getInstance()->addSearchPath("src/64bit");
+//    FileUtils::getInstance()->addSearchPath("src/64bit");
 #endif
-    FileUtils::getInstance()->addSearchPath("src");
-    FileUtils::getInstance()->addSearchPath("res");
-    if (engine->executeScriptFile("main.lua"))
-    {
-        return false;
-    }
+    engine->executeScriptFile("src/main.lua");
 
     return true;
 }

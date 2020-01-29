@@ -1,23 +1,15 @@
-
 -- 0 - disable debug info, 1 - less debug info, 2 - verbose debug info
-DEBUG = 2
+DEBUG = 1
 
--- show FPS on screen
-CC_SHOW_FPS = true
+-- display FPS stats on screen
+DEBUG_FPS = true
 
--- disable create unexpected global variable
-CC_DISABLE_GLOBAL = true
+-- dump memory info every 10 seconds
+DEBUG_MEM = false
 
--- for module display
-CC_DESIGN_RESOLUTION = {
-    width = __SCREEN_WIDTH__,
-    height = __SCREEN_HEIGHT__,
-    autoscale = "FIXED_HEIGHT",
-    callback = function(framesize)
-        local ratio = framesize.width / framesize.height
-        if ratio <= 1.34 then
-            -- iPad 768*1024(1536*2048) is 4:3 screen
-            return {autoscale = "FIXED_WIDTH"}
-        end
-    end
-}
+-- design resolution
+CONFIG_SCREEN_WIDTH  = 640
+CONFIG_SCREEN_HEIGHT = 960
+
+-- auto scale mode
+CONFIG_SCREEN_AUTOSCALE = "FIXED_WIDTH"
