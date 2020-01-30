@@ -227,6 +227,7 @@ void EventDispatcher::visitTarget(Node* node, bool isRootNode)
     node->sortAllChildren();
     
     int i = 0;
+    node->sortAllChildren();
     auto& children = node->getChildren();
     
     auto childrenCount = children.size();
@@ -313,6 +314,7 @@ void EventDispatcher::pauseEventListenersForTarget(Node* target, bool recursive/
     
     if (recursive)
     {
+        target->sortAllChildren();
         const auto& children = target->getChildren();
         for (const auto& child : children)
         {
@@ -345,6 +347,7 @@ void EventDispatcher::resumeEventListenersForTarget(Node* target, bool recursive
     
     if (recursive)
     {
+        target->sortAllChildren();
         const auto& children = target->getChildren();
         for (const auto& child : children)
         {
@@ -395,6 +398,7 @@ void EventDispatcher::removeEventListenersForTarget(Node* target, bool recursive
     
     if (recursive)
     {
+        target->sortAllChildren();
         const auto& children = target->getChildren();
         for (const auto& child : children)
         {
@@ -1536,6 +1540,7 @@ void EventDispatcher::setDirtyForNode(Node* node)
     }
 
     // Also set the dirty flag for node's children
+    node->sortAllChildren();
     const auto& children = node->getChildren();
     for (const auto& child : children)
     {

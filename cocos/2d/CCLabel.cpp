@@ -184,7 +184,7 @@ public:
         updateColor();
     }
 
-    bool isVisible() const override
+    bool isVisible(bool checkParent = false) const override
     {
         return _letterVisible;
     }
