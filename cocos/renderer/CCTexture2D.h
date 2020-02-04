@@ -118,7 +118,7 @@ public:
      @since v0.8
      */
     static backend::PixelFormat getDefaultAlphaPixelFormat();
-	std::string _name;
+    std::string _name;
 public:
     /**
      * @js ctor
@@ -200,8 +200,8 @@ public:
     */
     bool initWithImage(Image * image);
     
-	const char* getName() { return _name.c_str(); }
-	void setName(const char *pName) { _name = pName; }
+    const std::string& getName() const { return _name; }
+    void setName(const std::string& name ) { _name = name; }
 	/**
     Initializes a texture from a UIImage object.
 
