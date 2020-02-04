@@ -410,6 +410,7 @@ Texture2D * TextureCache::addImage(const std::string &path)
 
             if (texture && texture->initWithImage(image))
             {
+                texture->setName(path);
 #if CC_ENABLE_CACHE_TEXTURE_DATA
                 // cache the texture file name
                 VolatileTextureMgr::addImageTexture(texture, fullpath);

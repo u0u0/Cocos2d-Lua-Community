@@ -118,7 +118,7 @@ public:
      @since v0.8
      */
     static backend::PixelFormat getDefaultAlphaPixelFormat();
-    
+    std::string _name;
 public:
     /**
      * @js ctor
@@ -200,7 +200,9 @@ public:
     */
     bool initWithImage(Image * image);
     
-    /** 
+    const std::string& getName() const { return _name; }
+    void setName(const std::string& name ) { _name = name; }
+	/**
     Initializes a texture from a UIImage object.
 
     We will use the format you passed to the function to convert the image format to the texture format.
