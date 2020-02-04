@@ -1,7 +1,5 @@
---[[--
-
-针对 ccui.Widget 的扩展
-
+--[[
+extension of ccui.Widget
 ]]
 
 local Widget = ccui.Widget

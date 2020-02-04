@@ -1,44 +1,10 @@
---[[
-
-Copyright (c) 2011-2014 chukong-inc.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-]]
-
---------------------------------
--- @module luaj
-
 --[[--
-
-Lua 与 Java 的交互接口
-
+Lua Java reflection
 ]]
-local luaj = {}
 
+local luaj = {}
 local callJavaStaticMethod = LuaJavaBridge.callStaticMethod
 
---[[--
-
-私有方法
-
-]]
 local function checkArguments(args, sig)
     if type(args) ~= "table" then args = {} end
     if sig then return args, sig end
@@ -61,18 +27,17 @@ local function checkArguments(args, sig)
     return args, table.concat(sig)
 end
 
--- start --
-
---------------------------------
--- 调用java类的接口。
--- @function [parent=#luaj] callStaticMethod
--- @param string className java类名
--- @param string methodName java类静态方法名
--- @param table args java类静态方法所需要的各种参数 数组
--- @param string sig java类方法的签名
--- @return boolean#boolean ret (return value: bool)  ok, mixed ret ok为是否调用成功, ok为true时,ret为java方法的返回值,ok为false时,ret为出错原因
-
--- end --
+--[[
+  Lua call Android Java API。
+  @function callStaticMethod
+  @param string className, Java Class
+  @param string methodName, Java Class Static method
+  @param table args, method's param
+  @param string sig, method's signature
+  @return boolean ok, int errorCode (mix return)
+        ok is true, call sucess
+        ok is false, call fail and errorCode return
+]]--
 
 function luaj.callStaticMethod(className, methodName, args, sig)
     local args, sig = checkArguments(args, sig)
