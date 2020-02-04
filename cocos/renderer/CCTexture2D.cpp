@@ -138,6 +138,7 @@ Texture2D::Texture2D()
 , _ninePatchInfo(nullptr)
 , _valid(true)
 , _alphaTexture(nullptr)
+, _name("nil")
 {
     backend::TextureDescriptor textureDescriptor;
     textureDescriptor.textureFormat = PixelFormat::NONE;
