@@ -1,87 +1,17 @@
 --[[
+  console debug utils
+]]--
 
-Copyright (c) 2011-2014 chukong-inc.com
+--[[
+  auto add tag to print line's head
+  @function printLog
+  @param string tag, like "WARN" etc.
+  @param string fmt, print format
+  @param ..., format's params
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-]]
-
---------------------------------
--- @module debug
-
---[[--
-
-提供调试接口
-
-]]
-
-if ngx and ngx.log then
-    -- 如果运行在
-    print = function(...)
-        local arg = {...}
-        for k,v in pairs(arg) do
-            arg[k] = tostring(v)
-        end
-        ngx.log(ngx.ERR, table.concat(arg, "\t"))
-    end
-end
-
---[[--
-
-定义一个作废的接口
-
-]]
-function DEPRECATED(newfunction, oldname, newname)
-    return function(...)
-        PRINT_DEPRECATED(string.format("%s() is deprecated, please use %s()", oldname, newname))
-        return newfunction(...)
-    end
-end
-
---[[--
-
-显示作废信息
-
-]]
-function PRINT_DEPRECATED(msg)
-    if not DISABLE_DEPRECATED_WARNING then
-        printf("[DEPRECATED] %s", msg)
-    end
-end
-
---[[--
-
-打印调试信息
-
-### 用法示例
-
-~~~ lua
-
-printLog("WARN", "Network connection lost at %d", os.time())
-
-~~~
-
-@param string tag 调试信息的 tag
-@param string fmt 调试信息格式
-@param [mixed ...] 更多参数
-
-]]
+  example:
+  printLog("WARN", "Network connection lost at %d", os.time())
+]]--
 function printLog(tag, fmt, ...)
     local t = {
         "[",
@@ -92,52 +22,38 @@ function printLog(tag, fmt, ...)
     print(table.concat(t))
 end
 
---[[--
-
-输出 tag 为 ERR 的调试信息
-
-@param string fmt 调试信息格式
-@param [mixed ...] 更多参数
-
-]]
+--[[
+  auto add "ERR" to print line's head, auto print debug.traceback
+  @function printError
+  @param string fmt, print format
+  @param ..., format's params
+]]--
 function printError(fmt, ...)
     printLog("ERR", fmt, ...)
     print(debug.traceback("", 2))
 end
 
---[[--
-
-输出 tag 为 INFO 的调试信息
-
-@param string fmt 调试信息格式
-@param [mixed ...] 更多参数
-
-]]
+--[[
+  auto add "INFO" to print line's head
+  @function printInfo
+  @param string fmt, print format
+  @param ..., format's params
+]]--
 function printInfo(fmt, ...)
     printLog("INFO", fmt, ...)
 end
 
---[[--
+--[[
+  print struct info of a Lua value.
+  @function dump
+  @param mixed value, Lua value to print.
+  @param string desciption, print desciption before Lua value.
+  @parma integer nesting, print MAX nesting on a table.
 
-输出值的内容
-
-### 用法示例
-
-~~~ lua
-
-local t = {comp = "chukong", engine = "quick"}
-
-dump(t)
-
-~~~
-
-@param mixed value 要输出的值
-
-@param [string desciption] 输出内容前的文字描述
-
-@parma [integer nesting] 输出时的嵌套层级，默认为 3
-
-]]
+  example:
+  dump({[1] = 1, a = 2})
+  dump({a = 1, b = 2}, "TableDump", 3)
+]]--
 function dump(value, desciption, nesting)
     if type(nesting) ~= "number" then nesting = 3 end
 

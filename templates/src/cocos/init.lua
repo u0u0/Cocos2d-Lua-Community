@@ -1,6 +1,7 @@
 -- 2d
 require "cocos.cocos2d.Cocos2d"
 require "cocos.cocos2d.Cocos2dConstants"
+require "cocos.cocos2d.RendererConstants"
 -- 3d
 require "cocos.3d.3dConstants"
 -- controller

@@ -1,70 +1,37 @@
 --[[
+  The module provide display related functions
 
-Copyright (c) 2011-2014 chukong-inc.com
+  constant:
+    display.sizeInPixels      , Screen pixel size
+    display.widthInPixels     , Screen pixel width
+    display.heightInPixels    , Screen pixel height
+    display.contentScaleFactor, design resolution scale factor
+    display.size              , design resolution size
+    display.width             , design resolution width
+    display.height            , design resolution height
+    display.cx                , half screen width
+    display.cy                , half screen height
+    display.left              , left Coordinate X of screen
+    display.top               , top Coordinate X of screen
+    display.right             , right Coordinate X of screen
+    display.bottom            , bottom Coordinate X of screen
+    display.c_left            , left Coordinate X of screen when origin is at sreen center
+    display.c_top             , top Coordinate X of screen when origin is at sreen center
+    display.c_right           , right Coordinate X of screen when origin is at sreen center
+    display.c_bottom          , bottom Coordinate X of screen when origin is at sreen center
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+  color constant:
+    display.COLOR_WHITE       , cc.c3b(255, 255, 255)
+    display.COLOR_YELLOW      , cc.c3b(255, 255, 0)
+    display.COLOR_GREEN       , cc.c3b(0, 255, 0)
+    display.COLOR_BLUE        , cc.c3b(0, 0, 255)
+    display.COLOR_RED         , cc.c3b(255, 0, 0)
+    display.COLOR_MAGENTA     , cc.c3b(255, 0, 255)
+    display.COLOR_BLACK       , cc.c3b(0, 0, 0)
+    display.COLOR_ORANGE      , cc.c3b(255, 127, 0)
+    display.COLOR_GRAY        , cc.c3b(166, 166, 166)
+]]--
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-]]
-
---------------------------------
--- @module display
-
---[[--
-
-与显示图像、场景有关的功能
-
-<br />
-
-display 模块封装了绝大部分与显示有关的功能，并负责根据 config.lua 中定义的分辨率设定计算屏幕的设计分辨率。
-
-<br />
-
-框架初始化后，display 模块提供下列属性：
-
--   display.sizeInPixels.width,
--   display.sizeInPixels.height 屏幕的像素分辨率
--   display.widthInPixels,
--   display.heightInPixels 屏幕的像素分辨率
--   display.contentScaleFactor 内容缩放因子
--   display.size.width,
--   display.size.height 屏幕的设计分辨率
--   display.width,
--   display.height 屏幕的设计分辨率
--   display.cx,
--   display.cy 屏幕中央的 x 坐标和 y 坐标
--   display.left,
--   display.top,
--   display.right,
--   display.bottom 屏幕四边的坐标
--   display.c_left,
--   display.c_top,
--   display.c_right,
--   display.c_bottom 当父对象在屏幕中央时，屏幕四边的坐标
-
-<br />
-
-颜色：
-
--   display.COLOR_WHITE 白色, cc.c3b(255, 255, 255)
--   display.COLOR_BLACK 黑色, cc.c3b(0, 0, 0)
-
-]]
 local display = {}
 
 local sharedDirector         = cc.Director:getInstance()
@@ -74,6 +41,7 @@ local sharedAnimationCache   = cc.AnimationCache:getInstance()
 
 -- check device screen size
 local glview = sharedDirector:getOpenGLView()
+assert(glview ~= nil, "Error: GLView not inited!")
 local size = glview:getFrameSize()
 display.sizeInPixels = {width = size.width, height = size.height}
 
@@ -254,18 +222,11 @@ display.TEXTURES_PIXEL_FORMAT = {}
 display.DEFAULT_TTF_FONT        = "Arial"
 display.DEFAULT_TTF_FONT_SIZE   = 24
 
-
--- start --
-
---------------------------------
--- 创建一个新场景，并返回 Scene 场景对象。
--- @function [parent=#display] newScene
--- @param string name 场景名称
--- @return Scene#Scene ret (return value: cc.Scene)  场景对象
--- @see Scene
-
--- end --
-
+--[[
+  Create a new scene, auto enable Node event(true)
+  @function newScene
+  @param string name, scene name
+]]--
 function display.newScene(name)
     local scene = cc.Scene:create()
     scene.name = name or "<unknown-scene>"
@@ -273,17 +234,11 @@ function display.newScene(name)
     return scene
 end
 
--- start --
-
---------------------------------
--- 创建一个新场景，并返回 Scene 场景对象。
--- @function [parent=#display] newPhysicsScene
--- @param string name 场景名称
--- @return Scene#Scene ret (return value: cc.Scene)  场景对象
--- @see Scene
-
--- end --
-
+--[[
+  Create a new physics scene, auto enable Node event(true)
+  @function newPhysicsScene
+  @param string name, scene name
+]]--
 function display.newPhysicsScene(name)
     local scene = cc.Scene:createWithPhysics()
     scene.name = name or "<unknown-scene>"
@@ -291,68 +246,57 @@ function display.newPhysicsScene(name)
     return scene
 end
 
--- start --
+--[[
+  Create a new transition scene, auto enable Node event(true)
+  @function wrapSceneWithTransition
+  @param Scene scene, cc.Scene
+  @param string transitionType,  transition type name
+  @param number time, transition time
+  @param string more, more param needed by some transition type
+  @return Scene ret, cc.Scene
 
---------------------------------
--- 用场景切换过渡效果包装场景对象，并返回场景过渡对象。
--- @function [parent=#display] wrapSceneWithTransition
--- @param Scene scene 场景对象
--- @param string transitionType 过渡效果名
--- @param number time 过渡时间
--- @param string more 过渡效果附加参数
--- @return Scene#Scene ret (return value: cc.Scene)  场景对象
+  example:
+  local nextScene = display.newScene("NextScene")
+  local transition = display.wrapSceneWithTransition(nextScene, "fade", 0.5)
+  display.replaceScene(transition)
 
---[[--
-
-~~~ lua
-
--- 创建一个新场景
-local nextScene = display.newScene("NextScene")
--- 包装过渡效果
-local transition = display.wrapSceneWithTransition(nextScene, "fade", 0.5)
--- 切换到新场景
-display.replaceScene(transition)
-
-~~~
-
-可用的过渡效果有：
-
--   crossFade 淡出当前场景的同时淡入下一个场景
--   fade 淡出当前场景到指定颜色，默认颜色为 cc.c3b(0, 0, 0)，可用 wrapSceneWithTransition() 的最后一个参数指定颜色
--   fadeBL 从左下角开始淡出场景
--   fadeDown 从底部开始淡出场景
--   fadeTR 从右上角开始淡出场景
--   fadeUp 从顶部开始淡出场景
--   flipAngular 当前场景倾斜后翻转成下一个场景，默认从左边开始翻转，可以指定为：
-    -   cc.TRANSITION_ORIENTATION_LEFT_OVER 从左边开始
-    -   cc.TRANSITION_ORIENTATION_RIGHT_OVER 从右边开始
-    -   cc.TRANSITION_ORIENTATION_UP_OVER 从顶部开始
-    -   cc.TRANSITION_ORIENTATION_DOWN_OVER 从底部开始
--   flipX 水平翻转，默认从左往右翻转，可用的附加参数同上
--   flipY 垂直翻转，默认从上往下翻转，可用的附加参数同上
--   zoomFlipAngular 倾斜翻转的同时放大，可用的附加参数同上
--   zoomFlipX 水平翻转的同时放大，可用的附加参数同上
--   zoomFlipY 垂直翻转的同时放大，可用的附加参数同上
--   jumpZoom 跳跃放大切换场景
--   moveInB 新场景从底部进入，直接覆盖现有场景
--   moveInL 新场景从左侧进入，直接覆盖现有场景
--   moveInR 新场景从右侧进入，直接覆盖现有场景
--   moveInT 新场景从顶部进入，直接覆盖现有场景
--   pageTurn 翻页效果，如果指定附加参数为 true，则表示从左侧往右翻页
--   rotoZoom 旋转放大切换场景
--   shrinkGrow 收缩交叉切换场景
--   slideInB 新场景从底部进入，现有场景同时从顶部退出
--   slideInL 新场景从左侧进入，现有场景同时从右侧退出
--   slideInR 新场景从右侧进入，现有场景同时从左侧退出
--   slideInT 新场景从顶部进入，现有场景同时从底部退出
--   splitCols 分成多列切换入新场景
--   splitRows 分成多行切换入新场景，类似百叶窗
--   turnOffTiles 当前场景分成多个块，逐渐替换为新场景
-
-]]
-
--- end --
-
+  transitionType:
+  crossFade      , fadeOut curren scene and fadeIn next scene.
+  fade           , fadeOut with specified color, which can set by param "more".
+  fadeBL         , fadeOut start from lower left corner.
+  fadeDown       , fadeOut start from bottom.
+  fadeTR         , fadeOut start from upper right corner.
+  fadeUp         , fadeOut start from top.
+  flipAngular    , flip then into next scene, flip angular set by param "more" which value can be:
+    cc.TRANSITION_ORIENTATION_LEFT_OVER
+    cc.TRANSITION_ORIENTATION_RIGHT_OVER
+    cc.TRANSITION_ORIENTATION_UP_OVER
+    cc.TRANSITION_ORIENTATION_DOWN_OVER
+  flipX          , flip horizontally.
+  flipY          , flip vertically.
+  zoomFlipAngular, flip and zoomIn, flip angular set by param "more" which value can be:
+    cc.TRANSITION_ORIENTATION_LEFT_OVER
+    cc.TRANSITION_ORIENTATION_RIGHT_OVER
+    cc.TRANSITION_ORIENTATION_UP_OVER
+    cc.TRANSITION_ORIENTATION_DOWN_OVER
+  zoomFlipX      , flip horizontally and zoomIn
+  zoomFlipY      , flip vertically abd zoomIn.
+  jumpZoom       , jump and zoomIn.
+  moveInB        , the new scene coming in from bottom, cover the old scene.
+  moveInL        , the new scene coming in from left, cover the old scene.
+  moveInR        , the new scene coming in from right, cover the old scene.
+  moveInT        , the new scene coming in from top, cover the old scene.
+  pageTurn       , pageTune effect, default from right to left, if param "more" set to true, from left to right
+  rotoZoom       , roation and zoomIn.
+  shrinkGrow     , shrink grow and cross fade.
+  slideInB       , the new scene coming in from bottom, the old exit from top.
+  slideInL       , the new scene coming in from left, the old exit from right.
+  slideInR       , the new scene coming in from right, the old exit from left.
+  slideInT       , the new scene coming in from top, the old exit from bottom.
+  splitCols      , split into cols to enter new scene, like a shuttered window.
+  splitRows      , split into rows to enter new scene, like a shuttered window.
+  turnOffTiles   , split into tiles, replace by new scene gradually.
+]]--
 function display.wrapSceneWithTransition(scene, transitionType, time, more)
     local key = string.upper(tostring(transitionType))
     if string.sub(key, 1, 12) == "CCTRANSITION" then
@@ -379,30 +323,17 @@ function display.wrapSceneWithTransition(scene, transitionType, time, more)
     return scene
 end
 
--- start --
+--[[
+  Enter a new scene, remove the old scene. And can set transitionType when do replaceScene.
+  inner auto call wrapSceneWithTransition
+  @function replaceScene
+  @param string transitionType, transition type name
+  @param number time, transition time
+  @param mixed more, param needed be some transition type
 
---------------------------------
--- 切换到新场景
--- @function [parent=#display] replaceScene
--- @param Scene newScene 场景对象
--- @param string transitionType 过渡效果名
--- @param number time 过渡时间
--- @param mixed more 过渡效果附加参数
-
---[[--
-
-切换到新场景
-
-~~~ lua
-
--- 使用红色做过渡色
-display.replaceScene(nextScene, "fade", 0.5, cc.c3b(255, 0, 0))
-
-~~~
-
-]]
--- end --
-
+  example:
+  display.replaceScene(nextScene, "fade", 0.5, cc.c3b(255, 0, 0))
+]]--
 function display.replaceScene(newScene, transitionType, time, more)
     if sharedDirector:getRunningScene() then
         if transitionType then
@@ -414,99 +345,56 @@ function display.replaceScene(newScene, transitionType, time, more)
     end
 end
 
--- start --
-
---------------------------------
--- 返回当前正在运行的场景对象
--- @function [parent=#display] getRunningScene
--- @return Scene#Scene ret (return value: cc.Scene)  场景对象
-
--- end --
-
+--[[
+  Get current running scene.
+  @function getRunningScene
+  @return Scene ret, cc.Scene
+]]--
 function display.getRunningScene()
     return sharedDirector:getRunningScene()
 end
 
--- start --
-
---------------------------------
--- 暂停当前场景
--- @function [parent=#display] pause
-
--- end --
-
+--[[
+  Pause Game.
+  @function pause
+]]--
 function display.pause()
     sharedDirector:pause()
 end
 
--- start --
-
---------------------------------
--- 恢复当前暂停的场景
--- @function [parent=#display] resume
-
--- end --
-
+--[[
+  Resume Game.
+  @function resume
+]]--
 function display.resume()
     sharedDirector:resume()
 end
 
--- start --
-
---------------------------------
--- 创建并返回一个 Layer 层对象
--- @function [parent=#display] newLayer
--- @see Layer
-
--- end --
-
+--[[
+  New a layer. In 4.0, cc.Layer removed, cc.Node do the same things.
+  @function newLayer
+  @return Node ret, cc.Node
+]]--
 function display.newLayer()
     local node = cc.Node:create()
 	node:setContentSize(cc.size(display.width, display.height))
 	return node
 end
 
--- start --
-
---------------------------------
--- 创建一个颜色填充层
--- @function [parent=#display] newColorLayer
--- @param ccColor4B color
--- @return LayerColor#LayerColor ret (return value: cc.LayerColor) 
--- @see LayerColor
-
--- end --
-
+--[[
+  New a color layer.
+  @function newColorLayer
+  @return LayerColor ret, cc.LayerColor
+]]--
 function display.newColorLayer(color)
     return cc.LayerColor:create(color)
 end
 
--- start --
-
---------------------------------
--- 创建并返回一个 Node 对象
--- @function [parent=#display] newNode
--- @return Node#Node ret (return value: cc.Node)  Node对象
--- @see Node
-
-
---[[--
-
-创建并返回一个 Node 对象
-
-Node 对象并不能显示对象，但可以作为其他显示对象的容器（起到群组的作用）。具体请参考 Node 。
-
-~~~ lua
-
-local group = display.newNode()     -- 创建一个容器
-group:addChild(sprite1)             -- 添加显示对象到容器中
-group:addChild(sprite2)             -- 添加显示对象到容器中
-
-~~~
-
-]]
--- end --
-
+--[[
+  New a node.
+  @function newNode
+  @return Node ret, cc.Node
+]]--
 function display.newNode()
     return cc.Node:create()
 end
@@ -517,90 +405,37 @@ else
     cc.ClippingRectangleNode = cc.ClippingRegionNode
 end
 
--- start --
+--[[
+  New a ClippingRectangleNode.
+  @function newClippingRectangleNode
+  @param Rect cc.Rect, clip rect
+  @return Node ret, cc.ClippingRegionNode
 
---------------------------------
--- 创建并返回一个 ClippingRectangleNode 对象。
--- @function [parent=#display] newClippingRectangleNode
--- @param table rect 指定的区域
--- @return ClippingRectangleNode#ClippingRectangleNode ret (return value: cc.ClippingRectangleNode)  ClippingRectangleNode
-
-
---[[--
-
-创建并返回一个 ClippingRectangleNode 对象。
-
-创建 ClippingRectangleNode 对象时需要指定一个屏幕区域，然后在显示时，所以加入 ClippingRectangleNode 对象的内容都会进行剪裁，超出指定区域的内容不会显示。
-
-~~~ lua
-
--- 剪裁区域从屏幕左下角靠内 100 点，到屏幕右上角
-local rect = cc.rect(display.left + 100,
-                    display.bottom + 100,
-                    display.width - 200,
-                    display.height - 200)
-local clipnode = display.newClippingRectangleNode(rect)
-
-clipnode:addChild(sprite1)
-clipnode:addChild(sprite2)
-
-scene:addChild(clipnode)
-
-~~~
-
-注意：ClippingRectangleNode 的父对象其坐标必须是 0, 0。
-
-]]
--- end --
-
+  example:
+  local layer = display.newColorLayer(cc.c4b(255, 255, 0, 255))
+  local clipnode = display.newClippingRectangleNode(cc.rect(0, 0, 100, 100))
+  layer:addTo(clipnode)
+  clipnode:addTo(scene)
+]]--
 function display.newClippingRectangleNode(rect)
 	return cc.ClippingRegionNode:create(rect)
 end
 
--- start --
+--[[
+  New a Sprite.
+  @function newSprite
+  @param mixed, image path or cc.SpriteFrame
+  @param number x
+  @param number y
+  @param table params
+  @return Sprite ret, cc.Sprite
 
---------------------------------
--- 创建并返回一个 Sprite 显示对象。
--- @function [parent=#display] newSprite
--- @param mixed 图像名或SpriteFrame对象
--- @param number x
--- @param number y
--- @param table params
--- @return Sprite#Sprite ret (return value: cc.Sprite) 
--- @see Sprite
-
-
---[[--
-
-创建并返回一个 Sprite 显示对象。
-
-display.newSprite() 有三种方式创建显示对象：
-
--   从图片文件创建
--   从缓存的图像帧创建
--   从 SpriteFrame 对象创建
-
-~~~ lua
-
--- 从图片文件创建显示对象
-local sprite1 = display.newSprite("hello1.png")
-
--- 从缓存的图像帧创建显示对象
--- 图像帧的名字就是图片文件名，但为了和图片文件名区分，所以此处需要在文件名前添加 “#” 字符
--- 添加 “#” 的规则适用于所有需要区分图像和图像帧的地方
-local sprite2 = display.newSprite("#frame0001.png")
-
--- 从 SpriteFrame 对象创建
-local frame = display.newFrame("frame0002.png")
-local sprite3 = display.newSprite(frame)
-
-~~~
-
-如果指定了 x,y 参数，那么创建显示对象后会调用对象的 setPosition() 方法设置对象位置。
-
-]]
--- end --
-
+  example:
+  local sprite1 = display.newSprite("hello1.png") -- from file
+  local sprite2 = display.newSprite("#frame0001.png") -- from SpriteFrame cache
+  local frame = display.newFrame("frame0002.png") -- new cc.SpriteFrame then create sprite
+  local sprite3 = display.newSprite(frame)
+]]--
 function display.newSprite(filename, x, y, params)
     local spriteClass = nil
     local size = nil
@@ -660,54 +495,37 @@ function display.newSprite(filename, x, y, params)
     return sprite
 end
 
--- start --
+--[[
+  New a Scale9Sprite.
+  @function newScale9Sprite
+  @param string filename, image path
+  @param integer x, positionX
+  @param integer y, positionY
+  @param table size, scale to size
+  @param table capInsets, scale9 param
+  @return Scale9Sprite ret, ccui.Scale9Sprite
 
---------------------------------
--- 创建并返回一个 Sprite9Scale 显示对象。
--- @function [parent=#display] newScale9Sprite
--- @param string filename 图像名
--- @param integer x
--- @param integer y
--- @param table size
--- @return Scale9Sprite#Scale9Sprite ret (return value: ccui.Scale9Sprite) Sprite9Scale显示对象
-
-
---[[--
-
-创建并返回一个 Sprite9Scale 显示对象。
-
-格式：
-
-sprite = display.newScale9Sprite(图像名, [x, y], [size 对象])
-
-Sprite9Scale 就是通常所說的“九宫格”图像。一个矩形图像会被分为 9 部分，然后根据要求拉伸图像，同时保证拉伸后的图像四边不变形。
-
-~~~ lua
-
--- 创建一个 Scale9 图像，并拉伸到 400, 300 点大小
-local sprite = display.newScale9Sprite("Box.png", 0, 0, cc.size(400, 300))
-
-~~~
-
-]]
--- end --
-
+  example:
+  local sprite = display.newScale9Sprite("bg.png", 0, 0, cc.size(200, 100), cc.rect(10, 10, 20, 20))
+]]--
 function display.newScale9Sprite(filename, x, y, size, capInsets)
-    local scale9sp = ccui.Scale9Sprite or cc.Scale9Sprite
-    return display.newSprite(filename, x, y, {class = scale9sp, size = size, capInsets = capInsets})
+    return display.newSprite(filename, x, y, {
+		class = ccui.Scale9Sprite,
+		size = size,
+		capInsets = capInsets
+	})
 end
 
--- start --
+--[[
+  New a Tiled sprite.
+  @function newTilesSprite
+  @param string filename, image path
+  @param cc.rect rect, Tiling rect
+  @return Sprite ret, cc.Sprite
 
---------------------------------
--- 创建并返回一个平铺的 Sprite 显示对象
--- @function [parent=#display] newTilesSprite
--- @param string filename 图像名
--- @param cc.rect rect    平铺范围
--- @return Sprite#Sprite ret (return value: cc.Sprite)
-
--- end --
-
+  example:
+  local sprite = display.newTilesSprite("bg.png", cc.rect(10, 10, 20, 20))
+]]--
 function display.newTilesSprite(filename, rect)
     if not rect then
         rect = cc.rect(0, 0, display.width, display.height)
@@ -718,27 +536,23 @@ function display.newTilesSprite(filename, rect)
         return
     end
 
-    sprite:getTexture():setTexParameters(gl.LINEAR, gl.LINEAR, gl.REPEAT, gl.REPEAT)
+    sprite:getTexture():setTexParameters(cc.backendSamplerFilter.LINEAR, cc.backendSamplerFilter.LINEAR, cc.backendSamplerAddressMode.REPEAT, cc.backendSamplerAddressMode.REPEAT)
 
     display.align(sprite, display.LEFT_BOTTOM, 0, 0)
 
     return sprite
 end
 
--- start --
-
---------------------------------
--- create a tiled SpriteBatchNode, the image can not a POT file.
--- @function [parent=#display] newTiledBatchNode
--- @param mixed filename As same a the first parameter for display.newSprite
--- @param string plistFile Texture(plist) image filename, filename must be a part of the texture.
--- @param size size The tiled node size, use cc.size create it please.
--- @param integer hPadding Horizontal padding, it will display 1 px gap on moving the node, set padding for fix it.
--- @param integer vPadding Vertical padding.
--- @return SpriteBatchNode#SpriteBatchNode ret (return value: cc.SpriteBatchNode) 
-
--- end --
-
+--[[
+  Create a tiled SpriteBatchNode
+  @function newTiledBatchNode
+  @param mixed filename, As same a the first parameter for display.newSprite
+  @param string plistFile, Texture(plist) image filename, filename must be a part of the texture.
+  @param size size, The tiled node size, use cc.size create it please.
+  @param integer hPadding, Horizontal padding.
+  @param integer vPadding, Vertical padding.
+  @return SpriteBatchNode ret, cc.SpriteBatchNode
+]]--
 function display.newTiledBatchNode(filename, plistFile, size, hPadding, vPadding)
     size = size or cc.size(display.width, display.height)
     hPadding = hPadding or 0
@@ -768,45 +582,25 @@ function display.newTiledBatchNode(filename, plistFile, size, hPadding, vPadding
     return __batch, __newSize.width, __newSize.height
 end
 
--- start --
-
---------------------------------
--- 创建并返回一个空的 DrawNode 对象
--- @function [parent=#display] newDrawNode
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode) 
--- @see DrawNode
-
--- end --
-
+--[[
+  Create a DrawNode
+  @function newDrawNode
+  @return DrawNode ret, cc.DrawNode
+]]--
 function display.newDrawNode()
     return cc.DrawNode:create()
 end
 
--- start --
+--[[
+  Create a solid circle DrawNode
+  @function newSolidCircle
+  @param number radius, radius of the circle
+  @param table params, {x, y, color}
+  @return DrawNode ret, cc.DrawNode
 
---------------------------------
--- 创建并返回一个 DrawNode（实心圆）对象。
--- @function [parent=#display] newSolidCircle
--- @param number radius 实心圆的半径
--- @param table params 创建圆的参数 x,y为圆点位置 color中圆的颜色
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode) 
--- @see DrawNode
-
-
---[[--
-
-创建并返回一个 DrawNode（实心圆）对象。
-
-~~~ lua
-
-local circle = display.newSolidCircle(10, {x = 150, y = 150, color = cc.c4f(1, 1, 1, 1)})
-circle:addTo(scene)
-
-~~~
-
-]]
--- end --
-
+  example:
+  local circle = display.newSolidCircle(10, {x = 150, y = 150, color = cc.c4f(1, 1, 1, 1)})
+]]--
 function display.newSolidCircle(radius, params)
     local circle = display.newDrawNode()
     circle:drawSolidCircle(cc.p(params.x or 0, params.y or 0),
@@ -820,35 +614,22 @@ function display.newSolidCircle(radius, params)
     return circle
 end
 
--- start --
+--[[
+  Create a circle DrawNode
+  @function newCircle
+  @param number radius, radius of the circle
+  @param table params, {x, y, fillColor, borderColor, borderWidth}
+  @return DrawNode ret, cc.DrawNode
 
---------------------------------
--- 创建并返回一个 DrawNode （圆）对象。
--- @function [parent=#display] newCircle
--- @param number radius
--- @param table params 有参数，x,y 圆的位置 填充色 fillColor, 边线色 borderColor 及边线宽度 borderWidth
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode) 
--- @see DrawNode
-
-
---[[--
-
-创建并返回一个 DrawNode （圆）对象。
-
-~~~ lua
-
---创建一个半径为50, 圆心在(100,100),中间填充为红色,边线为绿色,边线的宽度为2 的圆
-local circle = display.newCircle(50,
-        {x = 100, y = 100,
-        fillColor = cc.c4f(1, 0, 0, 1),
-        borderColor = cc.c4f(0, 1, 0, 1),
-        borderWidth = 2})
-
-~~~
-
-]]
--- end --
-
+  example:
+  local circle = display.newCircle(50, {
+    x = 100,
+	y = 100,
+    fillColor = cc.c4f(1, 0, 0, 1), -- if set, be a solid circle
+    borderColor = cc.c4f(0, 1, 0, 1),
+    borderWidth = 2
+  })
+]]--
 function display.newCircle(radius, params)
     params = checktable(params)
 
@@ -896,40 +677,20 @@ function display.newCircle(radius, params)
     return circle
 end
 
--- start --
+--[[
+  Create a rect DrawNode
+  @function newRect
+  @param table rect
+  @param table params, {fillColor, borderColor, borderWidth}
+  @return DrawNode ret, cc.DrawNode
 
---------------------------------
--- 创建并返回一个 DrawNode （矩形）对象。
--- @function [parent=#display] newRect
--- @param table rect table
--- @param table params 有参数，填充色 fillColor, 边线色 borderColor 及边线宽度 borderWidth
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode) 
--- @see ShapeNode
-
-
---[[--
-
-创建并返回一个 DrawNode （矩形）对象。
-
-格式：
-
-shape = display.newRect(rect表, [参数])
-
-~~~ lua
-
--- 创建一个宽度 200，高度 100 的矩形，并且定位于 50, 80
-local shape3 = display.newRect(cc.rect(50, 80, 200, 100))
-
--- 创建一个宽度 100, 高度 100 的矩形，并定位于 40,40
--- 并设置它的中间填充色 fillColor, 边线色 borderColor 及边线宽度 borderWidth
-local shape4 = display.newRect(cc.rect(100, 100, 40, 40),
-        {fillColor = cc.c4f(1,0,0,1), borderColor = cc.c4f(0,1,0,1), borderWidth = 5})
-
-~~~
-
-]]
--- end --
-
+  example:
+  local rect = display.newRect(cc.rect(100, 100, 40, 40), {
+    fillColor = cc.c4f(1,0,0,1),
+	borderColor = cc.c4f(0,1,0,1),
+	borderWidth = 5
+  })
+]]--
 function display.newRect(rect, params)
     local x, y, width, height = 0, 0
     x = rect.x or 0
@@ -946,26 +707,21 @@ function display.newRect(rect, params)
     return display.newPolygon(points, params)
 end
 
---[[--
+--[[
+  Create a rounded rect DrawNode
+  @function newRoundedRect
+  @param size size
+  @param integer radius, rounded corner radius
+  @param table params, {fillColor, borderColor, borderWidth}
+  @return DrawNode ret, cc.DrawNode
 
-创建并返回一个 DrawNode （圆角矩形）对象。
-
-~~~ lua
-
--- 创建一个长200、宽100， 圆角为40 的矩形
-
-local clipSize = cc.size(200, 100)
-local node = display.newRoundedRect(clipSize, 40, {
-	fillColor = cc.c4f(1,0,0,1),
-	borderColor = cc.c4f(0,1,0,1),
-	borderWidth = 1
-})
-node:addTo(self)
-node:center()
-~~~
-
+  example:
+  local rect = display.newRoundedRect(cc.size(200, 100), 40, {
+    fillColor = cc.c4f(1,0,0,1),
+    borderColor = cc.c4f(0,1,0,1),
+    borderWidth = 1
+  })
 ]]--
-
 function display.newRoundedRect(size, radius, params)
     local radius = radius or 1
     local segments = math.ceil(radius)
@@ -1021,37 +777,19 @@ function display.newRoundedRect(size, radius, params)
     return drawNode
 end
 
--- start --
+--[[
+  Create a line DrawNode
+  @function newLine
+  @param table points
+  @param table params, {borderColor, borderWidth}
+  @return DrawNode ret, cc.DrawNode
 
---------------------------------
--- 创建并返回一个 DrawNode （线性）对象。
--- @function [parent=#display] newLine
--- @param table point table
--- @param table params 有参数，边线色 borderColor 及边线宽度 borderWidth
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode) 
--- @see ShapeNode
-
-
---[[--
-
-创建并返回一个 DrawNode （线性）对象。
-
-格式：
-
-shape = display.newLine(point表, [参数])
-
-~~~ lua
-
--- 创建一个线宽为2，颜色为红色，从(10,10)到(100,100)的线段
-local shape3 = display.newLine({{10, 10}, {100,100}},
-    {borderColor = cc.c4f(1.0, 0.0, 0.0, 1.0),
-    borderWidth = 1})
-
-~~~
-
-]]
--- end --
-
+  example:
+  local line = display.newLine({{10, 10}, {100,100}}, {
+    borderColor = cc.c4f(1.0, 0.0, 0.0, 1.0),
+    borderWidth = 1
+  })
+]]--
 function display.newLine(points, params)
     local radius
     local borderColor
@@ -1078,35 +816,22 @@ function display.newLine(points, params)
     return drawNode
 end
 
--- start --
+--[[
+  Create a polygon DrawNode
+  @function newPolygon
+  @param table points
+  @param table params, {scale, borderWidth, fillColor, borderColor}
+  @param DrawNode drawNode
+  @return DrawNode ret, cc.DrawNode
 
---------------------------------
--- 创建并返回一个 PolygonShape （多边形）对象。
--- @function [parent=#display] newPolygon
--- @param table points 包含多边形每一个点坐标的表格对象
--- @param number scale 缩放比例
--- @return DrawNode#DrawNode ret (return value: cc.DrawNode)  DrawNode
--- @see DrawNode
-
-
---[[--
-
-创建并返回一个 PolygonShape （多边形）对象。
-
-~~~ lua
-
-local points = {
-    {10, 10},  -- point 1
-    {50, 50},  -- point 2
-    {100, 10}, -- point 3
-}
-local polygon = display.newPolygon(points)
-
-~~~
-
-]]
--- end --
-
+  example:
+  local line = display.newPolygon({{30, 30}, {30, 60}, {60, 60}}, {
+    scale = 1,
+    borderWidth = 1,
+    fillColor = cc.c4f(0.0, 1.0, 0.0, 1.0),
+    borderColor = cc.c4f(1.0, 0.0, 0.0, 1.0),
+  })
+]]--
 function display.newPolygon(points, params, drawNode)
     params = checktable(params)
     local scale = checknumber(params.scale or 1.0)
@@ -1124,42 +849,18 @@ function display.newPolygon(points, params, drawNode)
     return drawNode
 end
 
--- start --
+--[[
+  Create a bmfont label
+  @function newBMFontLabel
+  @param table params, {text, font, align, maxLineWidth, offsetX, offsetY, x, y}
+  @return Label ret, cc.Label
 
---------------------------------
--- 用位图字体创建文本显示对象，并返回 Label 对象。
--- @function [parent=#display] newBMFontLabel
--- @param table params 参数表格对象
--- @return Label#Label ret (return value: cc.Label)  Label对象
-
---[[--
-
-用位图字体创建文本显示对象，并返回 Label 对象。
-
-BMFont 通常用于显示英文内容，因为英文字母加数字和常用符号也不多，生成的 BMFont 文件较小。如果是中文，应该用 TTFLabel。
-
-可用参数：
-
--    text: 要显示的文本
--    font: 字体文件名
--    align: 文字的水平对齐方式（可选）
--    maxLineWidth: 最大行宽（可选）
--    offsetX: 图像的X偏移量（可选）
--    offsetY: 图像的Y偏移量（可选）
--    x, y: 坐标（可选）
-
-~~~ lua
-
-local label = display.newBMFontLabel({
+  example:
+  local label = display.newBMFontLabel({
     text = "Hello",
     font = "UIFont.fnt",
-})
-
-~~~
-
-]]
--- end --
-
+  })
+]]--
 function display.newBMFontLabel(params)
     assert(type(params) == "table",
            "[framework.display] newBMFontLabel() invalid params")
@@ -1183,64 +884,33 @@ function display.newBMFontLabel(params)
     return label
 end
 
--- start --
+--[[
+  Create a TTF label
+  @function newTTFLabel
+  @param table params, {text, font, size, color, align, valign, dimensions, x, y}
+  @return Label ret, cc.Label
 
---------------------------------
--- 使用 TTF 字体创建文字显示对象，并返回 Label 对象。
--- @function [parent=#display] newTTFLabel
--- @param table params 参数表格对象
--- @return Label#Label ret (return value: cc.Label)  Label对象
+  align can be:
+  cc.TEXT_ALIGNMENT_LEFT
+  cc.TEXT_ALIGNMENT_CENTER
+  cc.TEXT_ALIGNMENT_RIGHT
 
---[[--
+  valign can be:
+  cc.VERTICAL_TEXT_ALIGNMENT_TOP
+  cc.VERTICAL_TEXT_ALIGNMENT_CENTER
+  cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
 
-使用 TTF 字体创建文字显示对象，并返回 Label 对象。
-
-可用参数：
-
--    text: 要显示的文本
--    font: 字体名，如果是非系统自带的 TTF 字体，那么指定为字体文件名
--    size: 文字尺寸，因为是 TTF 字体，所以可以任意指定尺寸
--    color: 文字颜色（可选），用 cc.c3b() 指定，默认为白色
--    align: 文字的水平对齐方式（可选）
--    valign: 文字的垂直对齐方式（可选），仅在指定了 dimensions 参数时有效
--    dimensions: 文字显示对象的尺寸（可选），使用 cc.size() 指定
--    x, y: 坐标（可选）
-
-align 和 valign 参数可用的值：
-
--    cc.TEXT_ALIGNMENT_LEFT 左对齐
--    cc.TEXT_ALIGNMENT_CENTER 水平居中对齐
--    cc.TEXT_ALIGNMENT_RIGHT 右对齐
--    cc.VERTICAL_TEXT_ALIGNMENT_TOP 垂直顶部对齐
--    cc.VERTICAL_TEXT_ALIGNMENT_CENTER 垂直居中对齐
--    cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM 垂直底部对齐
-
-~~~ lua
-
--- 创建一个居中对齐的文字显示对象
-local label = display.newTTFLabel({
-    text = "Hello, World",
-    font = "Marker Felt",
-    size = 64,
-    align = cc.TEXT_ALIGNMENT_CENTER -- 文字内部居中对齐
-})
-
--- 左对齐，并且多行文字顶部对齐
-local label = display.newTTFLabel({
+  example:
+  local label = display.newTTFLabel({
     text = "Hello, World\n您好，世界",
     font = "Arial",
     size = 64,
-    color = cc.c3b(255, 0, 0), -- 使用纯红色
+    color = cc.c3b(255, 0, 0),
     align = cc.TEXT_ALIGNMENT_LEFT,
     valign = cc.VERTICAL_TEXT_ALIGNMENT_TOP,
     dimensions = cc.size(400, 200)
-})
-
-~~~
-
-]]
--- end --
-
+  })
+]]--
 function display.newTTFLabel(params)
     assert(type(params) == "table",
            "[framework.display] newTTFLabel() invalid params")
@@ -1277,100 +947,61 @@ function display.newTTFLabel(params)
     return label
 end
 
--- start --
+--[[
+  setAnchorPoint for specified target with specified type, and setPosition.
+  @function align
+  @param Node target
+  @param integer anchorPointType
+  @param integer x
+  @param integer y
 
---------------------------------
--- 将指定的显示对象按照特定锚点对齐。
--- @function [parent=#display] align
--- @param Sprite target 显示对象
--- @param integer anchorPoint 锚点位置
--- @param integer x
--- @param integer y
+  anchorPointType can be:
+  display.CENTER
+  display.LEFT_TOP
+  display.TOP_LEFT
+  display.CENTER_TOP
+  display.TOP_CENTER
+  display.RIGHT_TOP
+  display.TOP_RIGHT
+  display.CENTER_LEFT
+  display.LEFT_CENTER
+  display.CENTER_RIGHT
+  display.RIGHT_CENTER
+  display.BOTTOM_LEFT
+  display.LEFT_BOTTOM
+  display.BOTTOM_RIGHT
+  display.RIGHT_BOTTOM
+  display.BOTTOM_CENTER
+  display.CENTER_BOTTOM
 
-
---[[--
-
-将指定的显示对象按照特定锚点对齐。
-
-格式：
-
-display.align(显示对象, 锚点位置, [x, y])
-
-显示对象锚点位置：
-
--   display.CENTER 图像中央
--   display.LEFT_TOP,
--   display.TOP_LEFT 图像左上角
--   display.CENTER_TOP,
--   display.TOP_CENTER 图像顶部的中间
--   display.RIGHT_TOP,
--   display.TOP_RIGHT 图像顶部的中间
--   display.CENTER_LEFT,
--   display.LEFT_CENTER 图像左边的中间
--   display.CENTER_RIGHT,
--   display.RIGHT_CENTER 图像右边的中间
--   display.BOTTOM_LEFT,
--   display.LEFT_BOTTOM 图像左边的底部
--   display.BOTTOM_RIGHT,
--   display.RIGHT_BOTTOM 图像右边的底部
--   display.BOTTOM_CENTER,
--   display.CENTER_BOTTOM 图像中间的底部
-
-~~~ lua
-
--- 将图像按左上角对齐，并放置在屏幕左上角
-display.align(sprite, display.LEFT_TOP, 0, 0)
-
-~~~
-
-]]
--- end --
-
+  example:
+  display.align(node, display.LEFT_TOP, 0, 0)
+]]--
 function display.align(target, anchorPoint, x, y)
     target:setAnchorPoint(display.ANCHOR_POINTS[anchorPoint])
     if x and y then target:setPosition(x, y) end
 end
 
+--[[
+  Load a image into TextureCache Async.
+  @function addImageAsync
+  @param string imagePath
+  @param function callback
+]]--
 function display.addImageAsync(imagePath, callback)
     sharedTextureCache:addImageAsync(imagePath, callback)
 end
 
--- start --
+--[[
+  Load SpriteFrames from plist(TexturePacker).
+  @function addSpriteFrames
+  @param string plistFilename
+  @param string imageName
+  @param function handler, if set, load Async
 
---------------------------------
--- 将指定的 Sprite Sheets 材质文件及其数据文件载入图像帧缓存。
--- @function [parent=#display] addSpriteFrames
--- @param string plistFilename 数据文件名
--- @param string image 材质文件名
--- @see Sprite Sheets
-
-
---[[--
-
-将指定的 Sprite Sheets 材质文件及其数据文件载入图像帧缓存。
-
-格式：
-
-display.addSpriteFrames(数据文件名, 材质文件名)
-
-~~~ lua
-
--- 同步加载纹理
-display.addSpriteFrames("Sprites.plist", "Sprites.png")
-
--- 异步加载纹理
-local cb = function(plist, image)
-    -- do something
-end
-display.addSpriteFrames("Sprites.plist", "Sprites.png", cb)
-
-~~~
-
-Sprite Sheets 通俗一点解释就是包含多张图片的集合。Sprite Sheets 材质文件由多张图片组成，而数据文件则记录了图片在材质文件中的位置等信息。
-
-]]
--- end --
-
+  example:
+  display.addSpriteFrames("Sprites.plist", "Sprites.png")
+]]--
 function display.addSpriteFrames(plistFilename, image, handler)
     local async = type(handler) == "function"
     local asyncHandler = nil
@@ -1390,7 +1021,7 @@ function display.addSpriteFrames(plistFilename, image, handler)
         else
             sharedSpriteFrameCache:addSpriteFrames(plistFilename, image)
         end
-        cc.Texture2D:setDefaultAlphaPixelFormat(cc.TEXTURE2_D_PIXEL_FORMAT_BGR_A8888)
+        cc.Texture2D:setDefaultAlphaPixelFormat(cc.backendPixelFormat.BGRA8888)
     else
         if async then
             sharedTextureCache:addImageAsync(image, asyncHandler)
@@ -1400,16 +1031,12 @@ function display.addSpriteFrames(plistFilename, image, handler)
     end
 end
 
--- start --
-
---------------------------------
--- 从内存中卸载 Sprite Sheets 材质和数据文件
--- @function [parent=#display] removeSpriteFramesWithFile
--- @param string plistFilename 数据文件名
--- @param string image 材质文件名
-
--- end --
-
+--[[
+  Unload SpriteFrames from plist(TexturePacker).
+  @function removeSpriteFramesWithFile
+  @param string plistFilename
+  @param string imageName
+]]--
 function display.removeSpriteFramesWithFile(plistFilename, imageName)
     sharedSpriteFrameCache:removeSpriteFramesFromFile(plistFilename)
     if imageName then
@@ -1417,126 +1044,42 @@ function display.removeSpriteFramesWithFile(plistFilename, imageName)
     end
 end
 
--- start --
-
---------------------------------
--- 设置材质格式。
--- @function [parent=#display] setTexturePixelFormat
--- @param string filename 材质文件名
--- @param integer format 材质格式
--- @see Texture Pixel Format
-
-
---[[--
-
-设置材质格式。
-
-为了节约内存，我们会使用一些颜色品质较低的材质格式，例如针对背景图使用 cc.TEXTURE2_D_PIXEL_FORMAT_RG_B565 格式。
-
-display.setTexturePixelFormat() 可以指定材质文件的材质格式，这样在加载材质文件时就会使用指定的格式。
-
-]]
--- end --
-
+--[[
+  Set Texture PixelFormat when Texture file load by display functions.
+  @function setTexturePixelFormat
+  @param string filename
+  @param integer format (cc.backendPixelFormat)
+]]--
 function display.setTexturePixelFormat(filename, format)
     display.TEXTURES_PIXEL_FORMAT[filename] = format
 end
 
--- start --
-
---------------------------------
--- 从图像帧缓存中删除一个图像。
--- @function [parent=#display] removeSpriteFrameByImageName
--- @param string imageName 图像文件名
-
---[[--
-
-从图像帧缓存中删除一个图像。
-
-有时候，某些图像仅在特定场景中使用，例如背景图。那么在场景退出时，就可以用 display.removeSpriteFrameByImageName() 从缓存里删除不再使用的图像数据。
-
-此外，Scene 提供了 markAutoCleanupImage() 接口，可以指定场景退出时需要自动清理的图像，推荐使用。
-
-]]
--- end --
-
+--[[
+  Remove image from SpriteFrameCache & TextureCache.
+  @function removeSpriteFrameByImageName
+  @param string imageName
+]]--
 function display.removeSpriteFrameByImageName(imageName)
     sharedSpriteFrameCache:removeSpriteFrameByName(imageName)
     cc.Director:getInstance():getTextureCache():removeTextureForKey(imageName)
 end
 
--- start --
-
---------------------------------
--- 从指定的图像文件创建并返回一个批量渲染对象。
--- @function [parent=#display] newBatchNode
--- @param string image 图像文件名
--- @param integer capacity
--- @return SpriteBatchNode#SpriteBatchNode ret (return value: cc.SpriteBatchNode) 
--- @see Batch Node
-
---[[--
-
-从指定的图像文件创建并返回一个批量渲染对象。
-
-~~~ lua
-
-local imageName = "Sprites.png"
-display.addSpriteFrames("Sprites.plist", imageName) -- 载入图像到帧缓存
-
--- 下面的代码绘制 100 个图像只用了 1 次 OpenGL draw call
-local batch = display.newBatchNode(imageName)
-for i = 1, 100 do
-    local sprite = display.newSprite("#Sprite0001.png")
-    batch:addChild(sprite)
-end
-
--- 下面的代码绘制 100 个图像则要使用 100 次 OpenGL draw call
-local group = display.newNode()
-for i = 1, 100 do
-    local sprite = display.newSprite("#Sprite0001.png")
-    group:addChild(sprite)
-end
-
-~~~
-
-]]
--- end --
-
+--[[
+  Create a batch node base no texture.
+  @function newBatchNode
+  @param string image
+  @param integer capacity
+]]--
 function display.newBatchNode(image, capacity)
     return cc.SpriteBatchNode:create(image, capacity or 100)
 end
 
--- start --
-
---------------------------------
--- 创建并返回一个图像帧对象。
--- @function [parent=#display] newSpriteFrame
--- @param string 图像帧名称
--- @return SpriteFrameCache#SpriteFrameCache ret (return value: cc.SpriteFrameCache) 
-
---[[--
-
-创建并返回一个图像帧对象。
-
-~~~ lua
-
-display.addSpriteFrames("Sprites.plist", "Sprites.png")
-
--- 创建一个 Sprite
-local sprite = display.newSprite("#Yes.png")
-
--- 创建一个图像帧
-local frameNo = display.newSpriteFrame("No.png")
-
--- 在需要时，修改 Sprite 的显示内容
-sprite:setSpriteFrame(frameNo)
-
-~~~
-
-]]
--- end --
-
+--[[
+  Create or Get SpriteFrame.
+  @function newSpriteFrame
+  @param string frameName
+  @return frame cc.SpriteFrame
+]]--
 function display.newSpriteFrame(frameName)
     local frame = sharedSpriteFrameCache:getSpriteFrame(frameName)
     if not frame then
@@ -1545,35 +1088,18 @@ function display.newSpriteFrame(frameName)
     return frame
 end
 
--- start --
+--[[
+  Create a table contain SpriteFrames.
+  @function newFrames
+  @param string pattern
+  @param integer begin
+  @param integer length
+  @param boolean isReversed
+  @return table ret
 
---------------------------------
--- 以特定模式创建一个包含多个图像帧对象的数组。
--- @function [parent=#display] newFrames
--- @param string pattern 模式字符串
--- @param integer begin 起始索引
--- @param integer length 长度
--- @param boolean isReversed 是否是递减索引
--- @return table#table ret (return value: table)  图像帧数组
-
-
---[[--
-
-以特定模式创建一个包含多个图像帧对象的数组。
-
-~~~ lua
-
--- 创建一个数组，包含 Walk0001.png 到 Walk0008.png 的 8 个图像帧对象
-local frames = display.newFrames("Walk%04d.png", 1, 8)
-
--- 创建一个数组，包含 Walk0008.png 到 Walk0001.png 的 8 个图像帧对象
-local frames = display.newFrames("Walk%04d.png", 1, 8, true)
-
-~~~
-
-]]
--- end --
-
+  example:
+  local frames = display.newFrames("Walk%04d.png", 1, 8)
+]]--
 function display.newFrames(pattern, begin, length, isReversed)
     local frames = {}
     local step = 1
@@ -1596,134 +1122,74 @@ function display.newFrames(pattern, begin, length, isReversed)
     return frames
 end
 
--- start --
+--[[
+  Create a cc.Animation from SpriteFrames.
+  @function newAnimation
+  @param table frames, get from display.newFrames()
+  @param number time
+  @return Animation ret, cc.Animation
 
---------------------------------
--- 以包含图像帧的数组创建一个动画对象。
--- @function [parent=#display] newAnimation
--- @param table frames 图像帧的数组
--- @param number time 每一桢动画之间的间隔时间
--- @return Animation#Animation ret (return value: cc.Animation)  Animation对象
-
---[[--
-
-以包含图像帧的数组创建一个动画对象。
-
-~~~ lua
-
-local frames = display.newFrames("Walk%04d.png", 1, 8)
-local animation = display.newAnimation(frames, 0.5 / 8) -- 0.5 秒播放 8 桢
-sprite:playAnimationOnce(animation) -- 播放一次动画
-
-~~~
-
-]]
--- end --
-
+  example:
+  local animation = display.newAnimation(frames, 0.5 / 8)
+]]--
 function display.newAnimation(frames, time)
-    local count = #frames
-    -- local array = Array:create()
-    -- for i = 1, count do
-    --     array:addObject(frames[i])
-    -- end
-    time = time or 1.0 / count
+    time = time or 1.0 / #frames
     return cc.Animation:createWithSpriteFrames(frames, time)
 end
 
--- start --
+--[[
+  Cache cc.Animation by name.
+  @function setAnimationCache
+  @param string name
+  @param Animation animation
 
---------------------------------
--- 以指定名字缓存创建好的动画对象，以便后续反复使用。
--- @function [parent=#display] setAnimationCache
--- @param string name 名字
--- @param Animation animation 动画对象
-
---[[--
-
-以指定名字缓存创建好的动画对象，以便后续反复使用。
-
-~~~ lua
-
-local frames = display.newFrames("Walk%04d.png", 1, 8)
-local animation = display.newAnimation(frames, 0.5 / 8) -- 0.5 秒播放 8 桢
-display.setAnimationCache("Walk", animation)
-
--- 在需要使用 Walk 动画的地方
-sprite:playAnimationOnce(display.getAnimationCache("Walk")) -- 播放一次动画
-
-~~~
-
-]]
--- end --
-
+  example:
+  display.setAnimationCache("Walk", animation)
+]]--
 function display.setAnimationCache(name, animation)
     sharedAnimationCache:addAnimation(animation, name)
 end
 
--- start --
+--[[
+  Get cached cc.Animation by name.
+  @function getAnimationCache
+  @param string name
+  @return Animation ret, cc.Animation
 
---------------------------------
--- 取得以指定名字缓存的动画对象，如果不存在则返回 nil。
--- @function [parent=#display] getAnimationCache
--- @param string name
--- @return Animation#Animation ret (return value: cc.Animation) 
-
--- end --
-
+  example:
+  local animation = display.getAnimationCache("Walk")
+]]--
 function display.getAnimationCache(name)
     return sharedAnimationCache:getAnimation(name)
 end
 
--- start --
-
---------------------------------
--- 删除指定名字缓存的动画对象。
--- @function [parent=#display] removeAnimationCache
--- @param string name
-
--- end --
-
+--[[
+  Remove cached cc.Animation by name.
+  @function removeAnimationCache
+  @param string name
+]]--
 function display.removeAnimationCache(name)
     sharedAnimationCache:removeAnimation(name)
 end
 
--- start --
-
---------------------------------
--- 从内存中卸载没有使用 Sprite Sheets 材质
--- @function [parent=#display] removeUnusedSpriteFrames
-
--- end --
-
+--[[
+  Remove Unused Sprite Frames.
+  @function removeUnusedSpriteFrames
+]]--
 function display.removeUnusedSpriteFrames()
     sharedSpriteFrameCache:removeUnusedSpriteFrames()
     sharedTextureCache:removeUnusedTextures()
 end
 
--- start --
-
---------------------------------
--- 创建一个进度条的节点
--- @function [parent=#display] newProgressTimer
--- @param mixed image
--- @param number progressType
-
---[[--
-
-创建一个进度条的节点
-
-进度条类型有:
-
-- display.PROGRESS_TIMER_BAR
-- display.PROGRESS_TIMER_RADIAL 环形
-
-]]
-
--- end --
-
-display.PROGRESS_TIMER_BAR = 1
 display.PROGRESS_TIMER_RADIAL = 0
+display.PROGRESS_TIMER_BAR = 1
 
+--[[
+  Create progress timer node.
+  @function newProgressTimer
+  @param mixed image
+  @param number progressType
+]]--
 function display.newProgressTimer(image, progresssType)
     if type(image) == "string" then
         image = display.newSprite(image)
@@ -1734,40 +1200,19 @@ function display.newProgressTimer(image, progresssType)
     return progress
 end
 
--- start --
+--[[
+  Capture Screen and save to file.
+  @function captureScreen
+  @param function callback
+  @param string fileName
 
---------------------------------
--- 截屏并保存为一个文件
--- @function [parent=#display] captureScreen
--- @param function callback 截屏的回调函数
--- @param string fileName 保存的文件, 绝对路径就直接保存, 只有文件名会保存在writePath下
-
---[[--
-
-~~~ lua
-
-display.captureScreen(
-    function (bSuc, filePath)
-        --bSuc 截屏是否成功
-        --filePath 文件保存所在的绝对路径
-    end, "screen.png")
-
-~~~
-
-]]
-
--- end --
-
+  example:
+  display.captureScreen(function(bSuc, filePath)
+    print(bSuc, filePath)
+  end, "screen.png")
+]]--
 function display.captureScreen(callback, fileName)
-	sharedDirector:captureScreen(function(image)
-		if image then
-			local path = cc.FileUtils:getInstance():getWritablePath() .. fileName
-			image:saveToFile(path)
-			callback(true, path)
-		else
-			callback(false)
-		end
-	end)
+	cc.utils:captureScreen(callback, fileName)
 end
 
 return display
