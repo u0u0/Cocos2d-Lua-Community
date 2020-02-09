@@ -1,103 +1,35 @@
 --[[
-
-Copyright (c) 2011-2014 chukong-inc.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-]]
-
---------------------------------
--- @module network
-
---[[--
-
-网络服务
-
-]]
+  network status and HTTP request
+]]--
 
 local network = {}
 
--- start --
-
---------------------------------
--- 检查地 WIFI 网络是否可用
--- @function [parent=#network] isLocalWiFiAvailable
--- @return boolean#boolean ret (return value: bool)  网络是否可用
-
---[[--
-
-检查地 WIFI 网络是否可用
-
-提示： WIFI 网络可用不代表可以访问互联网。
-
-]]
--- end --
-
+--[[
+  Check if local WIFI is available.
+  @function isLocalWiFiAvailable
+  @return boolean
+]]--
 function network.isLocalWiFiAvailable()
     return cc.Network:isLocalWiFiAvailable()
 end
 
--- start --
-
---------------------------------
--- 检查互联网连接是否可用
--- @function [parent=#network] isInternetConnectionAvailable
--- @return boolean#boolean ret (return value: bool)  网络是否可用
-
---[[--
-
-检查互联网连接是否可用
-
-通常，这里接口返回 3G 网络的状态，具体情况与设备和操作系统有关。 
-
-]]
--- end --
-
+--[[
+  Check if Internet is available.
+  @function isInternetConnectionAvailable
+  @return boolean
+]]--
 function network.isInternetConnectionAvailable()
     return cc.Network:isInternetConnectionAvailable()
 end
 
--- start --
+--[[
+  Check if hostname is available, the method will block main thread
+  @function isInternetConnectionAvailable
+  @return boolean
 
---------------------------------
--- 检查是否可以解析指定的主机名
--- @function [parent=#network] isHostNameReachable
--- @param string hostname 主机名
--- @return boolean#boolean ret (return value: bool)  主机名是否可以解析
-
---[[--
-
-检查是否可以解析指定的主机名
-
-~~~ lua
-
-if network.isHostNameReachable("www.google.com") then
-    -- 域名可以解析
-end
-
-~~~
-
-注意： 该接口会阻塞程序，因此在调用该接口时应该提醒用户应用程序在一段时间内会失去响应。 
-
-]]
--- end --
-
+  example:
+  network.isHostNameReachable("www.baidu.com")
+]]--
 function network.isHostNameReachable(hostname)
     if type(hostname) ~= "string" then
         printError("network.isHostNameReachable() - invalid hostname %s", tostring(hostname))
@@ -106,81 +38,53 @@ function network.isHostNameReachable(hostname)
     return cc.Network:isHostNameReachable(hostname)
 end
 
--- start --
-
---------------------------------
--- 返回互联网连接状态值
--- @function [parent=#network] getInternetConnectionStatus
--- @return string#string ret (return value: string)  互联网连接状态值
-
---[[--
-
-返回互联网连接状态值
-
-状态值有三种：
-
--   kCCNetworkStatusNotReachable: 无法访问互联网
--   kCCNetworkStatusReachableViaWiFi: 通过 WIFI
--   kCCNetworkStatusReachableViaWWAN: 通过 3G 网络
-
-]]
--- end --
-
+--[[
+  Check Internet connect type.
+  @function getInternetConnectionStatus
+  @return integer
+    cc.kCCNetworkStatusNotReachable
+    cc.kCCNetworkStatusReachableViaWiFi
+    cc.kCCNetworkStatusReachableViaWWAN
+]]--
 function network.getInternetConnectionStatus()
     return cc.Network:getInternetConnectionStatus()
 end
 
--- start --
+--[[
+  Create a http request.
+  @function createHTTPRequest
+  @param function callback, connection status change callback
+  @param string url, the request url
+  @param string method, "GET" or "POST" or "PUT" or "DELETE"
+  @return cc.HTTPRequest
 
---------------------------------
--- 创建异步 HTTP 请求，并返回 cc.HTTPRequest 对象。
--- @function [parent=#network] createHTTPRequest
--- @param function callbock 回调函数
--- @url string http路径
--- method string method 请求方式
--- @return HTTPRequest#HTTPRequest ret (return value: cc.HTTPRequest) 
-
---[[--
-
-创建异步 HTTP 请求，并返回 cc.HTTPRequest 对象。 
-
-~~~ lua
-
-function onRequestFinished(event)
-    local ok = (event.name == "completed")
+  example:
+  local function onRequestCallback(event)
     local request = event.request
- 
-    if not ok then
-        -- 请求失败，显示错误代码和错误消息
-        print(request:getErrorCode(), request:getErrorMessage())
+    if event.name == "completed" then
+      print(request:getResponseHeadersString())
+      local code = request:getResponseStatusCode()
+      if code ~= 200 then
+        print(code) -- get error
         return
+      end
+      
+      -- get success
+      print("response length" .. request:getResponseDataLength())
+      local response = request:getResponseString()
+      print(response)
+    elseif event.name == "progress" then
+      print("progress" .. event.dltotal)
+    else
+      print(event.name) -- get error
+      print(request:getErrorCode(), request:getErrorMessage())
+      return
     end
- 
-    local code = request:getResponseStatusCode()
-    if code ~= 200 then
-        -- 请求结束，但没有返回 200 响应代码
-        print(code)
-        return
-    end
- 
-    -- 请求成功，显示服务端返回的内容
-    local response = request:getResponseString()
-    print(response)
-end
- 
--- 创建一个请求，并以 POST 方式发送数据到服务端
-local url = "http://www.mycompany.com/request.php"
-local request = network.createHTTPRequest(onRequestFinished, url, "POST")
-request:addPOSTValue("KEY", "VALUE")
- 
--- 开始请求。当请求完成时会调用 callback() 函数
-request:start()
+  end
 
-~~~
-
-]]
--- end --
-
+  local request = network.createHTTPRequest(onRequestCallback, "https://baidu.com", "GET")
+  request:start()
+]]--
 function network.createHTTPRequest(callback, url, method)
     if not method then method = "GET" end
     if string.upper(tostring(method)) == "GET" then
@@ -195,57 +99,39 @@ function network.createHTTPRequest(callback, url, method)
     return cc.HTTPRequest:createWithUrl(callback, url, method)
 end
 
--- start --
+--[[
+  Upload a file through a HTTPRequest instance.
+  @function uploadFile
+  @param callback As same as the first parameter of network.createHTTPRequest.
+  @param url As same as the second parameter of network.createHTTPRequest.
+  @param datas Includes following values:
+    fileFiledName(The input label name that type is file);
+    filePath(A absolute path for a file)
+    contentType(Optional, the file's contentType, default is application/octet-stream)
+    extra(Optional, the key-value table that transmit to form)
+  @return cc.HTTPRequest
 
---------------------------------
--- 通过HTTPRequest上传一个文件
--- @function [parent=#network] uploadFile
--- @param function callback 回调函数
--- @param string url 上传路径
--- @param tabel datas 上传参数
--- @return HTTPRequest#HTTPRequest  结果
-
---[[--
---- Upload a file through a HTTPRequest instance.
--- @author zrong(zengrong.net)
--- Creation: 2014-04-14
--- @param callback As same as the first parameter of network.createHTTPRequest.
--- @param url As same as the second parameter of network.createHTTPRequest.
--- @param datas Includes following values:
--- 		fileFiledName(The input label name that type is file);
--- 		filePath(A absolute path for a file)
--- 		contentType(Optional, the file's contentType, default is application/octet-stream)
--- 		extra(Optional, the key-value table that transmit to form)
--- for example:
-
-~~~ lua
-
-network.uploadFile(function(evt)
-		if evt.name == "completed" then
-			local request = evt.request
-			printf("REQUEST getResponseStatusCode() = %d", request:getResponseStatusCode())
-			printf("REQUEST getResponseHeadersString() =\n%s", request:getResponseHeadersString())
- 			printf("REQUEST getResponseDataLength() = %d", request:getResponseDataLength())
-            printf("REQUEST getResponseString() =\n%s", request:getResponseString())
-		end
-	end,
-	"http://127.0.0.1/upload.php",
-	{
-		fileFieldName="filepath",
-		filePath=device.writablePath.."screen.jpg",
-		contentType="Image/jpeg",
-		extra={
-			{"act", "upload"},
-			{"submit", "upload"},
-		}
+  example:
+  network.uploadFile(function(evt)
+    if evt.name == "completed" then
+	  local request = evt.request
+	  printf("REQUEST getResponseStatusCode() = %d", request:getResponseStatusCode())
+	  printf("REQUEST getResponseHeadersString() =\n%s", request:getResponseHeadersString())
+	  printf("REQUEST getResponseDataLength() = %d", request:getResponseDataLength())
+	  printf("REQUEST getResponseString() =\n%s", request:getResponseString())
+	end
+  end,
+  "http://127.0.0.1/upload.php",
+  {
+    fileFieldName = "filepath",
+	filePath = device.writablePath.."screen.jpg",
+	contentType = "Image/jpeg",
+	extra = {
+	  {"act", "upload"},
+	  {"submit", "upload"},
 	}
-)
-    
-~~~
-
-]]		
--- end --
-
+  })
+]]--
 function network.uploadFile(callback, url, datas)
 	assert(datas or datas.fileFieldName or datas.filePath, "Need file datas!")
 	local request = network.createHTTPRequest(callback, url, "POST")
@@ -273,16 +159,12 @@ local function parseTrueFalse(t)
     return false
 end
 
--- start --
-
---------------------------------
--- 转换cookie为一个字串
--- @function [parent=#network] makeCookieString
--- @param tabel cookie
--- @return string#string  结果
-
--- end --
-
+--[[
+  Convert a cookie to string.
+  @function makeCookieString
+  @param table cookie
+  @return string
+]]--
 function network.makeCookieString(cookie)
     local arr = {}
     for name, value in pairs(cookie) do
@@ -298,16 +180,12 @@ function network.makeCookieString(cookie)
     return table.concat(arr, "; ")
 end
 
--- start --
-
---------------------------------
--- 转换字串为一个cookie表
--- @function [parent=#network] parseCookie
--- @param string cookieString
--- @return table#table  结果
-
--- end --
-
+--[[
+  Convert a string to cookie table.
+  @function parseCookie
+  @param string cookieString
+  @return table
+]]--
 function network.parseCookie(cookieString)
     local cookie = {}
     local arr = string.split(cookieString, "\n")

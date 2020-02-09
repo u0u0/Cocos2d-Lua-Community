@@ -8,7 +8,6 @@ local MyApp = class("MyApp", AppBase)
 
 function MyApp:ctor()
     MyApp.super.ctor(self)
-    cc.disable_global()	
 end
 
 function MyApp:run()

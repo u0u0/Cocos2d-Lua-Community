@@ -1,7 +1,12 @@
 --[[
-Design for Quick-Cocos2dx-Community
-First Write at 2017.2.17 by u0u0
-]]
+  High-level abstraction of Luasocket's TCP.
+  Design for Quick-Cocos2dx-Community
+  First Write at 2017.2.17 by u0u0
+
+  This is Not auto loaded module, use following code to load.
+  example:
+  local SimpleTCP = require(cc.PACKAGE_NAME .. ".SimpleTCP")
+]]--
 
 local socket = require "socket"
 if not socket then return end
@@ -65,10 +70,10 @@ function SimpleTCP:connect()
 		self.globalUpdateHandler = scheduler.scheduleUpdateGlobal(handler(self, self._update))
 	else
 		-- if "closed", create a new LuaSocket
-		socket.dns.isIpv6(self.host, function(err, isIpv6)
-			assert(err == nil, "Error in socket.dns.isIpv6")
+		cc.Network:isIPv6(self.host, function(err, isIPv6)
+			assert(err == nil, "Error in socket.dns.isIPv6")
 			-- get a master socket
-			if isIpv6 then
+			if isIPv6 then
 				self.tcp = socket.tcp6()
 			else
 				self.tcp = socket.tcp()

@@ -1,58 +1,42 @@
 --[[
-
-Copyright (c) 2011-2014 chukong-inc.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-]]
-
---[[--
-
-针对 cc.Node 的扩展
-
-]]
+  extension of cc.Node
+]]--
 
 local c = cc
 local Node = c.Node
 
--- cocos2dx events
+-- Lua Node event Type
 c.NODE_EVENT                 = 1
 c.NODE_ENTER_FRAME_EVENT     = 2
 c.NODE_TOUCH_EVENT           = 3
 c.KEYPAD_EVENT               = 4
 c.ACCELEROMETER_EVENT        = 5
 
--- touch
+-- touch mode
 c.TOUCH_MODE_ALL_AT_ONCE              = cc.TOUCHES_ALL_AT_ONCE
 c.TOUCH_MODE_ONE_BY_ONE               = cc.TOUCHES_ONE_BY_ONE
 
-local function isPointIn( rc, pt )
-    local rect = c.rect(rc.x, rc.y, rc.width, rc.height)
-    return c.rectContainsPoint(rect, pt)
-end
-
+--[[
+  Set Node's AnchorPoint and Position.
+  @function align
+  @param integer anchorPoint, anchor point TYPE defined in display.
+  @param integer x
+  @param integer y
+  @return self
+]]--
 function Node:align(anchorPoint, x, y)
     self:setAnchorPoint(display.ANCHOR_POINTS[anchorPoint])
     if x and y then self:setPosition(x, y) end
     return self
 end
 
+--[[
+  Start a schedule belong to the node.
+  @function schedule
+  @param function callback
+  @param number interval
+  @return cc.Action
+]]--
 function Node:schedule(callback, interval)
     local seq = c.Sequence:create(
         c.DelayTime:create(interval),
@@ -63,6 +47,13 @@ function Node:schedule(callback, interval)
     return action
 end
 
+--[[
+  Start a delay callback belong to the node.
+  @function performWithDelay
+  @param function callback
+  @param number delay
+  @return cc.Action
+]]--
 function Node:performWithDelay(callback, delay)
     local action = c.Sequence:create(
         c.DelayTime:create(delay),
@@ -72,14 +63,12 @@ function Node:performWithDelay(callback, delay)
     return action
 end
 
---[[--
-
-测试一个点是否在当前结点区域中
-
-@param tabel point cc.p的点位置,世界坐标
-@return boolean 是否在结点区域中
-
-]]
+--[[
+  Test whether a point is in the node rect.
+  @function hitTest
+  @param table point
+  @return boolean
+]]--
 function Node:hitTest(point)
     local nsp = self:convertToNodeSpace(point)
     local rect = self:getContentSize()
@@ -91,6 +80,11 @@ function Node:hitTest(point)
     return false
 end
 
+--[[
+  Remove self from parent and cleanup.
+  @function removeSelf
+  @return self
+]]--
 function Node:removeSelf()
     self:removeFromParent(true)
 end
@@ -115,10 +109,16 @@ end
 function Node:onCleanup()
 end
 
+--[[
+  Enable Accelerometer, call after addNodeEventListener(cc.ACCELEROMETER_EVENT).
+  @function setAccelerometerEnabled
+  @param boolean enabled
+  @return self
+]]--
 function Node:setAccelerometerEnabled(enabled)
 	cc.Device:setAccelerometerEnabled(enabled)
 	if not enabled then
-		return
+		return self
 	end
 
 	local listener = cc.EventListenerAcceleration:create(function(event, x, y, z, timestamp)
@@ -131,8 +131,15 @@ function Node:setAccelerometerEnabled(enabled)
 		}
 	end)
 	self:getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
+	return self
 end
 
+--[[
+  Enable Node event, auto cal node's member functions.
+  @function setNodeEventEnabled
+  @param boolean enabled
+  @return self
+]]--
 function Node:setNodeEventEnabled(enabled)
 	if enabled then
 		local listener = function(event)
@@ -168,6 +175,12 @@ local function KeypadEventCodeConvert(code)
     return key
 end
 
+--[[
+  Enable keyboard event, call after addNodeEventListener(cc.KEYPAD_EVENT)
+  @function setKeypadEnabled
+  @param boolean enabled
+  @return self
+]]--
 function Node:setKeypadEnabled(enable)
     if enable == self:isKeypadEnabled() then
         return self
@@ -206,6 +219,11 @@ function Node:setKeypadEnabled(enable)
     return self
 end
 
+--[[
+  Is keyboard event enabled.
+  @function setKeypadEnabled
+  @return boolean
+]]--
 function Node:isKeypadEnabled()
     if self.__key_event_handle__ then
 		return true
@@ -213,6 +231,11 @@ function Node:isKeypadEnabled()
 	return false
 end
 
+--[[
+  Start node's frame event.
+  @function scheduleUpdate
+  @return self
+]]--
 function Node:scheduleUpdate()
     local listener = function (dt)
 		-- call listener
@@ -223,6 +246,10 @@ function Node:scheduleUpdate()
     return self
 end
 
+--[[
+  Set node's touch mode.
+  @function setTouchMode
+]]--
 function Node:setTouchMode(mode)
 	if mode ~= c.TOUCH_MODE_ALL_AT_ONCE and mode ~= c.TOUCHES_ONE_BY_ONE then
 		print("== wrong mode", mode)
@@ -231,6 +258,11 @@ function Node:setTouchMode(mode)
 	self._luaTouchMode = mode
 end
 
+--[[
+  Enable touch event, call after addNodeEventListener(cc.NODE_TOUCH_EVENT)
+  @function setTouchEnabled
+  @param boolean enabled
+]]--
 function Node:setTouchEnabled(enable)
 	-- remove old
 	local eventDispatcher = self:getEventDispatcher()
@@ -333,12 +365,28 @@ function Node:setTouchEnabled(enable)
 	eventDispatcher:addEventListenerWithSceneGraphPriority(self._luaTouchListener, self)
 end
 
+--[[
+  Change the node's touch swallow flag
+  @function setTouchSwallowEnabled
+  @param boolean enabled
+]]--
 function Node:setTouchSwallowEnabled(enable)
 	if self._luaTouchListener then
 		self._luaTouchListener:setSwallowTouches(enable)
 	end
 end
 
+--[[
+  Register node evet by type.
+  @function addNodeEventListener
+  @param integer evt, value can be:
+    cc.NODE_EVENT
+    cc.NODE_ENTER_FRAME_EVENT
+    cc.NODE_TOUCH_EVENT
+    cc.KEYPAD_EVENT
+    cc.ACCELEROMETER_EVENT
+  @param function hdl
+]]--
 function Node:addNodeEventListener(evt, hdl)
 	self._LuaListeners = self._LuaListeners or {}
 	if evt == c.NODE_EVENT then
@@ -351,6 +399,16 @@ function Node:addNodeEventListener(evt, hdl)
 	self._LuaListeners[evt] = hdl
 end
 
+--[[
+  Unregister node evet by type.
+  @function addNodeEventListener
+  @param integer evt, value can be:
+    cc.NODE_EVENT
+    cc.NODE_ENTER_FRAME_EVENT
+    cc.NODE_TOUCH_EVENT
+    cc.KEYPAD_EVENT
+    cc.ACCELEROMETER_EVENT
+]]--
 function Node:removeNodeEventListener(evt)
     if not self._LuaListeners then return end
 
@@ -369,6 +427,10 @@ function Node:removeNodeEventListener(evt)
 	self._LuaListeners[evt] = nil
 end
 
+--[[
+  Unregister all node's event.
+  @function removeAllNodeEventListeners
+]]--
 function Node:removeAllNodeEventListeners()
     self:removeNodeEventListener(c.NODE_EVENT)
     self:removeNodeEventListener(c.NODE_ENTER_FRAME_EVENT)

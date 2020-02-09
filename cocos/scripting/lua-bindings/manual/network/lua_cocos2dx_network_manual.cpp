@@ -128,7 +128,7 @@ tolua_lerror:
 }
 
 // new a thread to void UI blocked
-static void checkIpv6Thread(lua_State *L, const char *hostname, int handler)
+static void checkIPv6Thread(lua_State *L, const char *hostname, int handler)
 {
 	struct addrinfo *iterator = NULL, *resolved = NULL;
 	struct addrinfo hints;
@@ -139,7 +139,7 @@ static void checkIpv6Thread(lua_State *L, const char *hostname, int handler)
 	ret = getaddrinfo(hostname, NULL, &hints, &resolved);
 	if (ret != 0) {
 		cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([=](){
-				CCLOG("== socket.dns.isIpv6 getaddrinfo error:%d", ret);
+				CCLOG("== cc.Network:isIPv6 getaddrinfo error:%d", ret);
 				cocos2d::LuaStack *stack = cocos2d::LuaEngine::getInstance()->getLuaStack();
 				lua_pushinteger(L, ret);
 				stack->executeFunctionByHandler(handler, 1);
@@ -156,7 +156,7 @@ static void checkIpv6Thread(lua_State *L, const char *hostname, int handler)
 		if (ret) {
 			freeaddrinfo(resolved);
 			cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([=](){
-					CCLOG("== socket.dns.isIpv6 getnameinfo error:%d", ret);
+					CCLOG("== cc.Network:isIPv6 getnameinfo error:%d", ret);
 					cocos2d::LuaStack *stack = cocos2d::LuaEngine::getInstance()->getLuaStack();
 					lua_pushinteger(L, ret);
 					stack->executeFunctionByHandler(handler, 1);
@@ -192,10 +192,10 @@ static int tolua_Network_isIPv6(lua_State* tolua_S)
 	else
 #endif
 	{
-		const char *hostname = luaL_checkstring(tolua_S, 1);
-		int handler = toluafix_ref_function(tolua_S, 2, 0);
+		const char *hostname = luaL_checkstring(tolua_S, 2);
+		int handler = toluafix_ref_function(tolua_S, 3, 0);
 
-		std::thread th(checkIpv6Thread, tolua_S, hostname, handler);
+		std::thread th(checkIPv6Thread, tolua_S, hostname, handler);
 		th.detach();//exit from main thread, auto exit
 	}
 	return 0;

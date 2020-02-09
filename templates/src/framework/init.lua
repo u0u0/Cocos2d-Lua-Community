@@ -48,9 +48,6 @@ end
 
 if DEBUG_MEM then
     local sharedTextureCache = cc.Director:getInstance():getTextureCache()
-    --[[--
-    @ignore
-    ]]
     local function showMemoryUsage()
         printInfo(string.format("LUA VM MEMORY USED: %0.2f KB", collectgarbage("count")))
         printInfo(sharedTextureCache:getCachedTextureInfo())
