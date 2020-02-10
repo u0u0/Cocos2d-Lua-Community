@@ -47,6 +47,7 @@ NS_CC_BEGIN
  * @{
  */
 
+typedef void (*FiledataDecoder)(Data &data);
 
 class ResizableBuffer {
 public:
@@ -828,6 +829,11 @@ public:
      *          If the original filename wasn't in the dictionary, it will return the original filename.
      */
     virtual std::string getNewFilename(const std::string &filename) const;
+    
+    /**
+     *  Set decoder callback for read data from file.
+     */
+    void setFileDataDecoder(FiledataDecoder decoder);
 
 protected:
     /**
@@ -948,6 +954,9 @@ protected:
      * Writable path.
      */
     std::string _writablePath;
+    
+    /** user decoder */
+    FiledataDecoder dataDecoder;
 
     /**
      *  The singleton pointer of FileUtils.

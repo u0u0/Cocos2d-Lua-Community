@@ -543,6 +543,7 @@ void FileUtils::setDelegate(FileUtils *delegate)
 
 FileUtils::FileUtils()
     : _writablePath("")
+    , dataDecoder(nullptr)
 {
 }
 
@@ -632,10 +633,18 @@ void FileUtils::getStringFromFile(const std::string &path, std::function<void (s
     }, std::move(callback));
 }
 
+void FileUtils::setFileDataDecoder(FiledataDecoder decoder)
+{
+    dataDecoder = decoder;
+}
+
 Data FileUtils::getDataFromFile(const std::string& filename) const
 {
     Data d;
     getContents(filename, &d);
+    if (dataDecoder) {
+        dataDecoder(d);
+    }
     return d;
 }
 

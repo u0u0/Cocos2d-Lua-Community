@@ -26,6 +26,7 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "cocos2d.h"
 #include "scripting/lua-bindings/manual/lua_module_register.h"
+#include "external/xxtea/xxtea.h"
 
 USING_NS_CC;
 using namespace std;
@@ -48,11 +49,45 @@ void AppDelegate::initGLContextAttrs()
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-// if you want to use the package manager to install more packages, 
-// don't modify or remove this function
-static int register_all_packages()
+int register_custom_module(lua_State* L)
 {
-    return 0; //flag for packages manager
+    // Register your custom module add in Classes here.
+    return 1;
+}
+
+static void decoder(Data &data)
+{
+    unsigned char sign[] = "Xt";
+    unsigned char key[] = "aaa";
+
+    // decrypt XXTEA
+    if (!data.isNull()) {
+        bool isEncoder = false;
+        unsigned char *buf = data.getBytes();
+        ssize_t size = data.getSize();
+        ssize_t len = strlen((char *)sign);
+        if (size <= len) {
+            return;
+        }
+
+        for (int i = 0; i < len; ++i) {
+            isEncoder = buf[i] == sign[i];
+            if (!isEncoder) {
+                break;
+            }
+        }
+
+        if (isEncoder) {
+            xxtea_long newLen = 0;
+            unsigned char* buffer = xxtea_decrypt(buf + len,
+                    (xxtea_long)(size - len),
+                    (unsigned char*)key,
+                    (xxtea_long)strlen((char *)key),
+                    &newLen);
+            data.clear();
+            data.fastSet(buffer, newLen);
+        }
+    }
 }
 
 bool AppDelegate::applicationDidFinishLaunching()
@@ -66,26 +101,33 @@ bool AppDelegate::applicationDidFinishLaunching()
         director->setOpenGLView(glview);
         director->startAnimation();
     }
-    
+
     // set default FPS
     Director::getInstance()->setAnimationInterval(1.0 / 60.0f);
 
     // register lua module
     auto engine = LuaEngine::getInstance();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
-    lua_State* L = engine->getLuaStack()->getLuaState();
+    LuaStack *stack = engine->getLuaStack();
+    lua_State *L = stack->getLuaState();
     lua_module_register(L);
-
-    register_all_packages();
-
     //register custom function
-    //LuaStack* stack = engine->getLuaStack();
-    //register_custom_function(stack->getLuaState());
-    
-#if CC_64BITS
-//    FileUtils::getInstance()->addSearchPath("src/64bit");
+    register_custom_module(L);
+
+    // resource decode, game32.zip & game64.zip deal as resoruce.
+    //FileUtils::getInstance()->setFileDataDecoder(decoder);
+#if 0 // set to 1 for release mode
+    // use luajit bytecode package
+#if defined(__aarch64__) || defined(__arm64__)
+    stack->loadChunksFromZIP("res/game64.zip");
+#else
+    stack->loadChunksFromZIP("res/game32.zip");
 #endif
+    stack->executeString("require 'main'");
+#else // #if 0
+    // use discrete files
     engine->executeScriptFile("src/main.lua");
+#endif
 
     return true;
 }
