@@ -94,14 +94,17 @@ elseif(APPLE)
              )
     elseif(MACOSX)
         list(APPEND GAME_HEADER
+             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/ConsoleWindowController.h
              )
         set(APP_UI_RES
             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Icon.icns
             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Info.plist
+            ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/ConsoleWindow.xib
             )
         list(APPEND GAME_SOURCE
-             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/main.cpp
+             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/main.mm
              ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Prefix.pch
+             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/ConsoleWindowController.m
              ${APP_UI_RES}
              )
     endif()
