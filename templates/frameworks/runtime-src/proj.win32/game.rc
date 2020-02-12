@@ -52,9 +52,9 @@ END
 
 IDR_MENU_COCOS MENU
 BEGIN
-    POPUP "°ïÖú(&H)"
+    POPUP "Help(&H)"
     BEGIN
-        MENUITEM "¹ØÓÚ(&A)",                      ID_HELP_ABOUT
+        MENUITEM "About(&A)",                      ID_HELP_ABOUT
     END
 END
 
@@ -66,11 +66,11 @@ END
 
 IDD_DIALOG_ABOUT DIALOGEX 0, 0, 243, 94
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About Simulator"
+CAPTION "About __PROJECT_COCOS_NAME__"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,173,69,63,18
-    CTEXT           "Cocos Simulator",IDC_STATIC,28,23,173,17
+    CTEXT           "__PROJECT_COCOS_NAME__",IDC_STATIC,28,23,173,17
 END
 
 
@@ -148,7 +148,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-GLFW_ICON               ICON                    "res\\game.ico"
+GLFW_ICON               ICON                    "game.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -174,9 +174,9 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "game Module"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "game"
+            VALUE "InternalName", "__PROJECT_COCOS_NAME__"
             VALUE "LegalCopyright", "Copyright "
-            VALUE "OriginalFilename", "game.exe"
+            VALUE "OriginalFilename", "__PROJECT_COCOS_NAME__.exe"
             VALUE "ProductName", "game Module"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END

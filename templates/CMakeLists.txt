@@ -29,7 +29,7 @@ project(${APP_NAME})
 
 if(XCODE)
     if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
-        SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 8.0)
+        SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 9.0)
     endif()
 endif()
 
@@ -68,9 +68,11 @@ elseif(LINUX)
 elseif(WINDOWS)
     list(APPEND GAME_HEADER
          ${RUNTIME_SRC_ROOT}/proj.win32/main.h
+         ${RUNTIME_SRC_ROOT}/proj.win32/resource.h
          )
     list(APPEND GAME_SOURCE
          ${RUNTIME_SRC_ROOT}/proj.win32/main.cpp
+         ${RUNTIME_SRC_ROOT}/proj.win32/game.rc
          ${cc_common_res}
          )
 elseif(APPLE)
