@@ -55,54 +55,10 @@ int register_custom_module(lua_State* L)
     return 1;
 }
 
-static void decoder(Data &data)
-{
-    unsigned char sign[] = "Xt";
-    unsigned char key[] = "aaa";
-
-    // decrypt XXTEA
-    if (!data.isNull()) {
-        bool isEncoder = false;
-        unsigned char *buf = data.getBytes();
-        ssize_t size = data.getSize();
-        ssize_t len = strlen((char *)sign);
-        if (size <= len) {
-            return;
-        }
-
-        for (int i = 0; i < len; ++i) {
-            isEncoder = buf[i] == sign[i];
-            if (!isEncoder) {
-                break;
-            }
-        }
-
-        if (isEncoder) {
-            xxtea_long newLen = 0;
-            unsigned char* buffer = xxtea_decrypt(buf + len,
-                    (xxtea_long)(size - len),
-                    (unsigned char*)key,
-                    (xxtea_long)strlen((char *)key),
-                    &newLen);
-            data.clear();
-            data.fastSet(buffer, newLen);
-        }
-    }
-}
-
 bool AppDelegate::applicationDidFinishLaunching()
 {
-    // initialize director
-    auto director = Director::getInstance();
-    auto glview = director->getOpenGLView();
-    if (!glview) {
-        glview = cocos2d::GLViewImpl::create("__PROJECT_COCOS_NAME__");
-        director->setOpenGLView(glview);
-        director->startAnimation();
-    }
-
     // set default FPS
-    director->setAnimationInterval(1.0 / 60.0f);
+    Director::getInstance()->setAnimationInterval(1.0 / 60.0f);
 
     // register lua module
     auto engine = LuaEngine::getInstance();
@@ -113,20 +69,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     //register custom function
     register_custom_module(L);
 
-    // resource decode, game32.zip & game64.zip deal as resoruce.
-    //FileUtils::getInstance()->setFileDataDecoder(decoder);
-#if 0 // set to 1 for release mode
-    // use luajit bytecode package
-#if defined(__aarch64__) || defined(__arm64__)
-    stack->loadChunksFromZIP("res/game64.zip");
-#else
-    stack->loadChunksFromZIP("res/game32.zip");
-#endif
-    stack->executeString("require 'main'");
-#else // #if 0
-    // use discrete files
     engine->executeScriptFile("src/main.lua");
-#endif
 
     return true;
 }
