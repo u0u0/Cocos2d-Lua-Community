@@ -1,1 +1,8 @@
+Cocos2d-Lua-Community v4.0.0 Beta
 
+[Overview]    First release of Cocos2d-Lua-Community, a improved of Cocos2d-x 4.0, 
+                     and easy to use Lua game engine. 
+                     The Lua "frameworks" compatible with Quick-Cocos2dx-Community v3.7.x.
+[new]            New developed "LuaGameRunner", replace old Player. Keep It Simple and Stupid.
+[new]            iOS and Mac support metal.
+[new]            Use CMake for all platforms.
