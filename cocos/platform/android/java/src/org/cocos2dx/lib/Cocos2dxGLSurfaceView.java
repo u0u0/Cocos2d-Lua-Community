@@ -29,12 +29,14 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.view.SurfaceHolder;
 
 public class Cocos2dxGLSurfaceView extends GLSurfaceView {
     // ===========================================================

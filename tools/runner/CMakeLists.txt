@@ -63,6 +63,8 @@ target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Class
 
 # mark app resources, resource will be copy auto after mark
 setup_cocos_app_config(${APP_NAME})
+# always open COCOS2D_DEBUG in cocos2d
+target_compile_definitions(cocos2d PUBLIC $<$<CONFIG:Release>:COCOS2D_DEBUG=1>)
 if(MACOSX)
 	set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
 	set_target_properties(${APP_NAME} PROPERTIES

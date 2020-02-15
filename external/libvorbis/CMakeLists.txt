@@ -40,6 +40,12 @@ target_include_directories(${target_name}
   PUBLIC ../libogg
 )
 
+if(ANDROID)
+	if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=armv7-a -mfloat-abi=softfp")
+	endif()
+endif()
+
 set_target_properties(${target_name}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
