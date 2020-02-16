@@ -21,7 +21,7 @@ static std::string getEngineRoot(void)
     res = _NSGetExecutablePath(path, &size);
     // find engine root
     char *p = strstr(path, "tools/runner");
-    *p = 0; // cut str
+    if (p) *p = 0; // cut str
     std::string pathTemp(path);
     free(path); // free memory
     return pathTemp;

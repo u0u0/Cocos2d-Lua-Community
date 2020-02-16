@@ -146,8 +146,8 @@ void CommandSetup::setupEngine(void)
     printf("scale:%f\n", _scale / 100.0);
     printf("size:%dx%d\n", _width, _height);
     printf("writePath:%s\n", _writePath.c_str());
-    printf("gameRootPath:%s\n", _gameRootPath.c_str());
-    printf("engineRootPath:%s\n", _engineRootPath.c_str());
+    printf("gameRootPath:%s\nisDirectoryExist: %s\n", _gameRootPath.c_str(), (_gameRootPath.size() > 0 && FileUtils::getInstance()->isDirectoryExist(_gameRootPath)) ? "TRUE" : "FALSE");
+    printf("engineRootPath:%s\nisDirectoryExist: %s\n", _engineRootPath.c_str(), FileUtils::getInstance()->isDirectoryExist(_engineRootPath) ? "TRUE" : "FALSE");
     printf("=== end setup configs ===\n");
     
     if (_gameRootPath.size() > 0) {

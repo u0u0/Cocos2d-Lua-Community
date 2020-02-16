@@ -21,7 +21,7 @@ static std::string getEngineRoot(void)
 
     // find engine root
     char *p = strstr(chAppDir, "tools\\runner");
-    *p = 0; // cut str
+    if (p) *p = 0; // cut str
     std::string pathTemp(chAppDir);
     free(chAppDir); // free memory
     return pathTemp;
