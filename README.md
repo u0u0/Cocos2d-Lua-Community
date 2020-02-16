@@ -36,6 +36,8 @@ Cocos2d-Lua-Community is a improved of Cocos2d-x 4.0, and easy to use Lua game e
 
 > Binary of LuaGameRunner is distribute in SkyDrive's Cocos2d-Lua-Community.zip, GitHub ONLY have the source code.
 
+> 链接: https://pan.baidu.com/s/162CmRTXFOSEChF6D5IJQzQ 提取码: 89jt 
+
 LuaGameRunner is a replacement of old Player. I just "Keep It Simple and Stupid".
 
 * By default, it run engine test cases.
