@@ -51,6 +51,7 @@ include(audio/CMakeLists.txt)
 option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
 option(BUILD_EDITOR_DRAGONBONES "Build editor support for dragonBones" ON)
+option(BUILD_EDITOR_FAIRYGUI "Build editor support for fairygui" ON)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 
 if(BUILD_EDITOR_COCOSTUDIO)
@@ -67,6 +68,11 @@ if(BUILD_EDITOR_DRAGONBONES)
     include(editor-support/dragonBones/CMakeLists.txt)
     set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_DRAGONBONES_SRC} ${COCOS_DRAGONBONES_HEADER})
 endif(BUILD_EDITOR_DRAGONBONES)
+
+if(BUILD_EDITOR_FAIRYGUI)
+    include(editor-support/fairygui/CMakeLists.txt)
+    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${FAIRYGUI_SRC} ${FAIRYGUI_HEADER})
+endif(BUILD_EDITOR_FAIRYGUI)
 
 if(BUILD_EXTENSIONS)
     include(../extensions/CMakeLists.txt)
@@ -128,6 +134,7 @@ target_include_directories(cocos2d
     PUBLIC ${COCOS2DX_ROOT_PATH}/extensions
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/platform
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/editor-support
+    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/editor-support/fairygui
     PRIVATE ${COCOS2DX_ROOT_PATH}/external/libogg
     PRIVATE ${COCOS2DX_ROOT_PATH}/external/libvorbis
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
