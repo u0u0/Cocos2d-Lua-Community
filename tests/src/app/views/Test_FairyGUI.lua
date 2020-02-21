@@ -12,13 +12,12 @@ function TestCase:ctor()
 
 	fairygui.UIPackage:addPackage("fairygui/package01");
     local view = fairygui.UIPackage:createObject("package01", "StartLayer")
+	view:setOpaque(false) -- ignore touch
     self.fairyRoot:addChild(view)
 
 	-- btn event, fairy has it's own EventDispatcher, cover the cocos's node
-	view:getChild("n9"):addEventListener(12, function(context)
-		print(context)
-		self:getParent():openScrollView()
-		self:removeSelf()
+	view:getChild("n9"):addEventListener(fairygui.UIEventType.TouchEnd, function(context)
+		print(context:captureTouch())
 	end)
 end
 

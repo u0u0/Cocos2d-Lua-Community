@@ -14,3 +14,5 @@ require "cocos.network.NetworkConstants"
 require "cocos.spine.SpineConstants"
 -- physics3d
 require "cocos.physics3d.physics3d-constants"
+-- fairygui
+require "cocos.fairygui.FairyGUIConstants"
