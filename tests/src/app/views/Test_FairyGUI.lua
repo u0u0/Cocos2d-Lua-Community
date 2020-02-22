@@ -16,8 +16,14 @@ function TestCase:ctor()
 
 	-- btn event, fairy has it's own EventDispatcher, cover the cocos's node
 	view:getChild("n9"):addEventListener(fairygui.UIEventType.TouchEnd, function(context)
-		print(context)
-		self.fairyRoot:release()
+		local input = context:getInput()
+		local touchPos = input:getTouch():getLocation()
+		if input:getTarget():hitTest(touchPos, cc.Camera:getVisitingCamera()) then
+			print("touch ended")
+			self.fairyRoot:release()
+		else
+			print("touch canceled")
+		end
 	end)
 end
 

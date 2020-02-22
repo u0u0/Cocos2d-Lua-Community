@@ -19881,7 +19881,7 @@ static int lua_fairygui_DragDropManager_getInstance(lua_State* tolua_S)
 #endif
 
 	argc = lua_gettop(tolua_S) - 1;
-	if (argc == 0){
+	if (argc == 0) {
 		fairygui::DragDropManager* ret = fairygui::DragDropManager::getInstance();
 		object_to_luaval<fairygui::DragDropManager>(tolua_S, "fairygui.DragDropManager",(fairygui::DragDropManager*)ret);
 		return 1;
@@ -19912,6 +19912,53 @@ static int lua_register_fairygui_DragDropManager(lua_State* tolua_S)
 	g_luaType[typeName] = "fairygui.DragDropManager";
 	g_typeCast["DragDropManager"] = "fairygui.DragDropManager";
 	return 1;
+}
+
+static int lua_fairygui_UIConfig_registerFont(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertable(tolua_S,1,"fairygui.UIConfig",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 2) {
+        std::string arg0;
+        std::string arg1;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "fairygui.UIConfig:registerFont");
+        ok &= luaval_to_std_string(tolua_S, 3, &arg1, "fairygui.UIConfig:registerFont");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_UIConfig_registerFont'", nullptr);
+            return 0;
+        }
+        fairygui::UIConfig::registerFont(arg0, arg1);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.UIConfig:registerFont", argc, 2);
+    return 0;
+    
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_UIConfig_registerFont'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_register_fairygui_UIConfig(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.UIConfig");
+    tolua_cclass(tolua_S,"UIConfig","fairygui.UIConfig","",nullptr);
+
+    tolua_beginmodule(tolua_S,"UIConfig");
+    tolua_function(tolua_S,"registerFont", lua_fairygui_UIConfig_registerFont);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::DragDropManager).name();
+    g_luaType[typeName] = "fairygui.UIConfig";
+    g_typeCast["UIConfig"] = "fairygui.UIConfig";
+    return 1;
 }
 
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
@@ -19952,6 +19999,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 		lua_register_fairygui_ScrollPane(tolua_S);
 		lua_register_fairygui_GProgressBar(tolua_S);
 		lua_register_fairygui_DragDropManager(tolua_S);
+        lua_register_fairygui_UIConfig(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}
