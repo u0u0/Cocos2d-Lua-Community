@@ -232,7 +232,6 @@ int register_network_module(lua_State* L)
 	if (lua_istable(L,-1))//stack:...,_G,
 		{
 			luaopen_lua_extensions(L);
-			tolua_web_socket_open(L);
 			register_web_socket_manual(L);
 			register_http_manual(L);
 			register_network_manual(L);

@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2020 cocos2d-lua.org
  
  http://www.cocos2d-x.org
  
@@ -37,463 +38,349 @@
 
 using namespace cocos2d;
 
-static int SendBinaryMessageToLua(int nHandler,const unsigned char* pTable,int nLength)
-{
-    if (NULL == pTable || nHandler <= 0) {
-        return 0;
-    }
-    
-    if (NULL == ScriptEngineManager::getInstance()->getScriptEngine()) {
-        return 0;
-    }
-    
-    LuaStack *pStack = LuaEngine::getInstance()->getLuaStack();
-    if (NULL == pStack) {
-        return 0;
-    }
-
-    lua_State *tolua_s = pStack->getLuaState();
-    if (NULL == tolua_s) {
-        return 0;
-    }
-    
-    int nRet = 0;
-    LuaValueArray array;
-    for (int i = 0 ; i < nLength; i++) {
-        LuaValue value = LuaValue::intValue(pTable[i]);
-        array.push_back(value);
-    }
-    
-    pStack->pushLuaValueArray(array);
-    nRet = pStack->executeFunctionByHandler(nHandler, 1);
-    pStack->clean();
-    return nRet;
-}
-
-
-
 LuaWebSocket::~LuaWebSocket()
 {
-    ScriptHandlerMgr::getInstance()->removeObjectAllHandlers((void*)this);
+	ScriptHandlerMgr::getInstance()->removeObjectAllHandlers((void*)this);
 }
 
 void LuaWebSocket::onOpen(WebSocket* ws)
 {
-    LuaWebSocket* luaWs = dynamic_cast<LuaWebSocket*>(ws);
-    if (NULL != luaWs) {
-        int nHandler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_OPEN);
-        if (0 != nHandler) {
-            CommonScriptData data(nHandler,"");
-            ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this, ScriptHandlerMgr::HandlerType::WEBSOCKET_OPEN);
+    if (0 != handler) {
+        LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
+        if (stack) {
+            stack->executeFunctionByHandler(handler, 0);
         }
     }
 }
-    
+
 void LuaWebSocket::onMessage(WebSocket* ws, const WebSocket::Data& data)
 {
-    LuaWebSocket* luaWs = dynamic_cast<LuaWebSocket*>(ws);
-    if (NULL != luaWs) {
-        if (data.isBinary) {
-            int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_MESSAGE);
-            if (0 != handler) {
-                SendBinaryMessageToLua(handler, (const unsigned char*)data.bytes, (int)data.len);
-            }
-        }
-        else{
-                
-            int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_MESSAGE);
-            if (0 != handler)
-            {
-                LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
-                if (nullptr != stack)
-                {
-                    stack->pushString(data.bytes,(int)data.len);
-                    stack->executeFunctionByHandler(handler,  1);
-                }
-            }
+    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_MESSAGE);
+    if (0 != handler) {
+        LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
+        if (stack) {
+            stack->pushString(data.bytes, (int)data.len);
+            stack->executeFunctionByHandler(handler, 1);
         }
     }
 }
-    
+
 void LuaWebSocket::onClose(WebSocket* ws)
 {
-    LuaWebSocket* luaWs = dynamic_cast<LuaWebSocket*>(ws);
-    if (NULL != luaWs) {
-        int nHandler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_CLOSE);
-        if (0 != nHandler)
-        {
-            CommonScriptData data(nHandler,"");
-            ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_CLOSE);
+    if (0 != handler) {
+        LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
+        if (stack) {
+            stack->executeFunctionByHandler(handler, 0);
         }
     }
 }
-    
+
 void LuaWebSocket::onError(WebSocket* ws, const WebSocket::ErrorCode& error)
 {
-    LuaWebSocket* luaWs = dynamic_cast<LuaWebSocket*>(ws);
-    if (NULL != luaWs) {
-        int nHandler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_ERROR);
-        if (0 != nHandler)
-        {
-            CommonScriptData data(nHandler,"");
-            ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
-        }
-    }
+	LuaWebSocket* luaWs = dynamic_cast<LuaWebSocket*>(ws);
+	if (NULL != luaWs) {
+		int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this,ScriptHandlerMgr::HandlerType::WEBSOCKET_ERROR);
+		if (0 != handler)
+		{
+            LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
+            if (stack) {
+                stack->pushInt((int)error);
+                stack->executeFunctionByHandler(handler, 1);
+            }
+		}
+	}
 }
 
-
-
-#ifdef __cplusplus
 static int tolua_collect_WebSocket (lua_State* tolua_S)
 {
-    LuaWebSocket* self = (LuaWebSocket*) tolua_tousertype(tolua_S,1,0);
-    Mtolua_delete(self);
-    return 0;
-}
-#endif
-/* function to release collected object via destructor */
-static void tolua_reg_Web_Socket_type(lua_State* tolua_S)
-{
-    tolua_usertype(tolua_S, "cc.WebSocket");
+	LuaWebSocket *self = (LuaWebSocket *)tolua_tousertype(tolua_S, 1, 0);
+    delete self;
+	return 0;
 }
 
-/* method: create of class WebSocket */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_WebSocket_create00
-static int tolua_Cocos2d_WebSocket_create00(lua_State* tolua_S)
+static int tolua_Cocos2d_WebSocket_create(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
 #endif
 
-    int argumentCount = lua_gettop(tolua_S);
-    if (argumentCount >= 2)
-    {
-        std::string url;
-        std::vector<std::string> protocols;
-        std::string caCertPath;
+	int argumentCount = lua_gettop(tolua_S);
+	if (argumentCount >= 2) {
+		std::string url;
+		std::vector<std::string> protocols;
+		std::string caCertPath;
 
-#ifndef TOLUA_RELEASE
-        if (!tolua_isusertable(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-            !tolua_isstring(tolua_S,2,0,&tolua_err)
-            )
-            goto tolua_lerror;
+#if COCOS2D_DEBUG >= 1
+		if (!tolua_isusertable(tolua_S, 1, "cc.WebSocket", 0, &tolua_err) ||
+				!tolua_isstring(tolua_S, 2, 0, &tolua_err)
+		   )
+			goto tolua_lerror;
 #endif
-        if (argumentCount == 3)
-        {
-            if (lua_istable(tolua_S, 3))
-            {
-                luaval_to_std_vector_string(tolua_S, 3, &protocols, "cc.WebSocket.create");
-            }
-            else if (lua_isstring(tolua_S, 3))
-            {
-                luaval_to_std_string(tolua_S, 3, &caCertPath);
-            }
-            else
-            {
-                luaL_error(tolua_S, "The second parameter should be a table contains protocols of string type or a string indicates ca certificate path!");
-                return 0;
-            }
-        }
-        else if (argumentCount == 4)
-        {
-#ifndef TOLUA_RELEASE
-            if (!tolua_istable(tolua_S, 3, 0, &tolua_err)
-                || !tolua_isstring(tolua_S, 4, 0, &tolua_err))
-                goto tolua_lerror;
+		if (argumentCount == 3) {
+			if (lua_istable(tolua_S, 3)) {
+				luaval_to_std_vector_string(tolua_S, 3, &protocols, "cc.WebSocket.create");
+			} else if (lua_isstring(tolua_S, 3)) {
+				luaval_to_std_string(tolua_S, 3, &caCertPath);
+			} else {
+				luaL_error(tolua_S, "The second parameter should be a table contains protocols of string type or a string indicates ca certificate path!");
+				return 0;
+			}
+		} else if (argumentCount == 4) {
+#if COCOS2D_DEBUG >= 1
+			if (!tolua_istable(tolua_S, 3, 0, &tolua_err)
+					|| !tolua_isstring(tolua_S, 4, 0, &tolua_err))
+				goto tolua_lerror;
 #endif
 
-            luaval_to_std_vector_string(tolua_S, 3, &protocols, "cc.WebSocket.create");
-            luaval_to_std_string(tolua_S, 4, &caCertPath);
-        }
+			luaval_to_std_vector_string(tolua_S, 3, &protocols, "cc.WebSocket.create");
+			luaval_to_std_string(tolua_S, 4, &caCertPath);
+		}
 
-        luaval_to_std_string(tolua_S, 2, &url);
+		luaval_to_std_string(tolua_S, 2, &url);
 
-        LuaWebSocket *wSocket = new (std::nothrow) LuaWebSocket();
-        wSocket->init(*wSocket, url, &protocols, caCertPath);
-        tolua_pushusertype(tolua_S,(void*)wSocket,"cc.WebSocket");
-        tolua_register_gc(tolua_S,lua_gettop(tolua_S));
-        return 1;
-    }
-#ifndef TOLUA_RELEASE
+		LuaWebSocket *wSocket = new (std::nothrow) LuaWebSocket();
+		wSocket->init(*wSocket, url, &protocols, caCertPath);
+		tolua_pushusertype(tolua_S, (void*)wSocket, "cc.WebSocket");
+		tolua_register_gc(tolua_S,lua_gettop(tolua_S));
+		return 1;
+	}
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'create'.",&tolua_err);
+	tolua_error(tolua_S,"#ferror in function 'create'.",&tolua_err);
 #endif
-    return 0;
+	return 0;
 }
-#endif //#ifndef TOLUA_DISABLE
 
-/* method: createByAProtocol of class WebSocket */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_WebSocket_createByAProtocol00
-static int tolua_Cocos2d_WebSocket_createByAProtocol00(lua_State* tolua_S)
+static int tolua_Cocos2d_WebSocket_createByAProtocol(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertable(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-        !tolua_isstring(tolua_S,2,0,&tolua_err)  ||
-        !tolua_isstring(tolua_S,3,0,&tolua_err)  ||
-        !tolua_isnoobj(tolua_S,4,&tolua_err)
-        )
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (
+			!tolua_isusertable(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
+			!tolua_isstring(tolua_S,2,0,&tolua_err)  ||
+			!tolua_isstring(tolua_S,3,0,&tolua_err)  ||
+			!tolua_isnoobj(tolua_S,4,&tolua_err)
+	   )
+		goto tolua_lerror;
+	else
 #endif
-    {
-        const char *urlName  = ((const char*)  tolua_tostring(tolua_S,2,0));
-        const char *protocol = ((const char*)  tolua_tostring(tolua_S,3,0));
-        std::vector<std::string> protocols;
-        protocols.push_back(protocol);
-        LuaWebSocket *wSocket = new (std::nothrow) LuaWebSocket();
-        wSocket->init(*wSocket, urlName,&protocols);
-        tolua_pushusertype(tolua_S,(void*)wSocket,"cc.WebSocket");
-        tolua_register_gc(tolua_S,lua_gettop(tolua_S));
-    }
-    return 1;
-#ifndef TOLUA_RELEASE
+	{
+		const char *urlName  = (const char*)tolua_tostring(tolua_S,2,0);
+		const char *protocol = (const char*)tolua_tostring(tolua_S,3,0);
+		std::vector<std::string> protocols;
+		protocols.push_back(protocol);
+		LuaWebSocket *wSocket = new (std::nothrow) LuaWebSocket();
+		wSocket->init(*wSocket, urlName, &protocols);
+		tolua_pushusertype(tolua_S,(void*)wSocket,"cc.WebSocket");
+		tolua_register_gc(tolua_S,lua_gettop(tolua_S));
+	}
+	return 1;
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'createByAProtocol'.",&tolua_err);
-    return 0;
+	tolua_error(tolua_S,"#ferror in function 'createByAProtocol'.",&tolua_err);
+	return 0;
 #endif
 }
-#endif //#ifndef TOLUA_DISABLE
 
-/* method: getReadyState of class WebSocket */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_WebSocket_getReadyState00
-static int tolua_Cocos2d_WebSocket_getReadyState00(lua_State* tolua_S)
+static int tolua_Cocos2d_WebSocket_getReadyState(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-        !tolua_isnoobj(tolua_S,2,&tolua_err)
-        )
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (
+			!tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
+			!tolua_isnoobj(tolua_S,2,&tolua_err)
+	   )
+		goto tolua_lerror;
+	else
 #endif
-    {
-        LuaWebSocket *self = (LuaWebSocket*)tolua_tousertype(tolua_S,1,0);
-        int tolua_ret = -1;
-        if (NULL != self) {
-            tolua_ret = (int)self->getReadyState();
-        }
-        tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
-    }
-    return 1;
-#ifndef TOLUA_RELEASE
+	{
+		LuaWebSocket *self = (LuaWebSocket*)tolua_tousertype(tolua_S,1,0);
+		int tolua_ret = -1;
+		if (NULL != self) {
+			tolua_ret = (int)self->getReadyState();
+		}
+		tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+	}
+	return 1;
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'getReadyState'.",&tolua_err);
-    return 0;
+	tolua_error(tolua_S,"#ferror in function 'getReadyState'.",&tolua_err);
+	return 0;
 #endif
 }
-#endif //#ifndef TOLUA_DISABLE
 
-
-/* method: close of class WebSocket */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_WebSocket_close00
-static int tolua_Cocos2d_WebSocket_close00(lua_State* tolua_S)
+static int tolua_Cocos2d_WebSocket_close(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-        !tolua_isnoobj(tolua_S,2,&tolua_err)
-        )
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (
+			!tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
+			!tolua_isnoobj(tolua_S,2,&tolua_err)
+	   )
+		goto tolua_lerror;
+	else
 #endif
-    {
-        LuaWebSocket* self    = (LuaWebSocket*)  tolua_tousertype(tolua_S,1,0);
-        if (NULL != self ) {
-            self->closeAsync();
-        }
-    }
-    return 0;
-#ifndef TOLUA_RELEASE
+	{
+		LuaWebSocket *self = (LuaWebSocket*)tolua_tousertype(tolua_S, 1, 0);
+		if (NULL != self ) {
+			self->closeAsync();
+		}
+	}
+	return 0;
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'getReadyState'.",&tolua_err);
-    return 0;
+	tolua_error(tolua_S,"#ferror in function 'getReadyState'.",&tolua_err);
+	return 0;
 #endif
 }
-#endif //#ifndef TOLUA_DISABLE
 
-/* method: sendString of class WebSocket */
-#ifndef TOLUA_DISABLE_tolua_Cocos2d_WebSocket_sendString00
-static int tolua_Cocos2d_WebSocket_sendString00(lua_State* tolua_S)
+static int tolua_Cocos2d_WebSocket_sendString(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (
-        !tolua_isusertype(tolua_S, 1, "cc.WebSocket", 0, &tolua_err) ||
-        !tolua_isstring(tolua_S, 2, 0, &tolua_err)                ||
-        !tolua_isnoobj(tolua_S, 3, &tolua_err)
-        )
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (
+			!tolua_isusertype(tolua_S, 1, "cc.WebSocket", 0, &tolua_err) ||
+			!tolua_isstring(tolua_S, 2, 0, &tolua_err)
+	   )
+		goto tolua_lerror;
+	else
 #endif
-    {
-        LuaWebSocket* self    = (LuaWebSocket*)  tolua_tousertype(tolua_S,1,0);
-        size_t size = 0;
-        const char* data = (const char*) lua_tolstring(tolua_S, 2, &size);
+	{
+		LuaWebSocket *self = (LuaWebSocket*)tolua_tousertype(tolua_S, 1, 0);
+		size_t size = 0;
+		const char *data = (const char*)lua_tolstring(tolua_S, 2, &size);
+        bool isBinary = lua_toboolean(tolua_S, 3);
         if ( NULL == data)
             return 0;
-
-        if (strlen(data) != size)
-        {
-            self->send((const unsigned char*)data, (unsigned int)size);
-        }
-        else
-        {
-            self->send(data);
-        }
-    }
-    return 0;
-#ifndef TOLUA_RELEASE
+		if (isBinary || strlen(data) != size) {
+			self->send((const unsigned char*)data, (unsigned int)size);
+		} else {
+			self->send(data);
+		}
+	}
+	return 0;
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'sendString'.",&tolua_err);
-    return 0;
+	tolua_error(tolua_S,"#ferror in function 'sendString'.",&tolua_err);
+	return 0;
 #endif
 }
-#endif //#ifndef TOLUA_DISABLE
 
 static int websocket_url_getter(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (!tolua_isusertype(L, 1, "cc.WebSocket", 0, &tolua_err))
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "cc.WebSocket", 0, &tolua_err))
+		goto tolua_lerror;
+	else
 #endif
-    {
-        LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(L, 1, 0);
-        lua_pushstring(L, self->getUrl().c_str());
-        return 1;
-    }
-#ifndef TOLUA_RELEASE
+	{
+		LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(L, 1, 0);
+		lua_pushstring(L, self->getUrl().c_str());
+		return 1;
+	}
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(L,"#ferror in function 'sendString'.",&tolua_err);
-    return 0;
+	tolua_error(L,"#ferror in function 'sendString'.",&tolua_err);
+	return 0;
 #endif
 }
 
 static int websocket_protocol_getter(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
-    tolua_Error tolua_err;
-    if (!tolua_isusertype(L, 1, "cc.WebSocket", 0, &tolua_err))
-        goto tolua_lerror;
-    else
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(L, 1, "cc.WebSocket", 0, &tolua_err))
+		goto tolua_lerror;
+	else
 #endif
-    {
-        LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(L, 1, 0);
-        lua_pushstring(L, self->getProtocol().c_str());
-        return 1;
-    }
-#ifndef TOLUA_RELEASE
+	{
+		LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(L, 1, 0);
+		lua_pushstring(L, self->getProtocol().c_str());
+		return 1;
+	}
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(L,"#ferror in function 'sendString'.",&tolua_err);
-    return 0;
+	tolua_error(L,"#ferror in function 'sendString'.",&tolua_err);
+	return 0;
 #endif
 }
 
-TOLUA_API int tolua_web_socket_open(lua_State* tolua_S){
-    tolua_open(tolua_S);
-    tolua_reg_Web_Socket_type(tolua_S);
-    tolua_module(tolua_S,"cc",0);
-    tolua_beginmodule(tolua_S,"cc");
-      #ifdef __cplusplus
-      tolua_cclass(tolua_S,"WebSocket","cc.WebSocket","",tolua_collect_WebSocket);
-      #else
-      tolua_cclass(tolua_S,"WebSocket","cc.WebSocket","",NULL);
-      #endif
-      tolua_beginmodule(tolua_S,"WebSocket");
-        tolua_function(tolua_S, "create", tolua_Cocos2d_WebSocket_create00);
-        tolua_function(tolua_S, "createByAProtocol", tolua_Cocos2d_WebSocket_createByAProtocol00);
-        tolua_function(tolua_S, "getReadyState", tolua_Cocos2d_WebSocket_getReadyState00);
-        tolua_function(tolua_S, "close", tolua_Cocos2d_WebSocket_close00);
-        tolua_function(tolua_S, "sendString", tolua_Cocos2d_WebSocket_sendString00);
-        tolua_variable(tolua_S, "url", websocket_url_getter, nullptr);
-        tolua_variable(tolua_S, "protocol", websocket_protocol_getter, nullptr);
-      tolua_endmodule(tolua_S);
-    tolua_endmodule(tolua_S);
-	return 1;
-}
-
-int tolua_Cocos2d_WebSocket_registerScriptHandler00(lua_State* tolua_S)
+int tolua_Cocos2d_WebSocket_registerScriptHandler(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
+#if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
     if (
-        !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-        !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err) ||
-        !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-        !tolua_isnoobj(tolua_S,4,&tolua_err)
-        )
+            !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
+            !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err) ||
+            !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+            !tolua_isnoobj(tolua_S,4,&tolua_err)
+       )
         goto tolua_lerror;
     else
 #endif
     {
-        LuaWebSocket* self    = (LuaWebSocket*)  tolua_tousertype(tolua_S,1,0);
+        LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(tolua_S,1,0);
         if (NULL != self ) {
-            int handler = (  toluafix_ref_function(tolua_S,2,0));
-            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)((int)tolua_tonumber(tolua_S,3,0) + (int)ScriptHandlerMgr::HandlerType::WEBSOCKET_OPEN);
+            int handler = toluafix_ref_function(tolua_S,2,0);
+            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)tolua_tonumber(tolua_S,3,0);
             ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, handlerType);
         }
     }
     return 0;
-#ifndef TOLUA_RELEASE
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'registerScriptHandler'.",&tolua_err);
     return 0;
 #endif
 }
 
-int tolua_Cocos2d_WebSocket_unregisterScriptHandler00(lua_State* tolua_S)
+int tolua_Cocos2d_WebSocket_unregisterScriptHandler(lua_State* tolua_S)
 {
-#ifndef TOLUA_RELEASE
+#if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
     if (
-        !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
-        !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-        !tolua_isnoobj(tolua_S,3,&tolua_err)
-        )
+            !tolua_isusertype(tolua_S,1,"cc.WebSocket",0,&tolua_err) ||
+            !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+            !tolua_isnoobj(tolua_S,3,&tolua_err)
+       )
         goto tolua_lerror;
     else
 #endif
     {
-        LuaWebSocket* self    = (LuaWebSocket*)  tolua_tousertype(tolua_S,1,0);
+        LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(tolua_S,1,0);
         if (NULL != self ) {
-            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)((int)tolua_tonumber(tolua_S,2,0) + (int)ScriptHandlerMgr::HandlerType::WEBSOCKET_OPEN);
-            
+            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)(int)tolua_tonumber(tolua_S,2,0);
             ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)self, handlerType);
         }
     }
     return 0;
-#ifndef TOLUA_RELEASE
+#if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'unregisterScriptHandler'.",&tolua_err);
     return 0;
 #endif
 }
 
-TOLUA_API int register_web_socket_manual(lua_State* tolua_S)
-{
-    if (nullptr == tolua_S)
-        return 0 ;
-    
-    lua_pushstring(tolua_S,"cc.WebSocket");
-    lua_rawget(tolua_S,LUA_REGISTRYINDEX);
-    if (lua_istable(tolua_S,-1))
-    {
-        lua_pushstring(tolua_S,"registerScriptHandler");
-        lua_pushcfunction(tolua_S,tolua_Cocos2d_WebSocket_registerScriptHandler00);
-        lua_rawset(tolua_S,-3);
-        lua_pushstring(tolua_S,"unregisterScriptHandler");
-        lua_pushcfunction(tolua_S,tolua_Cocos2d_WebSocket_unregisterScriptHandler00);
-        lua_rawset(tolua_S,-3);
-    }
-    lua_pop(tolua_S, 1);
-    
-    return 1;
+TOLUA_API int register_web_socket_manual(lua_State* tolua_S){
+	tolua_open(tolua_S);
+	tolua_usertype(tolua_S, "cc.WebSocket");
+	tolua_module(tolua_S,"cc",0);
+	tolua_beginmodule(tolua_S,"cc");
+	tolua_cclass(tolua_S,"WebSocket","cc.WebSocket","",tolua_collect_WebSocket);
+	tolua_beginmodule(tolua_S,"WebSocket");
+	tolua_function(tolua_S, "create", tolua_Cocos2d_WebSocket_create);
+	tolua_function(tolua_S, "createByAProtocol", tolua_Cocos2d_WebSocket_createByAProtocol);
+	tolua_function(tolua_S, "getReadyState", tolua_Cocos2d_WebSocket_getReadyState);
+	tolua_function(tolua_S, "close", tolua_Cocos2d_WebSocket_close);
+	tolua_function(tolua_S, "sendString", tolua_Cocos2d_WebSocket_sendString);
+    tolua_function(tolua_S, "registerScriptHandler", tolua_Cocos2d_WebSocket_registerScriptHandler);
+    tolua_function(tolua_S, "unregisterScriptHandler", tolua_Cocos2d_WebSocket_unregisterScriptHandler);
+	tolua_variable(tolua_S, "url", websocket_url_getter, nullptr);
+	tolua_variable(tolua_S, "protocol", websocket_protocol_getter, nullptr);
+	tolua_endmodule(tolua_S);
+	tolua_endmodule(tolua_S);
+	return 1;
 }

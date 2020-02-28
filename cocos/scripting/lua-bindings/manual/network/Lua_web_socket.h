@@ -46,17 +46,8 @@ public:
     virtual void onMessage(WebSocket* ws, const WebSocket::Data& data) override;
     virtual void onClose(WebSocket* ws) override;
     virtual void onError(WebSocket* ws, const WebSocket::ErrorCode& error) override;
-    
-    enum WebSocketScriptHandlerType
-    {
-        kWebSocketScriptHandlerOpen,
-        kWebSocketScriptHandlerMessage,
-        kWebSocketScriptHandlerClose,
-        kWebSocketScriptHandlerError,
-    };
 };
 
-TOLUA_API int tolua_web_socket_open(lua_State* tolua_S);
 TOLUA_API int register_web_socket_manual(lua_State* tolua_S);
 ///@endcond
 
