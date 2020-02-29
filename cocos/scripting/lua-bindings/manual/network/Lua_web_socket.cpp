@@ -325,7 +325,7 @@ int tolua_Cocos2d_WebSocket_registerScriptHandler(lua_State* tolua_S)
         LuaWebSocket* self = (LuaWebSocket*)tolua_tousertype(tolua_S,1,0);
         if (NULL != self ) {
             int handler = toluafix_ref_function(tolua_S,2,0);
-            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)tolua_tonumber(tolua_S,3,0);
+            ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType)(int)tolua_tonumber(tolua_S,3,0);
             ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, handlerType);
         }
     }

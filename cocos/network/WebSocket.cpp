@@ -82,6 +82,7 @@ static void _winLog(const char *format, va_list args)
 
     } while (true);
 
+    printf("%s", buf);
     strcat(buf, "\n");
 
     int pos = 0;
@@ -224,14 +225,15 @@ static lws_context_creation_info convertToContextCreationInfo(const struct lws_p
 
     info.gid = -1;
     info.uid = -1;
-    if (peerServerCert)
-    {
+    if (peerServerCert) {
         info.options = LWS_SERVER_OPTION_EXPLICIT_VHOSTS | LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT;
-    }
-    else
-    {
+    } else {
         info.options = LWS_SERVER_OPTION_EXPLICIT_VHOSTS | LWS_SERVER_OPTION_DO_SSL_GLOBAL_INIT | LWS_SERVER_OPTION_PEER_CERT_NOT_REQUIRED;
     }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    // open IPv6 on Ipv4 will curse "socket connect fail" on Win32, temporary disable IPv6.
+    info.options |= LWS_SERVER_OPTION_DISABLE_IPV6;
+#endif
     info.user = nullptr;
 
     return info;
@@ -1301,6 +1303,7 @@ int WebSocket::onSocketCallback(struct lws *wsi,
             break;
 
         case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
+            LOGD("WebSocket (%p) onConnectionError: %s\n", this, (char *)in);
             ret = onConnectionError();
             break;
 
