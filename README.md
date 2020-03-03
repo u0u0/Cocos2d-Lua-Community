@@ -16,6 +16,7 @@ Cocos2d-Lua-Community is a improved of Cocos2d-x 4.0, and easy to use Lua game e
 * Integrate more thirdpart Lua libraries: protobuf,lsqlite3 etc.
 * Refactor TMX runtime, support Tiled Map Editor 1.2+.
 * Spine runtime update to 3.8.
+* Support FairyGUI.
 
 ## Develop Requirements
 

@@ -91,7 +91,6 @@ elseif(APPLE)
              ${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/AppController.mm
              ${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/RootViewController.mm
              ${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/Prefix.pch
-             ${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/build-cfg.json
              ${APP_UI_RES}
              )
     elseif(MACOSX)
