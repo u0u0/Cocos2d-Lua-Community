@@ -38,6 +38,10 @@
 - (void)dealloc
 {
     [linesCount release];
+    if (fileHandle) {
+        [fileHandle closeFile];
+        [fileHandle release];
+    }
     [super dealloc];
 }
 
@@ -47,10 +51,28 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
 
+- (void)openLogToFile:(const char *)path
+{
+    if (fileHandle) {
+        [fileHandle closeFile];
+        [fileHandle release];
+    }
+    
+    NSString *nsPath = [NSString stringWithCString:path encoding:NSUTF8StringEncoding];
+    [[NSFileManager defaultManager] createFileAtPath:nsPath contents:nil attributes:nil] ;
+    fileHandle = [NSFileHandle fileHandleForWritingAtPath:nsPath];
+    [fileHandle retain];
+}
+
 - (void)handleNotification:(NSNotification *)note
 {
     [readHandle readInBackgroundAndNotify];
     NSData *data = [[note userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    // write to debug.log
+    if (fileHandle != nil) {
+        [fileHandle writeData:data];
+    }
+    // write to console window
     NSString *str = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
     if (str) {
         [self trace:str];

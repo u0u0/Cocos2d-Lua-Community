@@ -1,3 +1,17 @@
+// Copyright 2020 KeNan Liu
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifdef _WINDOWS
 #undef _UNICODE
 #include "../proj.win32/getopt.h"
@@ -101,6 +115,15 @@ void CommandSetup::parseCommand(int argc, char *argv[])
         }
     }
     
+    // init writePath
+    if (_writePath.size() == 0) {
+        if (_gameRootPath.size() > 0) {
+            _writePath = _gameRootPath;
+        } else {
+            _writePath = _engineRootPath;
+        }
+    }
+    
     // parse args, not in use yet
     while (optind < argc) {
         printf("arg:%s\n", argv[optind]);
@@ -136,11 +159,6 @@ std::string CommandSetup::makeCommand(void)
 
 void CommandSetup::setupEngine(void)
 {
-    // set default writePath
-    if (_writePath.size() == 0) {
-        _writePath = _gameRootPath;
-    }
-    
     printf("=== begin setup configs ===\n");
     printf("logToFile:%s\n", _logToFile ? "true" : "false");
     printf("scale:%f\n", _scale / 100.0);
@@ -174,4 +192,19 @@ void CommandSetup::setupEngine(void)
         director->setOpenGLView(glview);
         director->startAnimation();
     }
+}
+
+std::string CommandSetup::getLogPath()
+{
+    if (!_logToFile) {
+        return "";
+    }
+    
+    std::string logFileName = "debug.log";
+    char lastChar = _writePath[_writePath.length() - 1];
+    if (lastChar == '/' || lastChar == '\\') {
+        return _writePath + logFileName;
+    }
+    
+    return _writePath + "/" + logFileName;
 }

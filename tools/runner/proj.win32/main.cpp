@@ -1,3 +1,17 @@
+// Copyright 2020 KeNan Liu
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "main.h"
 #include "cocos2d.h"
 #include "../Classes/AppDelegate.h"
@@ -7,6 +21,25 @@ USING_NS_CC;
 
 // uncomment below line, open debug console
 #define USE_WIN32_CONSOLE
+
+static WNDPROC oldWinProc = nullptr;
+static FILE *fpLogFile = nullptr;
+
+LRESULT CALLBACK winProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg) {
+        case WM_COPYDATA: {
+            PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT)lParam;
+            if (fpLogFile && pMyCDS->dwData == 1) {
+                const char *szBuf = (const char*)(pMyCDS->lpData);
+                fputs(szBuf, fpLogFile);
+                fflush(fpLogFile);
+                break;
+            }
+        }
+    }
+    return oldWinProc(hWnd, uMsg, wParam, lParam);
+}
 
 static std::string getEngineRoot(void)
 {
@@ -59,15 +92,15 @@ static void relaunchSelf(std::string& cmdLine)
     MultiByteToWideChar(CP_ACP, 0, winCmd.c_str(), -1, command, MAX_COMMAND);
 
     BOOL success = CreateProcess(NULL,
-        command,   // command line 
-        NULL,      // process security attributes 
-        NULL,      // primary thread security attributes 
-        FALSE,     // handles are inherited 
-        0,         // creation flags 
-        NULL,      // use parent's environment 
-        NULL,      // use parent's current directory 
-        &si,       // STARTUPINFO pointer 
-        &pi);      // receives PROCESS_INFORMATION 
+        command,   // command line
+        NULL,      // process security attributes
+        NULL,      // primary thread security attributes
+        FALSE,     // handles are inherited
+        0,         // creation flags
+        NULL,      // use parent's environment
+        NULL,      // use parent's current directory
+        &si,       // STARTUPINFO pointer
+        &pi);      // receives PROCESS_INFORMATION
     if (!success) {
         printf("relaunchSelf fail: %s", winCmd.c_str());
     }
@@ -75,9 +108,9 @@ static void relaunchSelf(std::string& cmdLine)
 }
 
 int WINAPI _tWinMain(HINSTANCE hInstance,
-                       HINSTANCE hPrevInstance,
-                       LPTSTR    lpCmdLine,
-                       int       nCmdShow)
+    HINSTANCE hPrevInstance,
+    LPTSTR    lpCmdLine,
+    int       nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -108,14 +141,27 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
     cmd->parseCommand(__argc, argv);
     cmd->setupEngine();
 
-    // free __wargv
+    // free argv
     for (int i = 0; i < __argc; ++i) {
         free(argv[i]);
     }
     free(argv);
 
+    HWND hwnd = Director::getInstance()->getOpenGLView()->getWin32Window();
+    oldWinProc = (WNDPROC)SetWindowLong(hwnd, GWL_WNDPROC, (LONG)winProc);
+    std::string logPath = cmd->getLogPath();
+    if (logPath.size() > 0) {
+        fpLogFile = fopen(logPath.c_str(), "w");
+        if (!fpLogFile) {
+            printf("Open debug file fail:%s", logPath.c_str());
+        }
+    }
+
     int ret = Application::getInstance()->run();
 
+    if (fpLogFile) {
+        fclose(fpLogFile);
+    }
 #ifdef USE_WIN32_CONSOLE
     FreeConsole();
 #endif
