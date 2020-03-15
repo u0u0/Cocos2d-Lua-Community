@@ -96,26 +96,29 @@ extern "C"
                 pos = prefix.find_first_of('?', pos + filename.length() + 1);
             }
             chunkName = prefix + BYTECODE_FILE_EXT;
-            if (utils->isFileExist(chunkName)) // && !utils->isDirectoryExist(chunkName))
+            if (utils->isFileExist(chunkName))
             {
                 chunk = utils->getDataFromFile(chunkName);
-                break;
+                if (chunk.getSize() > 0)
+                    break;
             }
             else
             {
                 chunkName = prefix + NOT_BYTECODE_FILE_EXT;
-                if (utils->isFileExist(chunkName) ) //&& !utils->isDirectoryExist(chunkName))
+                if (utils->isFileExist(chunkName))
                 {
                     chunk = utils->getDataFromFile(chunkName);
-                    break;
+                    if (chunk.getSize() > 0)
+                        break;
                 }
                 else
                 {
                     chunkName = prefix;
-                    if (utils->isFileExist(chunkName)) // && !utils->isDirectoryExist(chunkName))
+                    if (utils->isFileExist(chunkName))
                     {
                         chunk = utils->getDataFromFile(chunkName);
-                        break;
+                        if (chunk.getSize() > 0)
+                            break;
                     }
                 }
             }
