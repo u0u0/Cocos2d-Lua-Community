@@ -293,11 +293,11 @@ function Node:setTouchEnabled(enable)
 			local pp = touch:getPreviousLocation()
 
 			if name == "began" then
-				if not self:isVisible(true) or not self:hitTest(tp) then
+				if not self:isVisible(true) or not Node.hitTest(self, tp) then
 					return false
 				end
 			elseif name == "ended" then
-				if not self:hitTest(tp) then -- out of touch area
+				if not Node.hitTest(self, tp) then -- out of touch area
 					name = "cancelled"
 				end
 			end
