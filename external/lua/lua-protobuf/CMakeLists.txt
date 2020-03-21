@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(lib_name protobuf)
+set(lib_name lua-protobuf)
 set(target_name ext_${lib_name})
 
 project(${lib_name})

@@ -49,6 +49,8 @@ extern "C" {
 // sproto
 LUALIB_API int luaopen_lpeg (lua_State *L);
 LUALIB_API int luaopen_sproto_core(lua_State *L);
+// lua-protobuf
+LUALIB_API int luaopen_lua_pb (lua_State *L);
 
 static luaL_Reg luax_exts[] = {
     {"socket.core", luaopen_socket_core}, // luasocket
@@ -62,6 +64,7 @@ static luaL_Reg luax_exts[] = {
     {"pb", luaopen_pb}, // protoc-gen-lua
     {"lpeg", luaopen_lpeg}, // sproto
     {"sproto.core", luaopen_sproto_core}, // sproto
+    {"luapb", luaopen_lua_pb}, // lua-protobuf
     {NULL, NULL}
 };
 
