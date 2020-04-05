@@ -6,7 +6,7 @@
 	#endif
 #endif
 
-#define LWS_INSTALL_DATADIR "/home/cocos/Github/cocos2d-x-3rd-party-libs-src/contrib/install-linux/i386/share"
+#define LWS_INSTALL_DATADIR "/usr/local/share"
 
 /* Define to 1 to use wolfSSL/CyaSSL as a replacement for OpenSSL.
  * LWS_OPENSSL_SUPPORT needs to be set also for this to work. */
@@ -35,7 +35,7 @@
 #define LWS_LIBRARY_VERSION_NUMBER (LWS_LIBRARY_VERSION_MAJOR*1000000)+(LWS_LIBRARY_VERSION_MINOR*1000)+LWS_LIBRARY_VERSION_PATCH
 
 /* The current git commit hash that we're building from */
-#define LWS_BUILD_HASH "cocos@cocos-ubuntu-v3.4-183-g88c52d4"
+#define LWS_BUILD_HASH "u0u0@u0u0-MacBookPro-"
 
 /* Build with OpenSSL support */
 #define LWS_OPENSSL_SUPPORT
@@ -53,7 +53,7 @@
 /* #undef LWS_WITH_LIBEV */
 
 /* Enable libuv io loop */
-#define LWS_WITH_LIBUV
+/* #undef LWS_WITH_LIBUV */
 
 /* Enable libevent io loop */
 /* #undef LWS_WITH_LIBEVENT */
@@ -90,9 +90,9 @@
 
 /* SSL server using ECDH certificate */
 /* #undef LWS_SSL_SERVER_WITH_ECDH_CERT */
-/* #undef LWS_HAVE_SSL_CTX_set1_param */
-/* #undef LWS_HAVE_X509_VERIFY_PARAM_set1_host */
-/* #undef LWS_HAVE_RSA_SET0_KEY */
+#define LWS_HAVE_SSL_CTX_set1_param
+#define LWS_HAVE_X509_VERIFY_PARAM_set1_host
+#define LWS_HAVE_RSA_SET0_KEY
 
 /* #undef LWS_HAVE_UV_VERSION_H */
 
@@ -147,9 +147,9 @@
 
 /* OpenSSL various APIs */
 
-/* #undef LWS_HAVE_TLS_CLIENT_METHOD */
-/* #undef LWS_HAVE_TLSV1_2_CLIENT_METHOD */
-/* #undef LWS_HAVE_SSL_SET_INFO_CALLBACK */
+#define LWS_HAVE_TLS_CLIENT_METHOD
+#define LWS_HAVE_TLSV1_2_CLIENT_METHOD
+#define LWS_HAVE_SSL_SET_INFO_CALLBACK
 
 #define LWS_HAS_INTPTR_T
 

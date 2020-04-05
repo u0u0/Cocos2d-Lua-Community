@@ -99,7 +99,7 @@ def joinDir(root, *dirs):
     return root
 
 def checkFileExt(path):
-    binExt = [".ogg", ".zip", ".jpg", ".jpeg", ".png", ".pvr", ".ccz", ".bmp", ".tmx", ".plist"]
+    binExt = [".ogg", ".zip", ".jpg", ".jpeg", ".png", ".pvr", ".ccz", ".bmp", ".tmx", ".plist", ".pb"]
     ext = os.path.splitext(path)[1]
     ext = ext.lower()
     return ext in binExt
