@@ -15522,12 +15522,289 @@ tolua_lerror:
 #endif
 }
 
+typedef enum {
+    GLIST_ITEM_RENDERER,
+    GLIST_ITEM_PROVIDER
+} GList_HandlerType;
+
+static int lua_fairygui_GList_get_itemRenderer(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+    int refid = -1;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_get_itemRenderer'", nullptr);
+        return 0;
+    }
+#endif
+
+    // GLIST_ITEM_RENDERER is a HandlerType
+    refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+    if (refid >= 0) {
+        toluafix_get_function_by_refid(L, refid);
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_get_itemRenderer'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+    LUA_FUNCTION refid = -1;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_set_itemRenderer'", nullptr);
+        return 0;
+    }
+#endif
+
+    if lua_isnil(L, 2) {
+        cobj->itemRenderer = nullptr;
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+        return 0;
+    }
+    if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
+        goto tolua_lerror;
+        
+    refid = (toluafix_ref_function(L, 2, 0));
+    cobj->itemRenderer = [=](int index, fairygui::GObject *gobject) {
+        lua_pushinteger(L, index);
+        object_to_luaval<fairygui::GObject>(L, "fairygui.GObject", gobject);
+        LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
+    };
+    // GLIST_ITEM_RENDERER is a HandlerType
+    ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_itemRenderer'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_get_itemProvider(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+    LUA_FUNCTION refid = -1;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_get_itemProvider'", nullptr);
+        return 0;
+    }
+#endif
+
+    // GLIST_ITEM_PROVIDER is a HandlerType
+    refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+    if (refid >= 0) {
+        toluafix_get_function_by_refid(L, refid);
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_get_itemProvider'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_set_itemProvider(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+    LUA_FUNCTION refid = -1;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_set_itemProvider'", nullptr);
+        return 0;
+    }
+#endif
+
+    if lua_isnil(L, 2) {
+        cobj->itemRenderer = nullptr;
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+        return 0;
+    }
+    if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
+        goto tolua_lerror;
+        
+    refid = (toluafix_ref_function(L, 2, 0));
+    cobj->itemProvider = [=](int index) -> std::string {
+        lua_pushinteger(L, index);
+        LuaEngine::getInstance()->getLuaStack()->pushFunctionByHandler(refid);
+        int error = lua_pcall(L, 1, 1, 0); // 1 pararm, 1 return
+        if (error) {
+            CCLOG("[LUA ERROR] %s", lua_tostring(L, -1));
+            lua_pop(L, 1); // remove error message from stack
+            return "";
+        }
+        std::string rtn = lua_tostring(L, -1);
+        lua_pop(L, 1);
+        return rtn;
+    };
+    // GLIST_ITEM_PROVIDER is a HandlerType
+    ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_itemProvider'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_get_scrollItemToViewOnClick(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_get_scrollItemToViewOnClick'", nullptr);
+        return 0;
+    }
+#endif
+
+    lua_pushboolean(L, cobj->scrollItemToViewOnClick);
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_get_scrollItemToViewOnClick'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_set_scrollItemToViewOnClick(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_set_scrollItemToViewOnClick'", nullptr);
+        return 0;
+    }
+#endif
+
+    if lua_isboolean(L, 2) {
+        cobj->scrollItemToViewOnClick = lua_toboolean(L, 2);
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_scrollItemToViewOnClick'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_get_foldInvisibleItems(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_get_foldInvisibleItems'", nullptr);
+        return 0;
+    }
+#endif
+
+    lua_pushboolean(L, cobj->foldInvisibleItems);
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_get_foldInvisibleItems'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GList_set_foldInvisibleItems(lua_State* L)
+{
+    fairygui::GList* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GList",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GList*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GList_set_foldInvisibleItems'", nullptr);
+        return 0;
+    }
+#endif
+
+    if lua_isboolean(L, 2) {
+        cobj->foldInvisibleItems = lua_toboolean(L, 2);
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_foldInvisibleItems'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_register_fairygui_GList(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S,"fairygui.GList");
 	tolua_cclass(tolua_S,"GList","fairygui.GList","fairygui.GComponent",nullptr);
 
 	tolua_beginmodule(tolua_S,"GList");
+    // variable
+    tolua_variable(tolua_S, "itemRenderer", lua_fairygui_GList_get_itemRenderer, lua_fairygui_GList_set_itemRenderer);
+    tolua_variable(tolua_S, "itemProvider", lua_fairygui_GList_get_itemProvider, lua_fairygui_GList_set_itemProvider);
+    tolua_variable(tolua_S, "scrollItemToViewOnClick", lua_fairygui_GList_get_scrollItemToViewOnClick, lua_fairygui_GList_set_scrollItemToViewOnClick);
+    tolua_variable(tolua_S, "foldInvisibleItems", lua_fairygui_GList_get_foldInvisibleItems, lua_fairygui_GList_set_foldInvisibleItems);
+    // function
 	tolua_function(tolua_S,"selectAll",lua_fairygui_GList_selectAll);
 	tolua_function(tolua_S,"getColumnGap",lua_fairygui_GList_getColumnGap);
 	tolua_function(tolua_S,"getLineCount",lua_fairygui_GList_getLineCount);
@@ -19961,6 +20238,299 @@ static int lua_register_fairygui_UIConfig(lua_State* tolua_S)
     return 1;
 }
 
+static int lua_fairygui_GLabel_getTitle(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_getTitle'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        const std::string& rtn = cobj->getTitle();
+        lua_pushlstring(tolua_S, rtn.c_str(), rtn.length());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:getTitle",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_getTitle'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_setTitle(lua_State* tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_setTitle'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S,2,&arg0, "fairygui.GLabel:setTitle");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GLabel_setTitle'", nullptr);
+            return 0;
+        }
+        cobj->setTitle(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:setTitle",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_setTitle'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_getTitleColor(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_getTitleColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        const cocos2d::Color3B ret = cobj->getTitleColor();
+        color3b_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:getTitleColor",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_getTitleColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_setTitleColor(lua_State* tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_setTitleColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        cocos2d::Color3B arg0;
+        ok &=luaval_to_color3b(tolua_S, 2, &arg0, "fairygui.GLabel:setTitleColor");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GLabel_setTitleColor'", nullptr);
+            return 0;
+        }
+        cobj->setTitleColor(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:setTitleColor",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_setTitleColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_getTitleFontSize(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_getTitleFontSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        lua_pushinteger(tolua_S, cobj->getTitleFontSize());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:getTitleFontSize",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_getTitleFontSize'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_setTitleFontSize(lua_State* tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_setTitleFontSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        int arg0;
+        ok &=luaval_to_int32(tolua_S, 2, &arg0, "fairygui.GLabel:setTitleFontSize");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GLabel_setTitleFontSize'", nullptr);
+            return 0;
+        }
+        cobj->setTitleFontSize(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:setTitleFontSize",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_setTitleFontSize'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_getTextField(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GLabel* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GLabel*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GLabel_getTextField'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        fairygui::GTextField *ret = cobj->getTextField();
+        object_to_luaval<fairygui::GTextField>(tolua_S, "fairygui.GTextField",(fairygui::GTextField*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GLabel:getTextField",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_getTextField'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GLabel_create(lua_State* tolua_S)
+{
+    int argc = 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertable(tolua_S,1,"fairygui.GLabel",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 0) {
+        fairygui::GLabel *ret = fairygui::GLabel::create();
+        object_to_luaval<fairygui::GLabel>(tolua_S, "fairygui.GLabel",(fairygui::GLabel*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.GLabel:create",argc, 0);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GLabel_create'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_register_fairygui_GLabel(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.GLabel");
+    tolua_cclass(tolua_S,"GLabel","fairygui.GLabel","fairygui.GComponent",nullptr);
+
+    tolua_beginmodule(tolua_S,"GLabel");
+    tolua_function(tolua_S,"getTitle",lua_fairygui_GLabel_getTitle);
+    tolua_function(tolua_S,"setTitle",lua_fairygui_GLabel_setTitle);
+    tolua_function(tolua_S,"getTitleColor",lua_fairygui_GLabel_getTitleColor);
+    tolua_function(tolua_S,"setTitleColor",lua_fairygui_GLabel_setTitleColor);
+    tolua_function(tolua_S,"getTitleFontSize",lua_fairygui_GLabel_getTitleFontSize);
+    tolua_function(tolua_S,"setTitleFontSize",lua_fairygui_GLabel_setTitleFontSize);
+    tolua_function(tolua_S,"getTextField",lua_fairygui_GLabel_getTextField);
+    tolua_function(tolua_S,"create", lua_fairygui_GLabel_create);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::GLabel).name();
+    g_luaType[typeName] = "fairygui.GLabel";
+    g_typeCast["GLabel"] = "fairygui.GLabel";
+    return 1;
+}
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -20000,6 +20570,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 		lua_register_fairygui_GProgressBar(tolua_S);
 		lua_register_fairygui_DragDropManager(tolua_S);
         lua_register_fairygui_UIConfig(tolua_S);
+        lua_register_fairygui_GLabel(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}

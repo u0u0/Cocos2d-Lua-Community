@@ -67,6 +67,7 @@ setup_cocos_app_config(${APP_NAME})
 target_compile_definitions(cocos2d PUBLIC $<$<CONFIG:Release>:COCOS2D_DEBUG=1>)
 if(MACOSX)
 	set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
+	set_xcode_property(${APP_NAME} INSTALL_PATH "\${LOCAL_APPS_DIR}") # fix archive no file
 	set_target_properties(${APP_NAME} PROPERTIES
 		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/proj.mac/Info.plist"
 		)
