@@ -15582,8 +15582,10 @@ static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
         ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
         return 0;
     }
+#if COCOS2D_DEBUG >= 1
     if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
         goto tolua_lerror;
+#endif
         
     refid = (toluafix_ref_function(L, 2, 0));
     cobj->itemRenderer = [=](int index, fairygui::GObject *gobject) {
@@ -15657,8 +15659,10 @@ static int lua_fairygui_GList_set_itemProvider(lua_State* L)
         ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
         return 0;
     }
+#if COCOS2D_DEBUG >= 1
     if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
         goto tolua_lerror;
+#endif
         
     refid = (toluafix_ref_function(L, 2, 0));
     cobj->itemProvider = [=](int index) -> std::string {
@@ -15731,12 +15735,13 @@ static int lua_fairygui_GList_set_scrollItemToViewOnClick(lua_State* L)
         cobj->scrollItemToViewOnClick = lua_toboolean(L, 2);
         return 0;
     }
+    luaL_error(L, "fairygui.GList:scrollItemToViewOnClick value type MUST be Boolean!");
 
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_scrollItemToViewOnClick'.",&tolua_err);
-    return 0;
 #endif
+    return 0;
 }
 
 static int lua_fairygui_GList_get_foldInvisibleItems(lua_State* L)
@@ -15785,12 +15790,13 @@ static int lua_fairygui_GList_set_foldInvisibleItems(lua_State* L)
         cobj->foldInvisibleItems = lua_toboolean(L, 2);
         return 0;
     }
+    luaL_error(L, "fairygui.GList:foldInvisibleItems value type MUST be Boolean!");
 
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(L,"#ferror in function 'lua_fairygui_GList_set_foldInvisibleItems'.",&tolua_err);
-    return 0;
 #endif
+    return 0;
 }
 
 static int lua_register_fairygui_GList(lua_State* tolua_S)
