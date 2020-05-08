@@ -5290,7 +5290,6 @@ static void extendPipelineDescriptor(lua_State *tolua_S)
     lua_pop(tolua_S, 1);
 }
 
-
 static int lua_cocos2dx_backend_ProgramState_getUniformLocation(lua_State* tolua_S)
 {
     int argc = 0;
@@ -5341,10 +5340,9 @@ static int lua_cocos2dx_backend_ProgramState_getUniformLocation(lua_State* tolua
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-                tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_backend_ProgramState_getUniformLocation'.", &tolua_err);
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_backend_ProgramState_getUniformLocation'.", &tolua_err);
 #endif
-
     return 0;
 }
 
@@ -5361,59 +5359,368 @@ static int lua_cocos2dx_ProgramState_setUniform(lua_State *tolua_S)
 
     self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
 #if COCOS2D_DEBUG >= 1
-    if (nullptr == self)
-    {
+    if (nullptr == self) {
         tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniform'\n", nullptr);
         return 0;
     }
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
-    if (2 == argc)
-    {
+    if (2 == argc) {
         cocos2d::backend::UniformLocation location;
         
-        if (lua_isstring(tolua_S, 2))
-        {
+        if (lua_isstring(tolua_S, 2)) {
             location = self->getUniformLocation(lua_tostring(tolua_S, 2));
-        } 
-        else if (lua_istable(tolua_S, 2))
-        {
+        }  else if (lua_istable(tolua_S, 2)) {
             ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniform");
         }
 
-        if (ok & lua_istable(tolua_S, 3))
-        {
+        if (ok && lua_istable(tolua_S, 3)) {
             int len = lua_objlen(tolua_S, 3);
             std::vector<uint8_t> buffer(len);
 
-            for (int i = 0; i < len; i++)
-            {
+            for (int i = 0; i < len; i++) {
                 lua_rawgeti(tolua_S, 3, i + 1);
                 buffer[i] = lua_tointeger(tolua_S, -1);
                 lua_pop(tolua_S, 1);
             }
-
             self->setUniform(location, buffer.data(), buffer.size());
-        }
-        else
-        {
+        } else {
             luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniform` argument invalidate");
-            
         }
         return 0;
     }
 
-    return 0;
-
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-                tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_set_PipelineDescriptor_vertexLayout'.", &tolua_err);
-                return 0;
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniform'.", &tolua_err);
 #endif
+    return 0;
 }
 
+static int lua_cocos2dx_ProgramState_setUniformVec2(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformVec2'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        cocos2d::Vec2 value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformVec2");
+        }
+
+        ok &= luaval_to_vec2(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(cocos2d::Vec2));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformVec2` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformVec2'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformVec3(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformVec3'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        cocos2d::Vec3 value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformVec3");
+        }
+
+        ok &= luaval_to_vec3(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(cocos2d::Vec3));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformVec3` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformVec3'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformVec4(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformVec4'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        cocos2d::Vec4 value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformVec4");
+        }
+
+        ok &= luaval_to_vec4(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(cocos2d::Vec4));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformVec4` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformVec4'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformInt(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformInt'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        int value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformInt");
+        }
+
+        ok &= luaval_to_int32(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(int));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformInt` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformInt'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformFloat(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformFloat'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        float value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformFloat");
+        }
+
+        ok &= luaval_to_float(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(float));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformFloat` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformFloat'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformMat4(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformMat4'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (2 == argc) {
+        cocos2d::backend::UniformLocation location;
+        cocos2d::Mat4 value;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformMat4");
+        }
+
+        ok &= luaval_to_mat4(tolua_S, 3, &value);
+        if (ok) {
+            self->setUniform(location, &value, sizeof(cocos2d::Mat4));
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformMat4` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformMat4'.", &tolua_err);
+#endif
+    return 0;
+}
+
+static int lua_cocos2dx_ProgramState_setUniformTexture(lua_State *tolua_S)
+{
+    bool ok = true;
+    int argc = 0;
+    cocos2d::backend::ProgramState* self = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "ccb.ProgramState", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    self = (cocos2d::backend::ProgramState*) tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (nullptr == self) {
+        tolua_error(tolua_S, "invalid 'self' in function 'lua_cocos2dx_ProgramState_setUniformTexture'\n", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (3 == argc) {
+        cocos2d::backend::UniformLocation location;
+        unsigned int slot;
+        cocos2d::backend::TextureBackend *texture;
+        
+        if (lua_isstring(tolua_S, 2)) {
+            location = self->getUniformLocation(lua_tostring(tolua_S, 2));
+        }  else if (lua_istable(tolua_S, 2)) {
+            ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniformTexture");
+        }
+        
+        ok &= luaval_to_uint32(tolua_S, 3, &slot, "ccb.ProgramState:setUniformTexture");
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 4, "ccb.TextureBackend", &texture, "ccb.ProgramState:setUniformTexture");
+        if (ok) {
+            self->setTexture(location, slot, texture);
+        } else {
+            luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniformTexture` argument invalidate");
+        }
+        return 0;
+    }
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_ProgramState_setUniformTexture'.", &tolua_err);
+#endif
+    return 0;
+}
 
 static void extendProgramState(lua_State *tolua_S)
 {
@@ -5424,14 +5731,20 @@ static void extendProgramState(lua_State *tolua_S)
     tolua_beginmodule(tolua_S, "ProgramState");
     if (lua_istable(tolua_S, -1))
     {
-        tolua_function(tolua_S, "setUniform", lua_cocos2dx_ProgramState_setUniform);
         tolua_function(tolua_S, "getUniformLocation", lua_cocos2dx_backend_ProgramState_getUniformLocation);
+        tolua_function(tolua_S, "setUniform", lua_cocos2dx_ProgramState_setUniform);// unfriendly for Lua
+        tolua_function(tolua_S, "setUniformVec2", lua_cocos2dx_ProgramState_setUniformVec2);
+        tolua_function(tolua_S, "setUniformVec3", lua_cocos2dx_ProgramState_setUniformVec3);
+        tolua_function(tolua_S, "setUniformVec4", lua_cocos2dx_ProgramState_setUniformVec4);
+        tolua_function(tolua_S, "setUniformInt", lua_cocos2dx_ProgramState_setUniformInt);
+        tolua_function(tolua_S, "setUniformFloat", lua_cocos2dx_ProgramState_setUniformFloat);
+        tolua_function(tolua_S, "setUniformMat4", lua_cocos2dx_ProgramState_setUniformMat4);
+        tolua_function(tolua_S, "setUniformTexture", lua_cocos2dx_ProgramState_setUniformTexture);
     }
     tolua_endmodule(tolua_S);
     tolua_endmodule(tolua_S);
     //lua_pop(tolua_S, 1);
 }
-
 
 int lua_cocos2dx_AutoPolygon_generatePolygon(lua_State* tolua_S)
 {
