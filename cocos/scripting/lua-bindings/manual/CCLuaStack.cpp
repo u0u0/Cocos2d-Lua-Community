@@ -297,6 +297,40 @@ int LuaStack::executeGlobalFunction(const char* functionName)
     return executeFunction(0);
 }
 
+int LuaStack::executeGlobalFunctionWithString(const char* functionName, const char* data)
+{
+    lua_getglobal(_state, functionName);
+    
+    if (!lua_isfunction(_state, -1))
+    {
+        CCLOG("[LUA ERROR] name '%s' does not represent a Lua function", functionName);
+        lua_pop(_state, 1);
+        return 0;
+    }
+    
+    pushString(data);
+    int error = lua_pcall(_state, 1, 1, 0);
+    
+    if (error)
+    {
+        CCLOG("[LUA ERROR] %s", lua_tostring(_state, - 1));
+        lua_pop(_state, 1); // clean error message
+        return 0;
+    }
+    
+    // get return value
+    if (!lua_isnumber(_state, -1))
+    {
+        lua_pop(_state, 1);
+        return 0;
+    }
+
+    int ret = lua_tointeger(_state, -1);
+    lua_pop(_state, 1);
+    return ret;
+}
+
+
 void LuaStack::clean()
 {
     lua_settop(_state, 0);

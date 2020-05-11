@@ -145,6 +145,13 @@ public:
     virtual int executeGlobalFunction(const char* functionName);
     
     /**
+     * 执行lua的全局函数,可以带一个字符串参数
+     * @参数1 functionName,全局函数名
+     * @参数2 data,utf8字符串
+     * @返回 int值告诉被调用者结果
+     */
+    virtual int executeGlobalFunctionWithString(const char* functionName, const char* data);
+    /**
      * Set the stack top index 0.
      */
     virtual void clean();
