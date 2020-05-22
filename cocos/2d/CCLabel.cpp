@@ -56,20 +56,8 @@ namespace {
     void updateBlend(backend::BlendDescriptor &blendDescriptor, BlendFunc blendFunc)
     {
         blendDescriptor.blendEnabled = true;
-        if (blendFunc == BlendFunc::ALPHA_NON_PREMULTIPLIED)
-        {
-            blendDescriptor.sourceRGBBlendFactor = backend::BlendFactor::SRC_ALPHA;
-            blendDescriptor.destinationRGBBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-            blendDescriptor.sourceAlphaBlendFactor = backend::BlendFactor::SRC_ALPHA;
-            blendDescriptor.destinationAlphaBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        }
-        else
-        {
-            blendDescriptor.sourceRGBBlendFactor = backend::BlendFactor::ONE;
-            blendDescriptor.destinationRGBBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-            blendDescriptor.sourceAlphaBlendFactor = backend::BlendFactor::ONE;
-            blendDescriptor.destinationAlphaBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        }
+        blendDescriptor.sourceRGBBlendFactor = blendDescriptor.sourceAlphaBlendFactor = blendFunc.src;
+        blendDescriptor.destinationRGBBlendFactor = blendDescriptor.destinationAlphaBlendFactor = blendFunc.dst;
     }
 }
 

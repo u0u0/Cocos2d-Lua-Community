@@ -204,22 +204,9 @@ void DrawNode::updateBlendState(CustomCommand& cmd)
 {
     backend::BlendDescriptor& blendDescriptor = cmd.getPipelineDescriptor().blendDescriptor;
     blendDescriptor.blendEnabled = true;
-    if (_blendFunc == BlendFunc::ALPHA_NON_PREMULTIPLIED)
-    {
-        blendDescriptor.sourceRGBBlendFactor = backend::BlendFactor::SRC_ALPHA;
-        blendDescriptor.destinationRGBBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        blendDescriptor.sourceAlphaBlendFactor = backend::BlendFactor::SRC_ALPHA;
-        blendDescriptor.destinationAlphaBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        setOpacityModifyRGB(false);
-    }
-    else
-    {
-        blendDescriptor.sourceRGBBlendFactor = backend::BlendFactor::ONE;
-        blendDescriptor.destinationRGBBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        blendDescriptor.sourceAlphaBlendFactor = backend::BlendFactor::ONE;
-        blendDescriptor.destinationAlphaBlendFactor = backend::BlendFactor::ONE_MINUS_SRC_ALPHA;
-        setOpacityModifyRGB(true);
-    }
+    blendDescriptor.sourceRGBBlendFactor = blendDescriptor.sourceAlphaBlendFactor = _blendFunc.src;
+    blendDescriptor.destinationRGBBlendFactor = blendDescriptor.destinationAlphaBlendFactor = _blendFunc.dst;
+    setOpacityModifyRGB(_blendFunc != BlendFunc::ALPHA_NON_PREMULTIPLIED);
 }
 
 void DrawNode::updateUniforms(const Mat4 &transform, CustomCommand& cmd)
