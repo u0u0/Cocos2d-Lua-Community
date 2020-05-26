@@ -346,11 +346,14 @@ void FUISprite::updateRadial(void)
         _vertexIndex = (unsigned short *)malloc(triangleCount * 3 * sizeof(*_vertexIndex));
         CCASSERT(_vertexData, "FUISprite. Not enough memory");
     }
+    else
+    {
+        triangleCount = _vertexDataCount - 2;//fix crash when dynamic update 'fillAmount'
+    }
     updateColor();
 
     if (!sameIndexCount)
     {
-
         //    First we populate the array with the _midpoint, then all
         //    vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
         _vertexData[0].texCoords = textureCoordFromAlphaPoint(midpoint);
