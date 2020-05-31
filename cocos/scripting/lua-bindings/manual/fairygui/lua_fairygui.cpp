@@ -20537,6 +20537,233 @@ static int lua_register_fairygui_GLabel(lua_State* tolua_S)
     return 1;
 }
 
+static int lua_fairygui_FUIInput_getTextFormat(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_getTextFormat'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        fairygui::TextFormat* ret = cobj->getTextFormat();
+        object_to_luaval<fairygui::TextFormat>(tolua_S, "fairygui.TextFormat",(fairygui::TextFormat*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:getTextFormat",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_getTextFormat'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_FUIInput_applyTextFormat(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_applyTextFormat'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        cobj->applyTextFormat();
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:applyTextFormat",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_applyTextFormat'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_FUIInput_isSingleLine(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_isSingleLine'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        lua_pushboolean(tolua_S, cobj->isSingleLine());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:isSingleLine",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_isSingleLine'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_FUIInput_setSingleLine(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_setSingleLine'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        bool arg0;
+        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "fairygui.FUIInput:setSingleLine");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_FUIInput_setSingleLine'", nullptr);
+            return 0;
+        }
+        cobj->setSingleLine(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:setSingleLine",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_setSingleLine'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_FUIInput_isPassword(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_isPassword'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        lua_pushboolean(tolua_S, cobj->isPassword());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:isPassword",argc,0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_isPassword'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_FUIInput_setPassword(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::FUIInput* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.FUIInput",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::FUIInput*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_FUIInput_setPassword'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        bool arg0;
+        ok &= luaval_to_boolean(tolua_S, 2, &arg0, "fairygui.FUIInput:setPassword");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_FUIInput_setPassword'", nullptr);
+            return 0;
+        }
+        cobj->setPassword(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.FUIInput:setPassword",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_FUIInput_setPassword'.",&tolua_err);
+    return 0;
+#endif
+}
+
+// FUIInput is return by GTextInput:displayObject()
+static int lua_register_fairygui_FUIInput(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.FUIInput");
+    tolua_cclass(tolua_S,"FUIInput","fairygui.FUIInput","ccui.EditBox",nullptr);
+
+    tolua_beginmodule(tolua_S,"FUIInput");
+    tolua_function(tolua_S,"getTextFormat",lua_fairygui_FUIInput_getTextFormat);
+    tolua_function(tolua_S,"applyTextFormat",lua_fairygui_FUIInput_applyTextFormat);
+    tolua_function(tolua_S,"isSingleLine",lua_fairygui_FUIInput_isSingleLine);
+    tolua_function(tolua_S,"setSingleLine",lua_fairygui_FUIInput_setSingleLine);
+    tolua_function(tolua_S,"isPassword",lua_fairygui_FUIInput_isPassword);
+    tolua_function(tolua_S,"setPassword",lua_fairygui_FUIInput_setPassword);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::FUIInput).name();
+    g_luaType[typeName] = "fairygui.FUIInput";
+    g_typeCast["FUIInput"] = "fairygui.FUIInput";
+    return 1;
+}
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -20577,6 +20804,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 		lua_register_fairygui_DragDropManager(tolua_S);
         lua_register_fairygui_UIConfig(tolua_S);
         lua_register_fairygui_GLabel(tolua_S);
+        lua_register_fairygui_FUIInput(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}

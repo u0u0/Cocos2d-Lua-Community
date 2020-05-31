@@ -67,7 +67,11 @@ void FUIInput::setSingleLine(bool value)
 void FUIInput::setPassword(bool value)
 {
     _password = value;
-    setInputFlag(ui::EditBox::InputFlag::PASSWORD);
+    if (value) {
+        setInputFlag(ui::EditBox::InputFlag::PASSWORD);
+    } else {
+        setInputFlag(ui::EditBox::InputFlag::INITIAL_CAPS_ALL_CHARACTERS);
+    }
 }
 
 void FUIInput::setKeyboardType(int value)
