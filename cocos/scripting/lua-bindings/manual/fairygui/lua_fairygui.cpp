@@ -15666,8 +15666,8 @@ static int lua_fairygui_GList_set_itemProvider(lua_State* L)
         
     refid = (toluafix_ref_function(L, 2, 0));
     cobj->itemProvider = [=](int index) -> std::string {
-        lua_pushinteger(L, index);
         LuaEngine::getInstance()->getLuaStack()->pushFunctionByHandler(refid);
+        lua_pushinteger(L, index);
         int error = lua_pcall(L, 1, 1, 0); // 1 pararm, 1 return
         if (error) {
             CCLOG("[LUA ERROR] %s", lua_tostring(L, -1));
@@ -20197,6 +20197,10 @@ static int lua_register_fairygui_DragDropManager(lua_State* tolua_S)
 	return 1;
 }
 
+typedef enum {
+    UICONFIG_MUSIC
+} UIConfig_HandlerType;
+
 static int lua_fairygui_UIConfig_registerFont(lua_State* tolua_S)
 {
     int argc = 0;
@@ -20230,12 +20234,55 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_UIConfig_set_onMusicCallback(lua_State* L)
+{
+    LUA_FUNCTION refid = -1;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertable(L,1,"fairygui.UIConfig",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    if lua_isnil(L, 2) {
+        fairygui::UIConfig::onMusicCallback = nullptr;
+        // cheat, use fairygui::UIConfig::registerFont address for ref object *_*
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)fairygui::UIConfig::registerFont, (ScriptHandlerMgr::HandlerType)UICONFIG_MUSIC);
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+    if (!toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
+        goto tolua_lerror;
+#endif
+
+    refid = (toluafix_ref_function(L, 2, 0));
+    fairygui::UIConfig::onMusicCallback = [=](const std::string &path) {
+        LuaEngine::getInstance()->getLuaStack()->pushFunctionByHandler(refid);
+        lua_pushlstring(L, path.c_str(), path.length());
+        int error = lua_pcall(L, 1, 0, 0); // 1 pararm, 0 return
+        if (error) {
+            CCLOG("[LUA ERROR] %s", lua_tostring(L, -1));
+            lua_pop(L, 1); // remove error message from stack
+        }
+    };
+    ScriptHandlerMgr::getInstance()->addObjectHandler((void*)fairygui::UIConfig::registerFont, refid, (ScriptHandlerMgr::HandlerType)UICONFIG_MUSIC);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_UIConfig_set_onMusicCallback'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_register_fairygui_UIConfig(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"fairygui.UIConfig");
     tolua_cclass(tolua_S,"UIConfig","fairygui.UIConfig","",nullptr);
 
     tolua_beginmodule(tolua_S,"UIConfig");
+    // variable
+    tolua_variable(tolua_S, "onMusicCallback", nullptr, lua_fairygui_UIConfig_set_onMusicCallback);
+    // function
     tolua_function(tolua_S,"registerFont", lua_fairygui_UIConfig_registerFont);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(fairygui::DragDropManager).name();

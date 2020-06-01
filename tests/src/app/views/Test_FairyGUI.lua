@@ -20,7 +20,7 @@ function TestCase:ctor()
 		local touchPos = input:getTouch():getLocation()
 		if input:getTarget():hitTest(touchPos, cc.Camera:getVisitingCamera()) then
 			print("touch ended")
-			self.fairyRoot:release()
+			-- self.fairyRoot:release()
 		else
 			print("touch canceled")
 		end

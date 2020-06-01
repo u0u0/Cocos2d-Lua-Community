@@ -30,6 +30,7 @@ public:
     static std::string windowModalWaiting;
     static std::string popupMenu;
     static std::string popupMenu_seperator;
+    static std::function<void(const std::string& path)> onMusicCallback;
 
     static void registerFont(const std::string& aliasName, const std::string& realName);
     static const std::string& getRealFontName(const std::string& aliasName, bool* isTTF = nullptr);

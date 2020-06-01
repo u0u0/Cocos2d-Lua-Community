@@ -1,5 +1,4 @@
 #include "GRoot.h"
-//#include "AudioEngine.h"
 #include "UIConfig.h"
 #include "UIPackage.h"
 
@@ -481,8 +480,9 @@ void GRoot::playSound(const std::string& url, float volumnScale)
         return;
 
     PackageItem* pi = UIPackage::getItemByURL(url);
-//    if (pi)
-//        AudioEngine::play2d(pi->file, false, _soundVolumeScale * volumnScale);
+    if (pi && UIConfig::onMusicCallback) {
+        UIConfig::onMusicCallback(pi->file);
+    }
 }
 
 void GRoot::setSoundEnabled(bool value)

@@ -2,6 +2,10 @@ if nil == fairygui then
     return
 end
 
+fairygui.UIConfig.onMusicCallback = function(path)
+	audio.playEffectSync(path)
+end
+
 fairygui.UIEventType = {
 	Enter = 0,
 	Exit = 1,
