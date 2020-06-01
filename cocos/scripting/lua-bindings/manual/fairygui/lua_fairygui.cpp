@@ -15583,7 +15583,7 @@ static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
         return 0;
     }
 #if COCOS2D_DEBUG >= 1
-    if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
+    if (!toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
         goto tolua_lerror;
 #endif
         
@@ -15655,12 +15655,12 @@ static int lua_fairygui_GList_set_itemProvider(lua_State* L)
 #endif
 
     if lua_isnil(L, 2) {
-        cobj->itemRenderer = nullptr;
+        cobj->itemProvider = nullptr;
         ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
         return 0;
     }
 #if COCOS2D_DEBUG >= 1
-    if (toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
+    if (!toluafix_isfunction(L, 2, "LUA_FUNCTION", 0, &tolua_err))
         goto tolua_lerror;
 #endif
         
