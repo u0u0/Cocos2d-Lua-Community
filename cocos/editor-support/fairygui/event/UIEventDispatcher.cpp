@@ -215,7 +215,9 @@ bool UIEventDispatcher::isDispatchingEvent(int eventType)
 
 void UIEventDispatcher::doDispatch(int eventType, EventContext* context)
 {
-    retain();
+    if (getReferenceCount() > 0) {
+        retain();
+    }
 
     _dispatching++;
     context->_sender = this;
@@ -261,7 +263,9 @@ void UIEventDispatcher::doDispatch(int eventType, EventContext* context)
         }
     }
 
-    release();
+    if (getReferenceCount() > 0) {
+        release();
+    }
 }
 
 void UIEventDispatcher::doBubble(int eventType, EventContext* context)
