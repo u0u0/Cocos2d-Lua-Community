@@ -929,7 +929,7 @@ GObject* GComponent::hitTest(const Vec2& worldPoint, const Camera* camera)
     if (_hitArea)
     {
         Rect rect;
-        rect.size = _size;
+        rect.size = _displayObject->getContentSize();
         Vec2 localPoint = _displayObject->convertToNodeSpace(worldPoint);
         flag = rect.containsPoint(localPoint) ? 1 : 2;
 
@@ -941,7 +941,7 @@ GObject* GComponent::hitTest(const Vec2& worldPoint, const Camera* camera)
         if (((FUIContainer*)_displayObject)->isClippingEnabled())
         {
             Rect rect;
-            rect.size = _size;
+            rect.size = _displayObject->getContentSize();
             Vec2 localPoint = _displayObject->convertToNodeSpace(worldPoint);
             flag = rect.containsPoint(localPoint) ? 1 : 2;
 
@@ -1024,7 +1024,7 @@ GObject* GComponent::hitTest(const Vec2& worldPoint, const Camera* camera)
     {
         if (flag == 0)
         {
-            rect.size = _size;
+            rect.size = _displayObject->getContentSize();
             flag = rect.containsPoint(_displayObject->convertToNodeSpace(worldPoint)) ? 1 : 2;
         }
 
