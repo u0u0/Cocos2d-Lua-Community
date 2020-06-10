@@ -708,7 +708,7 @@ GObject* GObject::hitTest(const Vec2& worldPoint, const Camera* camera)
         return nullptr;
 
     Rect rect;
-    rect.size = _size;
+    rect.size = _displayObject->getContentSize();
     //if (isScreenPointInRect(worldPoint, camera, _displayObject->getWorldToNodeTransform(), rect, nullptr))
     if (rect.containsPoint(_displayObject->convertToNodeSpace(worldPoint)))
         return this;
