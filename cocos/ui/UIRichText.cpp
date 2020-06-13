@@ -1336,6 +1336,7 @@ void RichText::removeTagDescription(const std::string& tag)
 
 void RichText::openUrl(const std::string& url)
 {
+    if (url.size() == 0) return;
     if (_handleOpenUrl) {
         _handleOpenUrl(url);
     }
@@ -1423,8 +1424,8 @@ void RichText::formatText()
                             elementRenderer->addComponent(ListenerComponent::create(elementRenderer,
                                                                                     elmtImage->_url,
                                                                                     std::bind(&RichText::openUrl, this, std::placeholders::_1)));
-                            elementRenderer->setColor(element->_color);
                         }
+                        elementRenderer->setColor(element->_color);
                         break;
                     }
                     case RichElement::Type::CUSTOM:
@@ -1793,24 +1794,27 @@ void RichText::formatRenderers()
         float nextPosY = 0.0f;
         std::vector<std::pair<Vector<Node*>*, float> > rowWidthPairs;
         rowWidthPairs.reserve(_elementRenders.size());
-        for (auto& element: _elementRenders)
+        for (int i = _elementRenders.size() - 1; i >= 0; i--)
         {
+            float rowWidth = 0.0f;
             float nextPosX = 0.0f;
             float maxY = 0.0f;
+            Vector<Node *> element = _elementRenders.at(i);
             for (auto& iter : element)
             {
                 iter->setAnchorPoint(Vec2::ZERO);
                 iter->setPosition(nextPosX, nextPosY);
                 this->addProtectedChild(iter, 1);
                 Size iSize = iter->getContentSize();
-                newContentSizeWidth += iSize.width;
+                rowWidth += iSize.width;
                 nextPosX += iSize.width;
                 maxY = std::max(maxY, iSize.height);
             }
-            nextPosY -= maxY;
+            nextPosY += maxY;
+            newContentSizeWidth = std::max(newContentSizeWidth, rowWidth);
             rowWidthPairs.emplace_back(&element, nextPosX);
         }
-        this->setContentSize(Size(newContentSizeWidth, -nextPosY));
+        this->setContentSize(Size(newContentSizeWidth, nextPosY));
         for ( auto& row : rowWidthPairs )
             doHorizontalAlignment(*row.first, row.second);
     }

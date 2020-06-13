@@ -16,6 +16,7 @@ function MainScene:ctor()
 		"Test_WebSocket",
 		"Test_LuaProtobuf",
 		"Test_Spine",
+		"Test_RichText",
 	}
 
 	local scrollView = ccui.ScrollView:create()
