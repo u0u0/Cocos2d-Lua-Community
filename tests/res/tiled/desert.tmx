@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.5" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="7">
+ <tileset firstgid="1" source="desert.tsx"/>
+ <layer id="1" name="Ground" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztmNkKwjAQRaN9cAPrAq5Yq3Xf6v9/nSM2VIbQJjEZR+nDwQZScrwztoORECLySBcIgZ7nc2y4KfyWDLx+Jb9nViNgDEwY+KioAXUgQN4+zpoCMwPmQAtoAx2CLFbA2oDEo9+hwG8DnIDtF/2K8ks086Tw2zH0uyMv7HcRr/6/EvvhnsPrsrxwX7rwU/0ODig/eV3mh3N1ld8eraWPaX6+64s9McesfrqcHfg1MpoifxcVEWjukyw+9AtFPl/I71pER3Of6j4bv7HI54s+MChhqLlPdZ/P3qMmFuo5h5NnTOhjM5tReN2yT51n5/v7J3F0vi46fk+ne7aX0i9l6If7mpufTX3f5wsqv9TAD2fJLT9VrTn7UeZnM5tR+v0LMQOHXwFnxe2/warGFRWf8QDjOLfP
+  </data>
+ </layer>
+ <objectgroup id="2" name="Objects">
+  <object id="1" x="61.8519" y="1056.5" width="41.7918" height="43.4635"/>
+  <object id="2" x="88.5987" y="1153.45">
+   <point/>
+  </object>
+  <object id="3" x="140.421" y="1074.89" width="35.1051" height="43.4635">
+   <ellipse/>
+  </object>
+  <object id="4" x="212.302" y="1084.92">
+   <polygon points="0,0 75.2253,56.8369 6.68669,80.2403"/>
+  </object>
+  <object id="5" gid="31" x="157.854" y="1176.14" width="32" height="32"/>
+  <object id="6" x="137.198" y="1177.37" width="80" height="22.3906">
+   <text wrap="1" color="#800080">上图一个图块对象</text>
+  </object>
+ </objectgroup>
+</map>

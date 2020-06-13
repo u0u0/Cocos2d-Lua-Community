@@ -1,6 +1,6 @@
 local BaseLayer = require("app.scenes.BaseLayer")
 
-local TestCase = class("Test_WebSocket", BaseLayer)
+local TestCase = class("Test_RichText", BaseLayer)
 
 function TestCase:ctor()
 	self.super.ctor(self)
