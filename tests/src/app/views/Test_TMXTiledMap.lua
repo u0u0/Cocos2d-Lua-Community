@@ -18,7 +18,7 @@ function TestCase:ctor()
 	local layer = map:getLayer("Ground")
 	local gid = layer:getTileGIDAt(cc.p(6, 12))
 	local prop = map:getPropertiesForGID(gid)
-	-- POS in gid's objectgroup pos is Tiled editor pos, which CAN'T be used directly
+	-- ObjectGroup's object's pos had convert to cocos coordinate
 	dump(prop)
 end
 
