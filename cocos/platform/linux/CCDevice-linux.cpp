@@ -386,6 +386,7 @@ public:
         }
 
         FT_Face face;
+		const Color3B &fontColor = textDefinition._fontFillColor;
         std::string fontfile = getFontFile(textDefinition._fontName.c_str());
         if ( FT_New_Face(library, fontfile.c_str(), 0, &face) ) {
             //no valid font found use default
@@ -456,8 +457,8 @@ public:
                         }
 
                         int iX = xoffset + x;
-                        //FIXME:wrong text color
-                        int iTemp = cTemp << 24 | cTemp << 16 | cTemp << 8 | cTemp;
+						// set fillColor by order a|b|g|r, and NOT PremultipliedAlpha
+                        int iTemp = cTemp << 24 | fontColor.b << 16 | fontColor.g << 8 | fontColor.r;
                         *(int*) &_data[(iY + iX) * 4 + 0] = iTemp;
                     }
                 }
@@ -500,7 +501,7 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
         height = dc.iMaxLineHeight;
         dc.reset();
         ret.fastSet(dc._data,width * height * 4);
-        hasPremultipliedAlpha = true;
+        hasPremultipliedAlpha = false;
     } while (0);
 
     return ret;
