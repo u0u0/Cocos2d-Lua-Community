@@ -1,6 +1,6 @@
 # Lua Game Runner, a desktop app to debug Lua.
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 
 set(APP_NAME LuaGameRunner)
 
@@ -25,7 +25,7 @@ set(GAME_SOURCE
 # sources need to compile info, include dirs and source files
 
 if(LINUX)
-	# list(APPEND GAME_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/proj.linux/main.cpp)
+	list(APPEND GAME_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/proj.linux/main.cpp)
 elseif(WINDOWS)
 	list(APPEND GAME_HEADER
 		${CMAKE_CURRENT_SOURCE_DIR}/proj.win32/getopt.h

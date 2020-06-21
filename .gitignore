@@ -1,2 +1,3 @@
 tools/runner/bin
 tools/runner/build_mac
+/tools/runner/build_linux

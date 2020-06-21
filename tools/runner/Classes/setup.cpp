@@ -144,11 +144,15 @@ std::string CommandSetup::makeCommand(void)
     stream << " -s ";
     stream << _scale;
     
-    stream << " -g ";
-    stream << _gameRootPath;
+    if (_gameRootPath.size() > 0) {
+        stream << " -g ";
+        stream << _gameRootPath;
+    }
     
-    stream << " -r ";
-    stream << _writePath;
+    if (_writePath.size() > 0) {
+        stream << " -r ";
+        stream << _writePath;
+    }
     
     if (_logToFile) {
         stream << " -l";
