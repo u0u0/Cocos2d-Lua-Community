@@ -568,7 +568,8 @@ void Renderer::drawBatchedTriangles()
     _triBatchesToDraw[0].cmd = nullptr;
     
     int batchesTotal = 0;
-    int prevMaterialID = -1;
+    uint32_t prevMaterialID = 0;
+    bool isValidMaterialID = false;
     bool firstCommand = true;
 
     _filledVertex = 0;
@@ -582,7 +583,7 @@ void Renderer::drawBatchedTriangles()
         fillVerticesAndIndices(cmd, vertexBufferFillOffset);
         
         // in the same batch ?
-        if (batchable && (prevMaterialID == currentMaterialID || firstCommand))
+        if (batchable && ((isValidMaterialID && prevMaterialID == currentMaterialID) || firstCommand))
         {
             CC_ASSERT((firstCommand || _triBatchesToDraw[batchesTotal].cmd->getMaterialID() == cmd->getMaterialID()) && "argh... error in logic");
             _triBatchesToDraw[batchesTotal].indicesToDraw += cmd->getIndexCount();
@@ -603,7 +604,7 @@ void Renderer::drawBatchedTriangles()
             
             // is this a single batch ? Prevent creating a batch group then
             if (!batchable)
-                currentMaterialID = -1;
+                isValidMaterialID = false;
         }
         
         // capacity full ?
@@ -614,6 +615,7 @@ void Renderer::drawBatchedTriangles()
         }
         
         prevMaterialID = currentMaterialID;
+        isValidMaterialID = true;
         firstCommand = false;
     }
     batchesTotal++;
