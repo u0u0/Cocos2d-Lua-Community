@@ -57,14 +57,46 @@ static void relaunchSelf(std::string &cmdLine)
     exit(0);
 }
 
+static void setupMenu()
+{
+    // custom app MainMenu
+    NSMenu *menubar = [[NSMenu new] autorelease];
+    [NSApp setMainMenu:menubar];
+    
+    // LuaGameRunner
+    NSMenuItem *appMenuItem = [[NSMenuItem new] autorelease];
+    [menubar addItem:appMenuItem];
+    NSMenu *appMenu = [[NSMenu new] autorelease];
+    [appMenuItem setSubmenu:appMenu];
+    // LuaGameRunner -> About
+    NSMenuItem *aboutMenuItem = [[[NSMenuItem alloc] initWithTitle:@"About"
+        action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""] autorelease];
+    [appMenu addItem:aboutMenuItem];
+    // LuaGameRunner -> Quit LuaGameRunner
+    NSString *appName = [[NSProcessInfo processInfo] processName];
+    NSMenuItem *quitMenuItem = [[[NSMenuItem alloc] initWithTitle:[@"Quit " stringByAppendingString:appName]
+        action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+    [appMenu addItem:quitMenuItem];
+    
+    // Edit
+    NSMenuItem *editMenuItem = [[NSMenuItem new] autorelease];
+    [menubar addItem:editMenuItem];
+    NSMenu *editMenu = [[NSMenu new] autorelease];
+    editMenu.title = @"Edit";
+    [editMenuItem setSubmenu:editMenu];
+    // Edit -> copy
+    NSMenuItem *cpoyMenuItem = [[[NSMenuItem alloc] initWithTitle:@"Copy"
+        action:@selector(copy:) keyEquivalent:@"c"] autorelease];
+    [editMenu addItem:cpoyMenuItem];
+    // Edit -> Select All
+    NSMenuItem *selectAllMenuItem = [[[NSMenuItem alloc] initWithTitle:@"Select All"
+        action:@selector(selectAll:) keyEquivalent:@"a"] autorelease];
+    [editMenu addItem:selectAllMenuItem];
+}
+
 int main(int argc, char *argv[])
 {
     AppDelegate app;
-    
-#ifdef USE_CONSOLE_WINDOW
-    ConsoleWindowController *consoleController = [[ConsoleWindowController alloc] initWithWindowNibName:@"ConsoleWindow"];
-    [consoleController.window orderFrontRegardless];
-#endif
     
     CommandSetup *cmd = CommandSetup::getInstance();
     cmd->setRelauncher(relaunchSelf);
@@ -72,10 +104,18 @@ int main(int argc, char *argv[])
     cmd->parseCommand(argc, argv);
     cmd->setupEngine();
     
+#ifdef USE_CONSOLE_WINDOW
+    // create after GLView inited
+    ConsoleWindowController *consoleController = [[ConsoleWindowController alloc] initWithWindowNibName:@"ConsoleWindow"];
+    [consoleController.window orderFrontRegardless];
+#endif
+
     std::string logPath = cmd->getLogPath();
     if (logPath.size() > 0) {
         [consoleController openLogToFile:logPath.c_str()];
     }
+    
+    setupMenu();// after GLView inited
 
     return Application::getInstance()->run();
 }
