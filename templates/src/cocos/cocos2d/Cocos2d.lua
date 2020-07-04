@@ -74,14 +74,7 @@ function cc.pToAngleSelf(self)
 end
 
 function cc.pGetAngle(self,other)
-    local a2 = cc.pNormalize(self)
-    local b2 = cc.pNormalize(other)
-    local angle = math.atan2(cc.pCross(a2, b2), cc.pDot(a2, b2) )
-    if math.abs(angle) < 1.192092896e-7 then
-        return 0.0
-    end
-
-    return angle
+    return math.atan2(other.y - self.y, other.x - self.x)
 end
 
 function cc.pGetDistance(startP,endP)
@@ -201,9 +194,8 @@ function cc.rect(_x,_y,_width,_height)
 end
 
 function cc.rectEqualToRect(rect1,rect2)
-    if ((rect1.x >= rect2.x) or (rect1.y >= rect2.y) or
-        ( rect1.x + rect1.width <= rect2.x + rect2.width) or
-        ( rect1.y + rect1.height <= rect2.y + rect2.height)) then
+    if ((rect1.x ~= rect2.x) or (rect1.y ~= rect2.y) or
+        (rect1.width ~= rect2.width) or (rect1.height ~= rect2.height)) then
         return false
     end
 
@@ -243,6 +235,16 @@ function cc.rectContainsPoint( rect, point )
     end
 
     return ret
+end
+
+function cc.rectContainsRect(rect1,rect2)
+    if ((rect1.x <= rect2.x) and (rect1.y <= rect2.y) and
+        (rect1.x + rect1.width >= rect2.x + rect2.width) and
+        (rect1.y + rect1.height >= rect2.y + rect2.height)) then
+        return true
+    end
+
+    return false
 end
 
 function cc.rectIntersectsRect( rect1, rect2 )
