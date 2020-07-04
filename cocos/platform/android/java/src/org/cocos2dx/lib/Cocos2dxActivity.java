@@ -358,16 +358,16 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         }
     }
 
-    private void initPermission() {
+	private void initPermission() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String allpermissions[] = {Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE};
-            String permissions[] = {};
+            ArrayList<String> permissions = new ArrayList<String>();
             boolean needPop = false;
 
             for (String permission : allpermissions) {
                 if (PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(this, permission)) {
                     if (shouldShowRequestPermissionRationale(permission)) {
-                        permissions[permissions.length] = permission;
+                        permissions.add(permission);
                     } else {
                         needPop = true;
                     }
@@ -424,8 +424,8 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
                 return;
             }
 
-            if (permissions.length > 0) {
-                this.requestPermissions(permissions, 1001);
+            if (permissions.size() > 0) {
+                this.requestPermissions(permissions.toArray(new String[permissions.size()]), 1001);
                 return;
             }
         }
