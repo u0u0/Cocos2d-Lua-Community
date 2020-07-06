@@ -53,6 +53,8 @@ import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
 import org.cocos2dx.utils.PSNetwork;
 import org.cocos2dx.utils.PSDevice;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;

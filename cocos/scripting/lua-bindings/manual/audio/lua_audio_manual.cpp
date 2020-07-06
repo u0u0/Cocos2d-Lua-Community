@@ -78,6 +78,18 @@ static int lnewSource(lua_State * L)
     return 1;// number of return values
 }
 
+static int lpause(lua_State * L)
+{
+    RDAudio::getInstance()->pause();
+    return 0;
+}
+
+static int lresume(lua_State * L)
+{
+    RDAudio::getInstance()->resume();
+    return 0;
+}
+
 /******************** for buffer metatable ********************/
 static int lBufferGC(lua_State *L)
 {
@@ -228,6 +240,8 @@ static const struct luaL_Reg meta_source [] = {
 static const struct luaL_Reg audio_funcs [] = {
     {"newBuffer", lnewBuffer},
     {"newSource", lnewSource},
+    {"pause", lpause},
+    {"resume", lresume},
     {NULL, NULL}
 };
 
