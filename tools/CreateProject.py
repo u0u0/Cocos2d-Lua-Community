@@ -138,7 +138,6 @@ def createProject(packageName, outputDir, isLandscape, needCopyCocos2d):
         os.mkdir(joinDir(outputDir, "frameworks", "cocos2d-x"))
         for dirName in ["cmake", "cocos", "extensions", "external"]:
             shutil.copytree(joinDir(engineRoot, dirName), joinDir(outputDir, "frameworks", "cocos2d-x", dirName))
-        copyFile(joinDir(engineRoot, "cocos", "scripting", "lua-bindings", "manual", "lua_module_register.h"), joinDir(outputDir, "frameworks", "runtime-src", "Classes", "lua_module_register.h"))
     print("====> Done.")
 
 if __name__ == "__main__":
