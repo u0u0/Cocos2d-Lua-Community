@@ -95,7 +95,7 @@ PB_NS_BEGIN
     X(sint32,   int32_t,  'j')  X(sint64,   int64_t,  'J') \
 
 typedef enum pb_WireType {
-#define X(id, name, fmt) PB_T##id,
+#define X(id,name,fmt) PB_T##id,
     PB_WIRETYPES(X)
 #undef  X
     PB_TWIRECOUNT
@@ -103,7 +103,7 @@ typedef enum pb_WireType {
 
 typedef enum pb_FieldType {
     PB_TNONE,
-#define X(name, type, fmt) PB_T##name,
+#define X(name,type,fmt) PB_T##name,
     PB_TYPES(X)
 #undef  X
     PB_TYPECOUNT
@@ -125,19 +125,21 @@ PB_API double   pb_decode_double (uint64_t v);
 
 /* decode */
 
-typedef struct pb_Slice { const char *p, *end; } pb_Slice;
-#define pb_gettype(v)       ((v) &  7)
-#define pb_gettag(v)        ((v) >> 3)
-#define pb_pair(tag, type)  ((tag) << 3 | ((type) & 7))
+typedef struct pb_Slice { const char *p, *start, *end; } pb_Slice;
+#define pb_gettype(v)      ((v) &  7)
+#define pb_gettag(v)       ((v) >> 3)
+#define pb_pair(tag,type)  ((tag) << 3 | ((type) & 7))
 
 PB_API pb_Slice pb_slice  (const char *p);
 PB_API pb_Slice pb_lslice (const char *p, size_t len);
-PB_API size_t   pb_len    (pb_Slice s);
+
+PB_API size_t pb_pos (const pb_Slice s);
+PB_API size_t pb_len (const pb_Slice s);
 
 PB_API size_t pb_readvarint32 (pb_Slice *s, uint32_t *pv);
 PB_API size_t pb_readvarint64 (pb_Slice *s, uint64_t *pv);
-PB_API size_t pb_readfixed32 (pb_Slice *s, uint32_t *pv);
-PB_API size_t pb_readfixed64 (pb_Slice *s, uint64_t *pv);
+PB_API size_t pb_readfixed32  (pb_Slice *s, uint32_t *pv);
+PB_API size_t pb_readfixed64  (pb_Slice *s, uint64_t *pv);
 
 PB_API size_t pb_readslice (pb_Slice *s, size_t len, pb_Slice *pv);
 PB_API size_t pb_readbytes (pb_Slice *s, pb_Slice *pv);
@@ -174,16 +176,16 @@ typedef struct pb_Buffer {
     } u;
 } pb_Buffer;
 
-#define pb_onheap(b)      ((b)->heap)
-#define pb_bufflen(b)     ((b)->size)
-#define pb_buffer(b)      (pb_onheap(b) ? (b)->u.h.buff : (b)->u.buff)
-#define pb_addsize(b, sz) ((void)((b)->size += (unsigned)(sz)))
+#define pb_onheap(b)     ((b)->heap)
+#define pb_bufflen(b)    ((b)->size)
+#define pb_buffer(b)     (pb_onheap(b) ? (b)->u.h.buff : (b)->u.buff)
+#define pb_addsize(b,sz) ((void)((b)->size += (unsigned)(sz)))
 
 PB_API void  pb_initbuffer   (pb_Buffer *b);
 PB_API void  pb_resetbuffer  (pb_Buffer *b);
 PB_API char *pb_prepbuffsize (pb_Buffer *b, size_t len);
 
-PB_API pb_Slice pb_result (pb_Buffer *b);
+PB_API pb_Slice pb_result (const pb_Buffer *b);
 
 PB_API size_t pb_addvarint32 (pb_Buffer *b, uint32_t v);
 PB_API size_t pb_addvarint64 (pb_Buffer *b, uint64_t v);
@@ -199,15 +201,16 @@ PB_API size_t pb_addlength (pb_Buffer *b, size_t len);
 
 typedef struct pb_State pb_State;
 typedef struct pb_Name  pb_Name;
+typedef struct pb_Cache pb_Cache;
 
 PB_API void pb_init (pb_State *S);
 PB_API void pb_free (pb_State *S);
 
-PB_API pb_Name *pb_newname (pb_State *S, pb_Slice    s);
-PB_API void     pb_delname (pb_State *S, pb_Name    *name);
-PB_API pb_Name *pb_name    (pb_State *S, pb_Slice    s);
-
+PB_API pb_Name *pb_newname (pb_State *S, pb_Slice s, pb_Cache *cache);
+PB_API void     pb_delname (pb_State *S, pb_Name *name);
 PB_API pb_Name *pb_usename (pb_Name *name);
+
+PB_API const pb_Name *pb_name (const pb_State *S, pb_Slice s, pb_Cache *cache);
 
 
 /* type info */
@@ -226,14 +229,14 @@ PB_API void      pb_deltype  (pb_State *S, pb_Type *t);
 PB_API pb_Field *pb_newfield (pb_State *S, pb_Type *t, pb_Name *fname, int32_t number);
 PB_API void      pb_delfield (pb_State *S, pb_Type *t, pb_Field *f);
 
-PB_API pb_Type  *pb_type   (pb_State *S, pb_Name *tname);
-PB_API pb_Field *pb_fname  (pb_Type *t,  pb_Name *tname);
-PB_API pb_Field *pb_field  (pb_Type *t,  int32_t number);
+PB_API const pb_Type  *pb_type  (const pb_State *S, const pb_Name *tname);
+PB_API const pb_Field *pb_fname (const pb_Type *t,  const pb_Name *tname);
+PB_API const pb_Field *pb_field (const pb_Type *t,  int32_t number);
 
-PB_API pb_Name *pb_oneofname (pb_Type *t, int oneof_index);
+PB_API const pb_Name *pb_oneofname (const pb_Type *t, int oneof_index);
 
-PB_API int pb_nexttype  (pb_State *S, pb_Type **ptype);
-PB_API int pb_nextfield (pb_Type *t, pb_Field **pfield);
+PB_API int pb_nexttype  (const pb_State *S, const pb_Type **ptype);
+PB_API int pb_nextfield (const pb_Type *t, const pb_Field **pfield);
 
 
 /* util: memory pool */
@@ -263,9 +266,10 @@ PB_API void pb_freetable (pb_Table *t);
 
 PB_API size_t pb_resizetable (pb_Table *t, size_t size);
 
-PB_API pb_Entry *pb_gettable (pb_Table *t, pb_Key key);
+PB_API pb_Entry *pb_gettable (const pb_Table *t, pb_Key key);
 PB_API pb_Entry *pb_settable (pb_Table *t, pb_Key key);
-PB_API int pb_nextentry (pb_Table *t, pb_Entry **pentry);
+
+PB_API int pb_nextentry (const pb_Table *t, const pb_Entry **pentry);
 
 struct pb_Table {
     unsigned  size;
@@ -283,8 +287,7 @@ struct pb_Entry {
 
 /* fields */
 
-#define PB_NAMECACHE_LSIZE (5)
-#define pb_NAMECACHE_SIZE  (1<<PB_NAMECACHE_LSIZE)
+#define PB_CACHE_SIZE  (53)
 
 typedef struct pb_NameEntry {
     struct pb_NameEntry *next;
@@ -299,13 +302,17 @@ typedef struct pb_NameTable {
     pb_NameEntry **hash;
 } pb_NameTable;
 
-typedef struct pb_NameCache {
+typedef struct pb_CacheSlot {
     const char *name;
     unsigned    hash;
-} pb_NameCache;
+} pb_CacheSlot;
+
+struct pb_Cache {
+    pb_CacheSlot slots[PB_CACHE_SIZE][2];
+    unsigned     hash;
+};
 
 struct pb_State {
-    pb_NameCache namecache[pb_NAMECACHE_SIZE];
     pb_NameTable nametable;
     pb_Table     types;
     pb_Pool      typepool;
@@ -327,14 +334,14 @@ struct pb_Field {
 struct pb_Type {
     pb_Name    *name;
     const char *basename;
-    pb_Table    field_tags;
-    pb_Table    field_names;
-    pb_Table    oneof_index;
-    unsigned    field_count : 28;
-    unsigned    is_enum   : 1;
-    unsigned    is_map    : 1;
-    unsigned    is_proto3 : 1;
-    unsigned    is_dead   : 1;
+    pb_Table field_tags;
+    pb_Table field_names;
+    pb_Table oneof_index;
+    unsigned field_count : 28;
+    unsigned is_enum   : 1;
+    unsigned is_map    : 1;
+    unsigned is_proto3 : 1;
+    unsigned is_dead   : 1;
 };
 
 
@@ -392,13 +399,10 @@ PB_API double pb_decode_double(uint64_t value)
 /* decode */
 
 PB_API pb_Slice pb_slice(const char *s)
-{ return pb_lslice(s, strlen(s)); }
+{ return s ? pb_lslice(s, strlen(s)) : pb_lslice(NULL, 0); }
 
-PB_API pb_Slice pb_lslice(const char *s, size_t len)
-{ pb_Slice slice; slice.p = s; slice.end = s + len; return slice; }
-
-PB_API size_t pb_len(pb_Slice s)
-{ return s.end - s.p; }
+PB_API size_t pb_pos(const pb_Slice s) { return s.p - s.start; }
+PB_API size_t pb_len(const pb_Slice s) { return s.end - s.p; }
 
 static size_t pb_readvarint_slow(pb_Slice *s, uint64_t *pv) {
     const char *p = s->p;
@@ -457,6 +461,13 @@ static size_t pb_readvarint64_fallback(pb_Slice *s, uint64_t *pv) {
     return p - o;
 }
 
+PB_API pb_Slice pb_lslice(const char *s, size_t len) {
+    pb_Slice slice;
+    slice.start = slice.p = s;
+    slice.end = s + len;
+    return slice;
+}
+
 PB_API size_t pb_readvarint32(pb_Slice *s, uint32_t *pv) {
     uint64_t u64;
     size_t ret;
@@ -508,8 +519,9 @@ PB_API size_t pb_readfixed64(pb_Slice *s, uint64_t *pv) {
 PB_API size_t pb_readslice(pb_Slice *s, size_t len, pb_Slice *pv) {
     if (pb_len(*s) < len)
         return 0;
-    pv->p   = s->p;
-    pv->end = s->p + len;
+    pv->start = s->start;
+    pv->p     = s->p;
+    pv->end   = s->p + len;
     s->p = pv->end;
     return len;
 }
@@ -521,6 +533,7 @@ PB_API size_t pb_readbytes(pb_Slice *s, pb_Slice *pv) {
         s->p = p;
         return 0;
     }
+    pv->start = s->start;
     pv->p   = s->p;
     pv->end = s->p + len;
     s->p = pv->end;
@@ -536,6 +549,7 @@ PB_API size_t pb_readgroup(pb_Slice *s, uint32_t tag, pb_Slice *pv) {
         if (pb_gettype(newtag) == PB_TGEND) {
             if (pb_gettag(newtag) != pb_gettag(tag))
                 break;
+            pv->start = s->start;
             pv->p = p;
             pv->end = s->p - count;
             return s->p - p;
@@ -613,7 +627,7 @@ PB_API int pb_wtypebytype(int type) {
 
 PB_API const char *pb_wtypename(int wiretype, const char *def) {
     switch (wiretype) {
-#define X(id, name, fmt) case PB_T##id: return name;
+#define X(id,name,fmt) case PB_T##id: return name;
         PB_WIRETYPES(X)
 #undef  X
     default: return def ? def : "<unknown>";
@@ -622,7 +636,7 @@ PB_API const char *pb_wtypename(int wiretype, const char *def) {
 
 PB_API const char *pb_typename(int type, const char *def) {
     switch (type) {
-#define X(name, type, fmt) case PB_T##name: return #name;
+#define X(name,type,fmt) case PB_T##name: return #name;
         PB_TYPES(X)
 #undef  X
     default: return def ? def : "<unknown>";
@@ -631,7 +645,7 @@ PB_API const char *pb_typename(int type, const char *def) {
 
 PB_API int pb_typebyname(const char *name, int def) {
     static struct entry { const char *name; int value; } names[] = {
-#define X(name, type, fmt) { #name, PB_T##name },
+#define X(name,type,fmt) { #name, PB_T##name },
         PB_TYPES(X)
 #undef  X
         { NULL, 0 }
@@ -645,7 +659,7 @@ PB_API int pb_typebyname(const char *name, int def) {
 
 PB_API int pb_wtypebyname(const char *name, int def) {
     static struct entry { const char *name; int value; } names[] = {
-#define X(id, name, fmt) { name, PB_T##id },
+#define X(id,name,fmt) { name, PB_T##id },
         PB_WIRETYPES(X)
 #undef  X
         { NULL, 0 }
@@ -660,7 +674,7 @@ PB_API int pb_wtypebyname(const char *name, int def) {
 
 /* encode */
 
-PB_API pb_Slice pb_result(pb_Buffer *b)
+PB_API pb_Slice pb_result(const pb_Buffer *b)
 { pb_Slice slice = pb_lslice(pb_buffer(b), b->size); return slice; }
 
 PB_API void pb_initbuffer(pb_Buffer *b)
@@ -832,8 +846,8 @@ PB_API void pb_poolfree(pb_Pool *pool, void *obj)
 
 /* hash table */
 
-#define pbT_offset(a, b) ((char*)(a) - (char*)(b))
-#define pbT_index(a, b)  ((pb_Entry*)((char*)(a) + (b)))
+#define pbT_offset(a,b) ((char*)(a) - (char*)(b))
+#define pbT_index(a,b)  ((pb_Entry*)((char*)(a) + (b)))
 
 PB_API void pb_inittable(pb_Table *t, size_t entrysize)
 { memset(t, 0, sizeof(pb_Table)), t->entry_size = (unsigned)entrysize; }
@@ -841,7 +855,7 @@ PB_API void pb_inittable(pb_Table *t, size_t entrysize)
 PB_API void pb_freetable(pb_Table *t)
 { free(t->hash); pb_inittable(t, t->entry_size); }
 
-static pb_Entry *pbT_hash(pb_Table *t, pb_Key key) {
+static pb_Entry *pbT_hash(const pb_Table *t, pb_Key key) {
     size_t h = ((size_t)key*2654435761U)&(t->size-1);
     if (key && h == 0) h = 1;
     return pbT_index(t->hash, h*t->entry_size);
@@ -849,7 +863,7 @@ static pb_Entry *pbT_hash(pb_Table *t, pb_Key key) {
 
 static pb_Entry *pbT_newkey(pb_Table *t, pb_Key key) {
     pb_Entry *mp, *on, *next, *f = NULL;
-    if (t->size == 0 && pb_resizetable(t, t->size*2) == 0) return NULL;
+    if (t->size == 0 && pb_resizetable(t, (size_t)t->size*2) == 0) return NULL;
     if (key == 0) {
         mp = t->hash;
         t->has_zero = 1;
@@ -858,7 +872,7 @@ static pb_Entry *pbT_newkey(pb_Table *t, pb_Key key) {
             pb_Entry *cur = pbT_index(t->hash, t->lastfree -= t->entry_size);
             if (cur->key == 0 && cur->next == 0) { f = cur; break; }
         }
-        if (f == NULL) return pb_resizetable(t, t->size*2) ?
+        if (f == NULL) return pb_resizetable(t, (size_t)t->size*2u) ?
             pbT_newkey(t, key) : NULL;
         if ((on = pbT_hash(t, mp->key)) != mp) {
             while ((next = pbT_index(on, on->next)) != mp) on = next;
@@ -901,7 +915,7 @@ PB_API size_t pb_resizetable(pb_Table *t, size_t size) {
     return newsize;
 }
 
-PB_API pb_Entry *pb_gettable(pb_Table *t, pb_Key key) {
+PB_API pb_Entry *pb_gettable(const pb_Table *t, pb_Key key) {
     pb_Entry *entry;
     if (t == NULL || t->size == 0)
         return NULL;
@@ -921,9 +935,9 @@ PB_API pb_Entry *pb_settable(pb_Table *t, pb_Key key) {
     return pbT_newkey(t, key);
 }
 
-PB_API int pb_nextentry(pb_Table *t, pb_Entry **pentry) {
+PB_API int pb_nextentry(const pb_Table *t, const pb_Entry **pentry) {
     size_t i = *pentry ? pbT_offset(*pentry, t->hash) : 0;
-    size_t size = t->size*t->entry_size;
+    size_t size = (size_t)t->size*t->entry_size;
     if (*pentry == NULL && t->has_zero) {
         *pentry = t->hash;
         return 1;
@@ -1005,10 +1019,10 @@ static pb_NameEntry *pbN_newname(pb_State *S, pb_Slice s, unsigned hash) {
     list = &nt->hash[hash & (nt->size - 1)];
     newobj = (pb_NameEntry*)malloc(sizeof(pb_NameEntry) + len + 1);
     if (newobj == NULL) return NULL;
-    newobj->next = *list;
-    newobj->length = (unsigned)len;
-    newobj->refcount = 1;
-    newobj->hash = hash;
+    newobj->next     = *list;
+    newobj->length   = (unsigned)len;
+    newobj->refcount = 0;
+    newobj->hash     = hash;
     memcpy(newobj+1, s.p, len);
     ((char*)(newobj+1))[len] = '\0';
     *list = newobj;
@@ -1031,8 +1045,8 @@ static void pbN_delname(pb_State *S, pb_NameEntry *name) {
     }
 }
 
-static pb_NameEntry *pbN_getname(pb_State *S, pb_Slice s, unsigned hash) {
-    pb_NameTable *nt = &S->nametable;
+static pb_NameEntry *pbN_getname(const pb_State *S, pb_Slice s, unsigned hash) {
+    const pb_NameTable *nt = &S->nametable;
     size_t len = pb_len(s);
     if (nt->hash) {
         pb_NameEntry *entry = nt->hash[hash & (nt->size - 1)];
@@ -1040,30 +1054,6 @@ static pb_NameEntry *pbN_getname(pb_State *S, pb_Slice s, unsigned hash) {
             if (entry->hash == hash && entry->length == len
                     && memcmp(s.p, entry + 1, len) == 0)
                 return entry;
-    }
-    return NULL;
-}
-
-static pb_NameEntry *pbN_cache(pb_State *S, pb_Slice s, pb_NameCache **pslot) {
-    pb_NameEntry *entry = NULL;
-    size_t cidx = ((uintptr_t)s.p*2654435761U)&(pb_NAMECACHE_SIZE-1);
-    *pslot = &S->namecache[cidx];
-    if ((*pslot)->name == s.p)
-        entry = pbN_getname(S, s, (*pslot)->hash);
-    return entry;
-}
-
-PB_API pb_Name *pb_newname(pb_State *S, pb_Slice s) {
-    if (s.p != NULL) {
-        pb_NameCache *slot;
-        pb_NameEntry *entry = pbN_cache(S, s, &slot);
-        if (entry) return pb_usename((pb_Name*)(entry + 1));
-        slot->name = s.p;
-        slot->hash = pbN_calchash(s);
-        entry = pbN_getname(S, s, slot->hash);
-        if (entry) return pb_usename((pb_Name*)(entry + 1));
-        entry = pbN_newname(S, s, slot->hash);
-        return entry ? (pb_Name*)(entry + 1) : NULL;
     }
     return NULL;
 }
@@ -1076,17 +1066,43 @@ PB_API void pb_delname(pb_State *S, pb_Name *name) {
     }
 }
 
-PB_API pb_Name *pb_name(pb_State *S, pb_Slice s) {
-    if (s.p != NULL) {
-        pb_NameCache *slot;
-        pb_NameEntry *entry = pbN_cache(S, s, &slot);
-        if (entry) return (pb_Name*)(entry + 1);
-        slot->name = s.p;
-        slot->hash = pbN_calchash(s);
-        entry = pbN_getname(S, s, slot->hash);
-        return entry ? (pb_Name*)(entry + 1) : NULL;
+PB_API pb_Name *pb_newname(pb_State *S, pb_Slice s, pb_Cache *cache) {
+    pb_NameEntry *entry;
+    if (s.p == NULL) return NULL;
+    (void)cache;
+    assert(cache == NULL);
+    /* if (cache == NULL) */{
+        unsigned hash = pbN_calchash(s);
+        entry = pbN_getname(S, s, hash);
+        if (entry == NULL) entry = pbN_newname(S, s, hash);
+    }/* else {
+        pb_Name *name = (pb_Name*)pb_name(S, s, cache);
+        if (name) return pb_usename(name);
+        entry = pbN_newname(S, s, cache->hash);
+    }*/
+    return entry ? pb_usename((pb_Name*)(entry + 1)) : NULL;
+}
+
+PB_API const pb_Name *pb_name(const pb_State *S, pb_Slice s, pb_Cache *cache) {
+    pb_NameEntry *entry = NULL;
+    pb_CacheSlot *slot;
+    if (s.p == NULL) return NULL;
+    if (cache == NULL)
+        entry = pbN_getname(S, s, pbN_calchash(s));
+    else {
+        slot = cache->slots[((uintptr_t)s.p*2654435761U)%PB_CACHE_SIZE];
+        if (slot[0].name == s.p)
+            entry = pbN_getname(S, s, cache->hash = slot[0].hash);
+        else if (slot[1].name == s.p)
+            entry = pbN_getname(S, s, cache->hash = (++slot)[0].hash);
+        else
+            slot[1] = slot[0], slot[0].name = s.p;
+        if (entry == NULL) {
+            cache->hash = slot[0].hash = pbN_calchash(s);
+            entry = pbN_getname(S, s, slot[0].hash);
+        }
     }
-    return NULL;
+    return entry ? (pb_Name*)(entry + 1) : NULL;
 }
 
 
@@ -1109,9 +1125,9 @@ PB_API void pb_init(pb_State *S) {
 }
 
 PB_API void pb_free(pb_State *S) {
-    pb_TypeEntry *te = NULL;
+    const pb_TypeEntry *te = NULL;
     if (S == NULL) return;
-    while (pb_nextentry(&S->types, (pb_Entry**)&te))
+    while (pb_nextentry(&S->types, (const pb_Entry**)&te))
         if (te->value != NULL) pb_deltype(S, te->value);
     pb_freetable(&S->types);
     pb_freepool(&S->typepool);
@@ -1119,38 +1135,38 @@ PB_API void pb_free(pb_State *S) {
     pbN_free(S);
 }
 
-PB_API pb_Type *pb_type(pb_State *S, pb_Name *tname) {
+PB_API const pb_Type *pb_type(const pb_State *S, const pb_Name *tname) {
     pb_TypeEntry *te = NULL;
     if (S != NULL && tname != NULL)
         te = (pb_TypeEntry*)pb_gettable(&S->types, (pb_Key)tname);
     return te && !te->value->is_dead ? te->value : NULL;
 }
 
-PB_API pb_Field *pb_fname(pb_Type *t, pb_Name *name) {
+PB_API const pb_Field *pb_fname(const pb_Type *t, const pb_Name *name) {
     pb_FieldEntry *fe = NULL;
     if (t != NULL && name != NULL)
         fe = (pb_FieldEntry*)pb_gettable(&t->field_names, (pb_Key)name);
     return fe ? fe->value : NULL;
 }
 
-PB_API pb_Field *pb_field(pb_Type *t, int32_t number) {
+PB_API const pb_Field *pb_field(const pb_Type *t, int32_t number) {
     pb_FieldEntry *fe = NULL;
     if (t != NULL) fe = (pb_FieldEntry*)pb_gettable(&t->field_tags, number);
     return fe ? fe->value : NULL;
 }
 
-PB_API pb_Name *pb_oneofname(pb_Type *t, int idx) {
+PB_API const pb_Name *pb_oneofname(const pb_Type *t, int idx) {
     pb_OneofEntry *oe = NULL;
     if (t != NULL) oe = (pb_OneofEntry*)pb_gettable(&t->oneof_index, idx);
     return oe ? oe->name : NULL;
 }
 
-PB_API int pb_nexttype(pb_State *S, pb_Type **ptype) {
-    pb_TypeEntry *e = NULL;
+PB_API int pb_nexttype(const pb_State *S, const pb_Type **ptype) {
+    const pb_TypeEntry *e = NULL;
     if (S != NULL) {
         if (*ptype != NULL)
             e = (pb_TypeEntry*)pb_gettable(&S->types, (pb_Key)(*ptype)->name);
-        while (pb_nextentry(&S->types, (pb_Entry**)&e))
+        while (pb_nextentry(&S->types, (const pb_Entry**)&e))
             if ((*ptype = e->value) != NULL && !(*ptype)->is_dead)
                 return 1;
     }
@@ -1158,12 +1174,12 @@ PB_API int pb_nexttype(pb_State *S, pb_Type **ptype) {
     return 0;
 }
 
-PB_API int pb_nextfield(pb_Type *t, pb_Field **pfield) {
-    pb_FieldEntry *e = NULL;
+PB_API int pb_nextfield(const pb_Type *t, const pb_Field **pfield) {
+    const pb_FieldEntry *e = NULL;
     if (t != NULL) {
         if (*pfield != NULL)
             e = (pb_FieldEntry*)pb_gettable(&t->field_tags, (*pfield)->number);
-        while (pb_nextentry(&t->field_tags, (pb_Entry**)&e))
+        while (pb_nextentry(&t->field_tags, (const pb_Entry**)&e))
             if ((*pfield = e->value) != NULL)
                 return 1;
     }
@@ -1212,7 +1228,7 @@ PB_API void pb_deltype(pb_State *S, pb_Type *t) {
     pb_FieldEntry *nf = NULL;
     pb_OneofEntry *ne = NULL;
     if (S == NULL || t == NULL) return;
-    while (pb_nextentry(&t->field_names, (pb_Entry**)&nf)) {
+    while (pb_nextentry(&t->field_names, (const pb_Entry**)&nf)) {
         if (nf->value != NULL) {
             pb_FieldEntry *of = (pb_FieldEntry*)pb_gettable(
                     &t->field_tags, nf->value->number);
@@ -1221,9 +1237,9 @@ PB_API void pb_deltype(pb_State *S, pb_Type *t) {
             pbT_freefield(S, nf->value);
         }
     }
-    while (pb_nextentry(&t->field_tags, (pb_Entry**)&nf))
+    while (pb_nextentry(&t->field_tags, (const pb_Entry**)&nf))
         if (nf->value != NULL) pbT_freefield(S, nf->value);
-    while (pb_nextentry(&t->oneof_index, (pb_Entry**)&ne))
+    while (pb_nextentry(&t->oneof_index, (const pb_Entry**)&ne))
         pb_delname(S, ne->name);
     pb_freetable(&t->field_tags);
     pb_freetable(&t->field_names);
@@ -1583,7 +1599,7 @@ static int pbL_prefixname(pb_State *S, pb_Slice s, size_t *ps, pb_Loader *L, pb_
     pbCM(buff = pb_prepbuffsize(&L->b, pb_len(s) + 1));
     *buff = '.'; pb_addsize(&L->b, 1);
     if (pb_addslice(&L->b, s) == 0) return PB_ENOMEM;
-    if (out) *out = pb_newname(S, pb_result(&L->b));
+    if (out) *out = pb_newname(S, pb_result(&L->b), NULL);
     return PB_OK;
 }
 
@@ -1596,9 +1612,9 @@ static int pbL_loadEnum(pb_State *S, pbL_EnumInfo *info, pb_Loader *L) {
     t->is_enum = 1;
     for (i = 0, count = pbL_count(info->value); i < count; ++i) {
         pbL_EnumValueInfo *ev = &info->value[i];
-        pbCE(pb_newfield(S, t, pb_newname(S, ev->name), ev->number));
+        pbCE(pb_newfield(S, t, pb_newname(S, ev->name, NULL), ev->number));
     }
-    L->b.size = curr;
+    L->b.size = (unsigned)curr;
     return PB_OK;
 }
 
@@ -1606,11 +1622,11 @@ static int pbL_loadField(pb_State *S, pbL_FieldInfo *info, pb_Loader *L, pb_Type
     pb_Type  *ft = NULL;
     pb_Field *f;
     if (info->type == PB_Tmessage || info->type == PB_Tenum)
-        pbCE(ft = pb_newtype(S, pb_newname(S, info->type_name)));
+        pbCE(ft = pb_newtype(S, pb_newname(S, info->type_name, NULL)));
     if (t == NULL)
-        pbCE(t = pb_newtype(S, pb_newname(S, info->extendee)));
-    pbCE(f = pb_newfield(S, t, pb_newname(S, info->name), info->number));
-    f->default_value = pb_newname(S, info->default_value);
+        pbCE(t = pb_newtype(S, pb_newname(S, info->extendee, NULL)));
+    pbCE(f = pb_newfield(S, t, pb_newname(S, info->name, NULL), info->number));
+    f->default_value = pb_newname(S, info->default_value, NULL);
     f->type      = ft;
     f->oneof_idx = info->oneof_index;
     f->type_id   = info->type;
@@ -1631,7 +1647,7 @@ static int pbL_loadType(pb_State *S, pbL_TypeInfo *info, pb_Loader *L) {
     t->is_proto3 = L->is_proto3;
     for (i = 0, count = pbL_count(info->oneof_decl); i < count; ++i) {
         pb_OneofEntry *e = (pb_OneofEntry*)pb_settable(&t->oneof_index, i+1);
-        pbCM(e); pbCE(e->name = pb_newname(S, info->oneof_decl[i]));
+        pbCM(e); pbCE(e->name = pb_newname(S, info->oneof_decl[i], NULL));
         e->index = (int)i+1;
     }
     for (i = 0, count = pbL_count(info->field); i < count; ++i)
@@ -1642,25 +1658,25 @@ static int pbL_loadType(pb_State *S, pbL_TypeInfo *info, pb_Loader *L) {
         pbC(pbL_loadEnum(S, &info->enum_type[i], L));
     for (i = 0, count = pbL_count(info->nested_type); i < count; ++i)
         pbC(pbL_loadType(S, &info->nested_type[i], L));
-    L->b.size = curr;
+    L->b.size = (unsigned)curr;
     return PB_OK;
 }
 
 static int pbL_loadFile(pb_State *S, pbL_FileInfo *info, pb_Loader *L) {
     size_t i, count, j, jcount, curr = 0;
+    pb_Name *syntax;
+    pbCM(syntax = pb_newname(S, pb_slice("proto3"), NULL));
     for (i = 0, count = pbL_count(info); i < count; ++i) {
-        pb_Name *syntax;
         if (info[i].package.p)
             pbC(pbL_prefixname(S, info[i].package, &curr, L, NULL));
-        pbCM(syntax = pb_newname(S, pb_slice("proto3")));
-        if (pb_name(S, info[i].syntax) == syntax) L->is_proto3 = 1;
+        L->is_proto3 = (pb_name(S, info[i].syntax, NULL) == syntax);
         for (j = 0, jcount = pbL_count(info[i].enum_type); j < jcount; ++j)
             pbC(pbL_loadEnum(S, &info[i].enum_type[j], L));
         for (j = 0, jcount = pbL_count(info[i].message_type); j < jcount; ++j)
             pbC(pbL_loadType(S, &info[i].message_type[j], L));
         for (j = 0, jcount = pbL_count(info[i].extension); j < jcount; ++j)
             pbC(pbL_loadField(S, &info[i].extension[j], L, NULL));
-        L->b.size = curr;
+        L->b.size = (unsigned)curr;
     }
     return PB_OK;
 }
