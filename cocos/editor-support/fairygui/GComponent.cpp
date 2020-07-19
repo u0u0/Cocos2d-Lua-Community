@@ -651,10 +651,10 @@ void GComponent::updateBounds()
             tmp = child->getY();
             if (tmp < ay)
                 ay = tmp;
-            tmp = child->getX() + child->getWidth();
+            tmp = child->getX() + child->getWidth() * child->getScaleX();
             if (tmp > ar)
                 ar = tmp;
-            tmp = child->getY() + child->getHeight();
+            tmp = child->getY() + child->getHeight() * child->getScaleY();
             if (tmp > ab)
                 ab = tmp;
         }
