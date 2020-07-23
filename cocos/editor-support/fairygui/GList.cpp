@@ -223,8 +223,15 @@ void GList::removeChildrenToPool(int beginIndex, int endIndex)
     if (endIndex < 0 || endIndex >= _children.size())
         endIndex = (int)_children.size() - 1;
 
+#if 1
+    // fix item order: returnToPool() use push, and getObject() use pop, the order will broken
+    for (int i = endIndex; i >= beginIndex; --i)
+        removeChildToPoolAt(i);
+#else
+    // backup old codes
     for (int i = beginIndex; i <= endIndex; ++i)
         removeChildToPoolAt(beginIndex);
+#endif
 }
 
 int GList::getSelectedIndex() const
@@ -383,6 +390,8 @@ void GList::clearSelection()
                 obj->setSelected(false);
         }
     }
+    // reset _selectedIndex in controller
+    if (_selectionController) _selectionController->setSelectedIndex(-1);
 }
 
 void GList::clearSelectionExcept(GObject* g)
