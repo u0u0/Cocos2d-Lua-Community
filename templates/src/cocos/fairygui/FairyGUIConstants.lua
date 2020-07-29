@@ -1,9 +1,15 @@
 if nil == fairygui then
-    return
+	return
 end
 
 fairygui.UIConfig.onMusicCallback = function(path)
 	audio.playEffectSync(path)
+end
+
+-- entend for GObject
+fairygui.GObject.setEnabled = function(self, enable)
+	self:setGrayed(not enable)
+	self:setTouchable(enable)
 end
 
 fairygui.UIEventType = {
@@ -11,7 +17,7 @@ fairygui.UIEventType = {
 	Exit = 1,
 	Changed = 2,
 	Submit = 3,
-	
+
 	TouchBegin = 10,
 	TouchMove = 11,
 	TouchEnd = 12,
@@ -21,28 +27,28 @@ fairygui.UIEventType = {
 	MouseWheel = 16,
 	RightClick = 17,
 	MiddleClick = 18,
-	
+
 	PositionChange = 20,
 	SizeChange = 21,
-	
+
 	KeyDown = 30,
 	KeyUp = 31,
-	
+
 	Scroll = 40,
 	ScrollEnd = 41,
 	PullDownRelease = 42,
 	PullUpRelease = 43,
-	
+
 	ClickItem = 50,
 	ClickLink = 51,
 	ClickMenu = 52,
 	RightClickItem = 53,
-	
+
 	DragStart = 60,
 	DragMove = 61,
 	DragEnd = 62,
 	Drop = 63,
-	
+
 	GearStop = 70,
 }
 
