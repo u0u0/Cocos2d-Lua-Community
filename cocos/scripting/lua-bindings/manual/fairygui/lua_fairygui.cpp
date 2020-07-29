@@ -16903,6 +16903,117 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GComboBox_setItems(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GComboBox* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GComboBox",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GComboBox*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GComboBox_setItems'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        std::vector<std::string> strs;
+        if (luaval_to_std_vector_string(tolua_S, 2, &strs, "fairygui.GComboBox:setItems")) {
+            std::vector<std::string>& ret = cobj->getItems();
+            ret.clear();
+            ret.assign(strs.begin(), strs.end());
+        }
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GComboBox:setItems",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GComboBox_setItems'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GComboBox_setIcons(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GComboBox* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GComboBox",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GComboBox*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GComboBox_setIcons'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        std::vector<std::string> strs;
+        if (luaval_to_std_vector_string(tolua_S, 2, &strs, "fairygui.GComboBox:setIcons")) {
+            std::vector<std::string>& ret = cobj->getIcons();
+            ret.clear();
+            ret.assign(strs.begin(), strs.end());
+        }
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GComboBox:setIcons",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GComboBox_setIcons'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GComboBox_setValues(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GComboBox* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GComboBox",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GComboBox*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GComboBox_setValues'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        std::vector<std::string> strs;
+        if (luaval_to_std_vector_string(tolua_S, 2, &strs, "fairygui.GComboBox:setValues")) {
+            std::vector<std::string>& ret = cobj->getValues();
+            ret.clear();
+            ret.assign(strs.begin(), strs.end());
+        }
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GComboBox:setValues",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GComboBox_setValues'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GComboBox_create(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -16946,6 +17057,9 @@ static int lua_register_fairygui_GComboBox(lua_State* tolua_S)
 	tolua_function(tolua_S,"getSelectionController",lua_fairygui_GComboBox_getSelectionController);
 	tolua_function(tolua_S,"getValues",lua_fairygui_GComboBox_getValues);
 	tolua_function(tolua_S,"setSelectionController",lua_fairygui_GComboBox_setSelectionController);
+    tolua_function(tolua_S,"setItems",lua_fairygui_GComboBox_setItems);
+    tolua_function(tolua_S,"setIcons",lua_fairygui_GComboBox_setIcons);
+    tolua_function(tolua_S,"setValues",lua_fairygui_GComboBox_setValues);
 	tolua_function(tolua_S,"create", lua_fairygui_GComboBox_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::GComboBox).name();
