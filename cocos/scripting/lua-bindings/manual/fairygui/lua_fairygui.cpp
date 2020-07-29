@@ -21542,6 +21542,20 @@ static int lua_register_fairygui_FUIInput(lua_State* tolua_S)
     return 1;
 }
 
+// GBasicTextField is extend from GTextField, and UIObjectFactory create this
+static int lua_register_fairygui_GBasicTextField(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.GBasicTextField");
+    tolua_cclass(tolua_S,"GBasicTextField","fairygui.GBasicTextField","fairygui.GTextField",nullptr);
+
+    tolua_beginmodule(tolua_S,"GBasicTextField");
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::GBasicTextField).name();
+    g_luaType[typeName] = "fairygui.GBasicTextField";
+    g_typeCast["GBasicTextField"] = "fairygui.GBasicTextField";
+    return 1;
+}
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -21583,6 +21597,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
         lua_register_fairygui_UIConfig(tolua_S);
         lua_register_fairygui_GLabel(tolua_S);
         lua_register_fairygui_FUIInput(tolua_S);
+        lua_register_fairygui_GBasicTextField(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}
