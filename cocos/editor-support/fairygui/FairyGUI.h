@@ -10,6 +10,7 @@
 #include "GTextInput.h"
 #include "GGraph.h"
 #include "GLoader.h"
+#include "GLoader3D.h"
 #include "GGroup.h"
 #include "GComponent.h"
 #include "GLabel.h"

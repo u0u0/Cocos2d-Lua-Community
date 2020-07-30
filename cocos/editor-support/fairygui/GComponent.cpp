@@ -277,10 +277,7 @@ int GComponent::setChildIndexBefore(GObject* child, int index)
             index = cnt - _sortingChildCount - 1;
     }
 
-    if (oldIndex < index)
-        return moveChild(child, oldIndex, index - 1);
-    else
-        return moveChild(child, oldIndex, index);
+    return moveChild(child, oldIndex, index);
 }
 
 int GComponent::moveChild(GObject* child, int oldIndex, int index)
