@@ -852,7 +852,9 @@ GObject* ScrollPane::hitTest(const cocos2d::Vec2& pt, const cocos2d::Camera* cam
     if (_maskContainer->isClippingEnabled())
     {
         Vec2 localPoint = _maskContainer->convertToNodeSpace(pt);
-        if (_maskContainer->getClippingRegion().containsPoint(localPoint))
+        Rect rect; // fix by u0u0. rect.origin must 0,0
+        rect.size = _maskContainer->getClippingRegion().size;
+        if (rect.containsPoint(localPoint))
             return _owner;
         else
             return nullptr;
