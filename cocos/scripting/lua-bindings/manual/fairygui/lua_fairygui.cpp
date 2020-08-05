@@ -9714,7 +9714,7 @@ static int lua_register_fairygui_GLoader3D(lua_State* tolua_S)
     tolua_function(tolua_S,"setLoop",lua_fairygui_GLoader3D_setLoop);
     tolua_function(tolua_S,"create", lua_fairygui_GLoader3D_create);
     tolua_endmodule(tolua_S);
-    std::string typeName = typeid(fairygui::GLoader).name();
+    std::string typeName = typeid(fairygui::GLoader3D).name();
     g_luaType[typeName] = "fairygui.GLoader3D";
     g_typeCast["GLoader3D"] = "fairygui.GLoader3D";
     return 1;
