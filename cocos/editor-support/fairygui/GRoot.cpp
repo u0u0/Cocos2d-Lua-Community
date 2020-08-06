@@ -54,13 +54,17 @@ GRoot::~GRoot()
 void GRoot::removeChildAt(int index)
 {
     GComponent::removeChildAt(index);
-    adjustModalLayer();
+    if (_modalLayer) {
+        adjustModalLayer();// only create _modalLayer on show windows
+    }
 }
 
 GObject* GRoot::addChildAt(GObject* child, int index)
 {
     GObject* c = GComponent::addChildAt(child, index);
-    adjustModalLayer();
+    if (_modalLayer) {
+        adjustModalLayer();// only create _modalLayer on show windows
+    }
     return c;
 }
 
