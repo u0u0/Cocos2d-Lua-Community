@@ -1824,7 +1824,7 @@ void GList::handleScroll3(bool forceUpdate)
     int oldFirstIndex = _firstIndex;
     _firstIndex = newFirstIndex;
 
-    int reuseIndex = oldFirstIndex;
+    int reuseIndex = oldFirstIndex < 0 ? 0 : oldFirstIndex;
     int virtualItemCount = (int)_virtualItems.size();
     int pageSize = _curLineItemCount * _curLineItemCount2;
     int startCol = newFirstIndex % _curLineItemCount;
@@ -1872,7 +1872,6 @@ void GList::handleScroll3(bool forceUpdate)
 
         if (ii.obj == nullptr)
         {
-            reuseIndex = reuseIndex < 0 ? 0 : reuseIndex;
             while (reuseIndex < virtualItemCount)
             {
                 ItemInfo& ii2 = _virtualItems[reuseIndex];
