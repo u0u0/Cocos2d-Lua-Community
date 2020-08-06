@@ -22414,7 +22414,7 @@ static int lua_register_fairygui_UIConfig(lua_State* tolua_S)
     // function
     tolua_function(tolua_S,"registerFont", lua_fairygui_UIConfig_registerFont);
     tolua_endmodule(tolua_S);
-    std::string typeName = typeid(fairygui::DragDropManager).name();
+    std::string typeName = typeid(fairygui::UIConfig).name();
     g_luaType[typeName] = "fairygui.UIConfig";
     g_typeCast["UIConfig"] = "fairygui.UIConfig";
     return 1;
