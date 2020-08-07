@@ -51,23 +51,6 @@ GRoot::~GRoot()
         Director::getInstance()->getEventDispatcher()->removeEventListener(_windowSizeListener);
 }
 
-void GRoot::removeChildAt(int index)
-{
-    GComponent::removeChildAt(index);
-    if (_modalLayer) {
-        adjustModalLayer();// only create _modalLayer on show windows
-    }
-}
-
-GObject* GRoot::addChildAt(GObject* child, int index)
-{
-    GObject* c = GComponent::addChildAt(child, index);
-    if (_modalLayer) {
-        adjustModalLayer();// only create _modalLayer on show windows
-    }
-    return c;
-}
-
 void GRoot::showWindow(Window* win)
 {
     addChild(win);

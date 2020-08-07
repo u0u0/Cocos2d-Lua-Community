@@ -20,9 +20,6 @@ public:
 
     static GRoot* create(cocos2d::Scene* scene, int zOrder = 1000);
     static GRoot* getInstance() { return _inst; }
-    
-    virtual void removeChildAt(int index) override;
-    virtual GObject* addChildAt(GObject* child, int index) override;
 
     void showWindow(Window* win);
     void hideWindow(Window* win);
