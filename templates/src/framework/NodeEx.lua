@@ -226,20 +226,34 @@ end
   @return boolean
 ]]--
 function Node:isKeypadEnabled()
-    if self.__key_event_handle__ then
+	if self.__key_event_handle__ then
 		return true
 	end
 	return false
 end
 
+local function MouseEventCodeConvert(code)
+	local key
+	if code == 0 then
+		key = "left"
+	elseif code == 1 then
+		key = "right"
+	elseif code == 2 then
+		key = "middle"
+	else
+		key = tostring(code)
+	end
+	return key
+end
+
 function Node:setMouseEnabled(enable)
-    if enable == self:isMouseEnabled() then
-        return self
-    end
+	if enable == self:isMouseEnabled() then
+		return self
+	end
 
 	local eventDispatcher = self:getEventDispatcher()
-    if enable then
-        local dealFunc = function(mouse, name)
+	if enable then
+		local dealFunc = function(mouse, name)
 			local tp = mouse:getLocationInView()
 			local sp = mouse:getStartLocationInView()
 			local pp = mouse:getPreviousLocationInView()
@@ -253,11 +267,12 @@ function Node:setMouseEnabled(enable)
 				startY = sp.y,
 				prevX = pp.x,
 				prevY = pp.y,
-				scroll = mouse:getScrollY()
+				scroll = mouse:getScrollY(),
+				key = MouseEventCodeConvert(mouse:getMouseButton())
 			}
-        end
+		end
 
-        local listener = c.EventListenerMouse:create()
+		local listener = c.EventListenerMouse:create()
 		listener:registerScriptHandler(function(mouse)
 			dealFunc(mouse, "down")
 		end, c.Handler.EVENT_MOUSE_DOWN)
@@ -270,14 +285,14 @@ function Node:setMouseEnabled(enable)
 		listener:registerScriptHandler(function(mouse)
 			dealFunc(mouse, "scroll")
 		end, c.Handler.EVENT_MOUSE_SCROLL)
-        eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
-        self.__mouse_event_handle__ = listener
+		eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
+		self.__mouse_event_handle__ = listener
 	else
-        eventDispatcher:removeEventListener(self.__mouse_event_handle__)
-        self.__mouse_event_handle__ = nil
+		eventDispatcher:removeEventListener(self.__mouse_event_handle__)
+		self.__mouse_event_handle__ = nil
 	end
 
-    return self
+	return self
 end
 
 function Node:isMouseEnabled()
