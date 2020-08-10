@@ -1440,17 +1440,27 @@ static int lua_fairygui_GController_setSelectedIndex(lua_State* tolua_S)
 #endif
 
 	argc = lua_gettop(tolua_S)-1;
-	if (argc == 1) {
+	if (argc >= 1 && argc <= 2) {
 		int arg0;
-		ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "fairygui.GController:setSelectedIndex");
+		ok &= luaval_to_int32(tolua_S, 2, &arg0, "fairygui.GController:setSelectedIndex");
 		if (!ok) {
 			tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GController_setSelectedIndex'", nullptr);
 			return 0;
 		}
-		cobj->setSelectedIndex(arg0);
+        if (argc > 1) {
+            bool arg1;
+            ok &= luaval_to_boolean(tolua_S, 3, &arg1, "fairygui.GController:setSelectedIndex");
+            if (!ok) {
+                tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GController_setSelectedIndex'", nullptr);
+                return 0;
+            }
+            cobj->setSelectedIndex(arg0, arg1);
+        } else {
+            cobj->setSelectedIndex(arg0);
+        }
         return 0;
 	}
-	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GController:setSelectedIndex",argc, 1);
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting 1~2\n", "fairygui.GController:setSelectedIndex",argc);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
