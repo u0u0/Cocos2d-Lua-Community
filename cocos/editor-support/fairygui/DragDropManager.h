@@ -14,6 +14,7 @@ public:
     ~DragDropManager();
 
     static DragDropManager* getInstance();
+    static void destroyInstance() { CC_SAFE_DELETE(_inst); };
 
     GLoader* getAgent() const { return _agent; }
     bool isDragging() const { return _agent->getParent() != nullptr; }
