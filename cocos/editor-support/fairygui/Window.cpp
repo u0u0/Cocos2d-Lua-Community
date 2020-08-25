@@ -292,5 +292,20 @@ void Window::onDragStart(EventContext * context)
     startDrag(context->getInput()->getTouchId());
 }
 
+// wappper for lua, by http://www.cocos2d-lua.org/
+void Window::onInit()
+{
+    dispatchEvent(UIEventType::OnInit);
+}
+
+void Window::onShown()
+{
+    dispatchEvent(UIEventType::OnShown);
+}
+
+void Window::onHide()
+{
+    dispatchEvent(UIEventType::OnHide);
+}
 
 NS_FGUI_END

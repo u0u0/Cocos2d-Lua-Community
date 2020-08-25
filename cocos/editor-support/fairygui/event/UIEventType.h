@@ -45,6 +45,11 @@ public:
     static const int Drop = 63;
 
     static const int GearStop = 70;
+    
+    // add for lua
+    static const int OnInit = 100;
+    static const int OnShown = 101;
+    static const int OnHide = 102;
 };
 
 NS_FGUI_END

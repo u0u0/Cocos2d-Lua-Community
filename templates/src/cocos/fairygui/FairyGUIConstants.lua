@@ -50,6 +50,10 @@ fairygui.UIEventType = {
 	Drop = 63,
 
 	GearStop = 70,
+
+	OnInit = 100,
+	OnShown = 101,
+	OnHide = 102,
 }
 
 fairygui.PackageItemType = {

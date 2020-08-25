@@ -27,6 +27,26 @@ function TestCase:ctor()
 		end
 	end)
 
+	local btnOpenWin = view:getChild("btnOpenWin")
+	btnOpenWin:addEventListener(fairygui.UIEventType.TouchEnd, function(context)
+		local input = context:getInput()
+		local touchPos = input:getTouch():getLocation()
+		if btnOpenWin:displayObject():hitTest(touchPos) then
+			local window = fairygui.Window:create()
+			window:addEventListener(fairygui.UIEventType.OnInit, function(context)
+				print("Window OnInit")
+			end)
+			window:addEventListener(fairygui.UIEventType.OnShown, function(context)
+				print("Window OnShown")
+			end)
+			window:addEventListener(fairygui.UIEventType.OnHide, function(context)
+				print("Window OnHide")
+			end)
+			window:setContentPane(fairygui.UIPackage:createObject("package01", "window"))
+			window:show()
+		end
+	end)
+
 	-- displayObject is FUIInput, FUIInput is derive from Editbox
 	local inputText = view:getChild("inputText"):displayObject()
 	inputText:registerScriptEditBoxHandler(function(event, target)
