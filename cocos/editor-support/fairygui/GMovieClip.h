@@ -27,6 +27,7 @@ public:
     void setTimeScale(float value);
 
     void advance(float time);
+    void reverse();
 
     FlipType getFlip() const;
     void setFlip(FlipType value);

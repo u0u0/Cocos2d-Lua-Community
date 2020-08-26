@@ -6474,6 +6474,38 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GMovieClip_reverse(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GMovieClip* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GMovieClip",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GMovieClip*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GMovieClip_reverse'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        cobj->reverse();
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GMovieClip:reverse",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GMovieClip_reverse'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GMovieClip_create(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -6513,6 +6545,7 @@ static int lua_register_fairygui_GMovieClip(lua_State* tolua_S)
 	tolua_function(tolua_S,"setPlaySettings",lua_fairygui_GMovieClip_setPlaySettings);
 	tolua_function(tolua_S,"isPlaying",lua_fairygui_GMovieClip_isPlaying);
 	tolua_function(tolua_S,"setFrame",lua_fairygui_GMovieClip_setFrame);
+    tolua_function(tolua_S,"reverse", lua_fairygui_GMovieClip_reverse);
 	tolua_function(tolua_S,"create", lua_fairygui_GMovieClip_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::GMovieClip).name();

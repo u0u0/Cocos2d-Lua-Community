@@ -53,6 +53,7 @@ int GMovieClip::getFrame() const
 {
     return _playAction->getFrame();
 }
+
 void GMovieClip::setFrame(int value)
 {
     _playAction->setFrame(value);
@@ -62,6 +63,7 @@ float GMovieClip::getTimeScale() const
 {
     return _playAction->getTimeScale();
 }
+
 void GMovieClip::setTimeScale(float value)
 {
     _playAction->setTimeScale(value);
@@ -70,6 +72,20 @@ void GMovieClip::setTimeScale(float value)
 void GMovieClip::advance(float time)
 {
     _playAction->advance(time);
+}
+
+void GMovieClip::reverse()
+{
+    ActionMovieClip *oldAction = _playAction;
+    bool oldPlaying = _playing;
+    if (oldPlaying) {
+        setPlaying(false);
+    }
+    _playAction = _playAction->reverse();
+    if (oldPlaying) {
+        setPlaying(true);
+    }
+    oldAction->release();
 }
 
 FlipType GMovieClip::getFlip() const
@@ -318,8 +334,19 @@ void ActionMovieClip::startWithTarget(Node* target)
 
 ActionMovieClip* ActionMovieClip::reverse() const
 {
-    CC_ASSERT(0);
-    return nullptr;
+    const Vector<AnimationFrame*>& frames = _animation->getFrames();
+    Vector<AnimationFrame*> reverseFrames(frames.size());
+    
+    for (auto frame : frames) {
+        reverseFrames.insert(0, frame);
+    }
+    
+    Animation *animation = _animation->clone();
+    animation->setFrames(reverseFrames);
+    
+    ActionMovieClip *clip = ActionMovieClip::create(animation, _repeatDelay, _swing);
+    clip->drawFrame();// update sprite to new first frame
+    return clip;
 }
 
 ActionMovieClip* ActionMovieClip::clone() const
