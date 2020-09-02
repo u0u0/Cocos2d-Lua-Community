@@ -15,6 +15,7 @@
 #ifndef __ASYNC_TCP_H__
 #define __ASYNC_TCP_H__
 
+#include <functional>
 #include <string>
 #include <queue>
 #include <thread>

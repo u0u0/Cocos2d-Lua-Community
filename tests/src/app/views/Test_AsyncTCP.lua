@@ -30,12 +30,11 @@ function TestCase:ctor()
 	btn:setTitleColor(cc.c3b(255, 255, 0))
 	btn:addTouchEventListener(function(sender, eventType)
 		if 2 == eventType then
-			print(self.asyncTCP)
 			if self.asyncTCP then return end
 
 			self.asyncTCP = AsyncTCP:create()
 			self.asyncTCP:setEventCB(handler(self, self.onTCPEvent))
-			self.asyncTCP:open("fe80::1c5c:f42e:369f:e11a%en0", 1234)
+			self.asyncTCP:open("127.0.0.1", 1234)
 
 			self:performWithDelay(function()
 				if self.asyncTCP then

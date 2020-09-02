@@ -235,7 +235,7 @@ int AsyncTCP::recvTCP()
 {
     unsigned char rbuf[1024] = {0};
     while (true) {
-        int ret = recv(_tcp, rbuf, sizeof(rbuf), 0);
+        int ret = recv(_tcp, (char *)rbuf, sizeof(rbuf), 0);
         int err = errno;
         if (ret > 0) {
             notify(EVENT_DATA, rbuf, ret);
@@ -262,7 +262,7 @@ int AsyncTCP::sendTCP(unsigned char *buff, size_t size)
 {
     size_t offset = 0;
     while (true) {
-        int ret = ::send(_tcp, buff + offset, size, 0);
+        int ret = ::send(_tcp, (const char *)(buff + offset), size, 0);
         int err = errno;
         if (ret >= 0) {
             size -= ret;
