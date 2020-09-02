@@ -27,6 +27,7 @@
 #include "scripting/lua-bindings/manual/network/lua_extensions.h"
 #include "scripting/lua-bindings/manual/network/Lua_web_socket.h"
 #include "scripting/lua-bindings/manual/network/lua_http_manual.h"
+#include "scripting/lua-bindings/manual/network/Lua_AsyncTCP.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "cocos/platform/CCNetwork.h"
 #include "base/CCDirector.h"
@@ -228,15 +229,16 @@ TOLUA_API int register_network_manual(lua_State* L)
 
 int register_network_module(lua_State* L)
 {
-	lua_getglobal(L, "_G");
-	if (lua_istable(L,-1))//stack:...,_G,
-		{
-			luaopen_lua_extensions(L);
-			register_web_socket_manual(L);
-			register_http_manual(L);
-			register_network_manual(L);
-		}
-	lua_pop(L, 1);
+    lua_getglobal(L, "_G");
+    if (lua_istable(L,-1))//stack:...,_G,
+    {
+        luaopen_lua_extensions(L);
+        register_web_socket_manual(L);
+        register_http_manual(L);
+        register_AsyncTCP_manual(L);
+        register_network_manual(L);
+    }
+    lua_pop(L, 1);
 
-	return 1;
+    return 1;
 }

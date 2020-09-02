@@ -18,6 +18,7 @@ function MainScene:ctor()
 		"Test_Spine",
 		"Test_RichText",
 		"Test_TMXTiledMap",
+		"Test_AsyncTCP",
 	}
 
 	local scrollView = ccui.ScrollView:create()
