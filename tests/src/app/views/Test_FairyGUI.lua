@@ -22,6 +22,9 @@ function TestCase:ctor()
 		if btn:displayObject():hitTest(touchPos) then
 			print("touch ended")
 			self.fairyRoot:release()
+			-- XXX:场景切换的时候需要释放fairygui的静态数据，避免不必要的异常
+			fairygui.HtmlObject:clearStaticPools()
+			fairygui.DragDropManager:destroyInstance()
 		else
 			print("touch canceled")
 		end
@@ -65,6 +68,13 @@ function TestCase:ctor()
             -- 从输入框返回
             print("从输入框返回")
         end
+	end)
+
+	-- button was created by <object src='ui://2enwy5c4lhol5' name='11' icon=''/>
+	local richtext = view:getChild("richtext")
+	local btnInRT = richtext:getControl("11"):getUI()
+	btnInRT:addEventListener(fairygui.UIEventType.TouchEnd, function(context)
+		print("btnInRT clicked")
 	end)
 end
 

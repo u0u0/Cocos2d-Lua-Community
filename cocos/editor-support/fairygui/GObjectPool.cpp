@@ -38,4 +38,12 @@ void GObjectPool::returnObject(GObject* obj)
     _pool[obj->getResourceURL()].pushBack(obj);
 }
 
+void GObjectPool::clear()
+{
+    for (auto &kv : _pool) {
+        kv.second.clear();
+    }
+    _pool.clear();
+}
+
 NS_FGUI_END

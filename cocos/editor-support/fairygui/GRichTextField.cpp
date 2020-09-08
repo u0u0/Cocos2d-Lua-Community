@@ -100,6 +100,11 @@ HtmlObject* GRichTextField::getControl(const std::string& name) const
     return _richText->getControl(name);
 }
 
+const std::vector<HtmlObject*>& GRichTextField::getControls() const
+{
+    return _richText->getControls();
+}
+
 void GRichTextField::handleSizeChanged()
 {
     if (_updatingSize)

@@ -16,6 +16,7 @@ public:
 
     GObject* getObject(const std::string& url);
     void returnObject(GObject* obj);
+    void clear(); // use for clear static GObjectPool in HtmlObject
 
 private:
     std::unordered_map<std::string, cocos2d::Vector<GObject*>> _pool;

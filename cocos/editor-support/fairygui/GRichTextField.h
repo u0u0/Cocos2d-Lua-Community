@@ -25,6 +25,7 @@ public:
     virtual void applyTextFormat() override;
 
     HtmlObject* getControl(const std::string& name) const;
+    const std::vector<HtmlObject*>& getControls() const;
 
     virtual GObject* hitTest(const cocos2d::Vec2& worldPoint, const cocos2d::Camera* camera) override;
 protected:
