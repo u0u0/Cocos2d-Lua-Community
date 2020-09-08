@@ -3,6 +3,7 @@
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "FairyGUI.h"
+#include "utils/html/HtmlObject.h"
 
 static void margin_to_luaval(lua_State* L, const fairygui::Margin& _margin)
 {
@@ -23403,6 +23404,145 @@ static int lua_register_fairygui_InputProcessor(lua_State* tolua_S)
     return 1;
 }
 
+static int lua_fairygui_HtmlObject_get_buttonResource(lua_State* L)
+{
+    lua_pushlstring(L, fairygui::HtmlObject::buttonResource.c_str(), fairygui::HtmlObject::buttonResource.size());
+    return 1;
+}
+
+static int lua_fairygui_HtmlObject_set_buttonResource(lua_State* L)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+    if lua_isnil(L, 2) {
+        fairygui::HtmlObject::buttonResource = "";
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isstring(L, 2, 0, &tolua_err))
+        goto tolua_lerror;
+#endif
+    
+    fairygui::HtmlObject::buttonResource = tolua_tostring(L, 2, "");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_HtmlObject_set_buttonResource'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_HtmlObject_get_inputResource(lua_State* L)
+{
+    lua_pushlstring(L, fairygui::HtmlObject::inputResource.c_str(), fairygui::HtmlObject::inputResource.size());
+    return 1;
+}
+
+static int lua_fairygui_HtmlObject_set_inputResource(lua_State* L)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+    if lua_isnil(L, 2) {
+        fairygui::HtmlObject::inputResource = "";
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isstring(L, 2, 0, &tolua_err))
+        goto tolua_lerror;
+#endif
+    
+    fairygui::HtmlObject::inputResource = tolua_tostring(L, 2, "");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_HtmlObject_set_inputResource'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_HtmlObject_get_selectResource(lua_State* L)
+{
+    lua_pushlstring(L, fairygui::HtmlObject::selectResource.c_str(), fairygui::HtmlObject::selectResource.size());
+    return 1;
+}
+
+static int lua_fairygui_HtmlObject_set_selectResource(lua_State* L)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+    if lua_isnil(L, 2) {
+        fairygui::HtmlObject::selectResource = "";
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isstring(L, 2, 0, &tolua_err))
+        goto tolua_lerror;
+#endif
+    
+    fairygui::HtmlObject::selectResource = tolua_tostring(L, 2, "");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_HtmlObject_set_selectResource'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_HtmlObject_get_usePool(lua_State* L)
+{
+    tolua_pushboolean(L, fairygui::HtmlObject::usePool);
+    return 1;
+}
+
+static int lua_fairygui_HtmlObject_set_usePool(lua_State* L)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isboolean(L, 2, 0, &tolua_err))
+        goto tolua_lerror;
+#endif
+    
+    fairygui::HtmlObject::usePool = tolua_toboolean(L, 2, true);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_HtmlObject_set_usePool'.",&tolua_err);
+    return 0;
+#endif
+}
+
+// HtmlObject only need static public members
+static int lua_register_fairygui_HtmlObject(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.HtmlObject");
+    tolua_cclass(tolua_S,"HtmlObject","fairygui.HtmlObject","",nullptr);
+
+    tolua_beginmodule(tolua_S,"HtmlObject");
+    // variable
+    tolua_variable(tolua_S, "buttonResource", lua_fairygui_HtmlObject_get_buttonResource, lua_fairygui_HtmlObject_set_buttonResource);
+    tolua_variable(tolua_S, "inputResource", lua_fairygui_HtmlObject_get_inputResource, lua_fairygui_HtmlObject_set_inputResource);
+    tolua_variable(tolua_S, "selectResource", lua_fairygui_HtmlObject_get_selectResource, lua_fairygui_HtmlObject_set_selectResource);
+    tolua_variable(tolua_S, "usePool", lua_fairygui_HtmlObject_get_usePool, lua_fairygui_HtmlObject_set_usePool);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::HtmlObject).name();
+    g_luaType[typeName] = "fairygui.HtmlObject";
+    g_typeCast["HtmlObject"] = "fairygui.HtmlObject";
+    return 1;
+}
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -23447,6 +23587,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
         lua_register_fairygui_FUIInput(tolua_S);
         lua_register_fairygui_GBasicTextField(tolua_S);
         lua_register_fairygui_InputProcessor(tolua_S);
+        lua_register_fairygui_HtmlObject(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}
