@@ -3,6 +3,7 @@
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "FairyGUI.h"
+#include "utils/html/HtmlElement.h"
 #include "utils/html/HtmlObject.h"
 
 static void margin_to_luaval(lua_State* L, const fairygui::Margin& _margin)
@@ -23633,6 +23634,39 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_HtmlObject_getElementAttrs(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::HtmlObject* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.HtmlObject",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::HtmlObject*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_HtmlObject_getElementAttrs'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        cocos2d::ValueMap &ret = cobj->getElement()->attrs;
+        ccvaluemap_to_luaval(tolua_S, ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.HtmlObject:getElementAttrs",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_HtmlObject_getElementAttrs'.",&tolua_err);
+    return 0;
+#endif
+}
+
 // fairygui.HtmlObject:clearStaticPools()
 static int lua_fairygui_HtmlObject_clearStaticPools(lua_State* tolua_S)
 {
@@ -23672,6 +23706,7 @@ static int lua_register_fairygui_HtmlObject(lua_State* tolua_S)
     tolua_variable(tolua_S, "usePool", lua_fairygui_HtmlObject_get_usePool, lua_fairygui_HtmlObject_set_usePool);
     // function
     tolua_function(tolua_S, "getUI", lua_fairygui_HtmlObject_getUI);
+    tolua_function(tolua_S, "getElementAttrs", lua_fairygui_HtmlObject_getElementAttrs);
     tolua_function(tolua_S, "clearStaticPools", lua_fairygui_HtmlObject_clearStaticPools);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(fairygui::HtmlObject).name();

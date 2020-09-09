@@ -72,7 +72,9 @@ function TestCase:ctor()
 
 	-- button was created by <object src='ui://2enwy5c4lhol5' name='11' icon=''/>
 	local richtext = view:getChild("richtext")
-	local btnInRT = richtext:getControl("11"):getUI()
+	local htmlObj = richtext:getControl("11")
+	dump(htmlObj:getElementAttrs())
+	local btnInRT = htmlObj:getUI()
 	btnInRT:addEventListener(fairygui.UIEventType.TouchEnd, function(context)
 		print("btnInRT clicked")
 	end)
