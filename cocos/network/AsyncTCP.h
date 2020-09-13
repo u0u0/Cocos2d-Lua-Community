@@ -34,7 +34,7 @@ public:
     
     // state: 1 connecting, 2 failed, 3 connected, 4 data, 5 closed.
     void setEventCB(std::function<void(int state, unsigned char *msg, size_t size)> cb);
-    void open(const std::string host, int port);
+    void open(const std::string host, int port, int timeout = 10);
     void send(unsigned char *buffer, size_t len);
     void close();
     
@@ -79,6 +79,7 @@ private:
     int _tcp;
     std::string _host;
     int _port;
+    int _timeout;
     std::function<void(int state, unsigned char *msg, size_t size)> _cb;
     bool _quit;
     

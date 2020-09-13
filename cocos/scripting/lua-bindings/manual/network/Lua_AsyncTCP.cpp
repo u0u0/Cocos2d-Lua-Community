@@ -97,7 +97,11 @@ static int lua_AsyncTCP_open(lua_State* tolua_S)
         if (self) {
             const char *host = lua_tostring(tolua_S, 2);
             int port = lua_tointeger(tolua_S, 3);
-            self->open(host, port);
+            if (lua_isnumber(tolua_S, 4)) {
+                self->open(host, port, lua_tointeger(tolua_S, 4));
+            } else {
+                self->open(host, port);
+            }
         }
         return 0;
     } while (0);

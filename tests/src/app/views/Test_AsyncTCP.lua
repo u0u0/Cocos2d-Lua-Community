@@ -34,7 +34,7 @@ function TestCase:ctor()
 
 			self.asyncTCP = AsyncTCP:create()
 			self.asyncTCP:setEventCB(handler(self, self.onTCPEvent))
-			self.asyncTCP:open("127.0.0.1", 1234)
+			self.asyncTCP:open("127.0.0.1", 1234, 5)
 
 			self:performWithDelay(function()
 				if self.asyncTCP then

@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <functional>
 #include <sys/types.h>
-#include <fcntl.h>
 #ifdef _WIN32
     #include <WinSock2.h> // struct sockaddr_in
     #include <WS2tcpip.h>
@@ -25,6 +24,9 @@
     #include <netdb.h> // addrinfo
     #include <sys/socket.h>
     #include <unistd.h>
+    #include <sys/select.h>
+    #include <sys/ioctl.h>
+    #include <sys/time.h>
 #endif // !_WIN32
 
 #include "cocos/network/AsyncTCP.h"
@@ -83,6 +85,7 @@ AsyncTCP::AsyncTCP()
 :_tcp(-1)
 ,_host("")
 ,_port(0)
+,_timeout(0)
 ,_cb(nullptr)
 ,_quit(false)
 ,_thread(nullptr)
@@ -102,7 +105,7 @@ void AsyncTCP::setEventCB(std::function<void(int state, unsigned char *msg, size
     _cb = cb;
 }
 
-void AsyncTCP::open(const std::string host, int port)
+void AsyncTCP::open(const std::string host, int port, int timeout)
 {
     // lua must call close() first, wait CLOSED event, then can open again.
     waitThreadAndClean();
@@ -110,6 +113,7 @@ void AsyncTCP::open(const std::string host, int port)
     _quit = false;
     _host = host;
     _port = port;
+    _timeout = timeout;
     _thread = new std::thread(&AsyncTCP::socketThread, this);
 }
 
@@ -294,7 +298,24 @@ int AsyncTCP::openTCP(bool isIpv6)
         printf("==socket error with errno: %d, %s\n", errno, strerror(errno));
         return -2;
     }
+
+    // set non-blocking.
+    unsigned long noBlock = 1UL;
+#ifdef _WIN32
+    ret = ioctlsocket(_tcp, FIONBIO, &noBlock);
+    if (ret == SOCKET_ERROR) {
+        printf("==ioctlsocket error with errno: %d, %s\n", errno, strerror(errno));
+        return -3;
+    }
+#else
+    ret = ioctl(_tcp, FIONBIO, &noBlock);
+    if (ret == -1) {
+        printf("==ioctl error with errno: %d, %s\n", errno, strerror(errno));
+        return -3;
+    }
+#endif //!WIN32
     
+    // connect with non-blocking
     if (isIpv6) {
         struct sockaddr_in6 servaddr6;
         memset(&servaddr6, 0, sizeof(servaddr6));
@@ -305,11 +326,7 @@ int AsyncTCP::openTCP(bool isIpv6)
             printf("==inet_pton AF_INET6 ret %d, errno %d, %s\n", ret, errno, strerror(errno));
             return -1;
         }
-        ret = connect(_tcp, (const struct sockaddr*)(&servaddr6), sizeof(servaddr6));
-        if (ret < 0) {
-            printf("==connect6 error with errno: %d, %s\n", errno, strerror(errno));
-            return -1;
-        }
+        connect(_tcp, (const struct sockaddr*)(&servaddr6), sizeof(servaddr6));// not check ret when non-blocking
     } else {
         struct sockaddr_in servaddr;
         memset(&servaddr, 0, sizeof(servaddr));
@@ -320,35 +337,31 @@ int AsyncTCP::openTCP(bool isIpv6)
             printf("==inet_pton AF_INET ret %d, errno %d, %s\n", ret, errno, strerror(errno));
             return -1;
         }
-        ret = connect(_tcp, (const struct sockaddr*)(&servaddr), sizeof(servaddr));
-        if (ret < 0) {
-            printf("==connect error with errno: %d, %s\n", errno, strerror(errno));
-            return -1;
+        connect(_tcp, (const struct sockaddr*)(&servaddr), sizeof(servaddr));// not check ret when non-blocking
+    }
+	
+    // check can write with timeout
+    struct timeval tv;
+    tv.tv_sec = _timeout;
+    tv.tv_usec = 0;
+
+    fd_set fdwrite;
+    FD_ZERO(&fdwrite);
+    FD_SET(_tcp, &fdwrite);
+
+    ret = select((int)_tcp + 1, NULL, &fdwrite, NULL, &tv);
+    if (ret > 0 && FD_ISSET(_tcp, &fdwrite)) {
+        int error = -1;
+        int optLen = sizeof(int);
+        getsockopt(_tcp, SOL_SOCKET, SO_ERROR, (void *)&error, (socklen_t *)&optLen);
+        if (0 == error) {
+            return 0; // connect socket successful.
         }
+        printf("==getsockopt error %d, %s\n", error, strerror(error));
+    } else {
+        printf("==select ret %d, errno %d, %s\n", ret, errno, strerror(errno));
     }
-    
-    // set non-blocking after connected.
-#ifdef _WIN32
-    unsigned long NoBlock = 1UL;
-    int nRes = ioctlsocket(_tcp, FIONBIO, &NoBlock);
-    if (nRes == SOCKET_ERROR) {
-        printf("==ioctlsocket error with errno: %d, %s\n", errno, strerror(errno));
-        return -3;
-    }
-#else
-    int flags = fcntl(_tcp, F_GETFL, 0);
-    if (flags == -1) {
-        printf("==socket non-blocking get fcntl error with errno: %d, %s\n", errno, strerror(errno));
-        return -3;
-    }
-    ret = fcntl(_tcp, F_SETFL, flags | O_NONBLOCK);
-    if (ret == -1) {
-        printf("==socket non-blocking set fcntl error with errno: %d, %s\n", errno, strerror(errno));
-        return -3;
-    }
-#endif //!WIN32
-    
-    return 0;
+    return -1;
 }
 
 void AsyncTCP::closeTCP()
