@@ -16,6 +16,8 @@
 #include <functional>
 #include <sys/types.h>
 #ifdef _WIN32
+    #define EAGAIN WSAEWOULDBLOCK
+    #define EINTR WSAEINTR
     #include <WinSock2.h> // struct sockaddr_in
     #include <WS2tcpip.h>
     #pragma comment(lib,"WS2_32.lib")
@@ -29,9 +31,41 @@
     #include <sys/time.h>
 #endif // !_WIN32
 
+// android log
+#ifdef ANDROID
+#define printf(...)  __android_log_print(ANDROID_LOG_DEBUG, "AsyncTCP",__VA_ARGS__)
+#endif
+
 #include "cocos/network/AsyncTCP.h"
 #include "base/CCScheduler.h"
 #include "base/CCDirector.h"
+
+static int getErrno(void)
+{
+#ifdef _WIN32
+    return (int)WSAGetLastError();
+#else
+    return errno;
+#endif
+}
+
+static void printErrno(const char *prefix)
+{
+    int err = getErrno();
+#ifdef _WIN32
+    char utf8[128] = {0};
+    LPTSTR lpMessageBuf;
+    int nLen = FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, err, MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPTSTR)&lpMessageBuf,
+        0, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, lpMessageBuf, nLen, utf8, sizeof(utf8), NULL, NULL);
+    LocalFree(lpMessageBuf);
+    printf("==%s error with errno: %d, %s\n", prefix, err, utf8);
+#else
+    printf("==%s error with errno: %d, %s\n", prefix, err, strerror(err));
+#endif
+}
 
 static int checkIPv6(const char *hostname, bool &isIpv6)
 {
@@ -250,7 +284,7 @@ int AsyncTCP::recvTCP()
     unsigned char rbuf[1024] = {0};
     while (true) {
         int ret = recv(_tcp, (char *)rbuf, sizeof(rbuf), 0);
-        int err = errno;
+        int err = getErrno();
         if (ret > 0) {
             notify(EVENT_DATA, rbuf, ret);
             continue;
@@ -277,7 +311,7 @@ int AsyncTCP::sendTCP(unsigned char *buff, size_t size)
     size_t offset = 0;
     while (true) {
         int ret = ::send(_tcp, (const char *)(buff + offset), size, 0);
-        int err = errno;
+        int err = getErrno();
         if (ret >= 0) {
             size -= ret;
             if (size == 0) break; // all sended
@@ -305,7 +339,7 @@ int AsyncTCP::openTCP(bool isIpv6)
         _tcp = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     }
     if (_tcp < 0) {
-        printf("==socket error with errno: %d, %s\n", errno, strerror(errno));
+        printErrno("socket");
         return -2;
     }
 
@@ -314,13 +348,13 @@ int AsyncTCP::openTCP(bool isIpv6)
 #ifdef _WIN32
     ret = ioctlsocket(_tcp, FIONBIO, &noBlock);
     if (ret == SOCKET_ERROR) {
-        printf("==ioctlsocket error with errno: %d, %s\n", errno, strerror(errno));
+        printErrno("ioctlsocket");
         return -3;
     }
 #else
     ret = ioctl(_tcp, FIONBIO, &noBlock);
     if (ret == -1) {
-        printf("==ioctl error with errno: %d, %s\n", errno, strerror(errno));
+        printErrno("ioctl");
         return -3;
     }
 #endif //!WIN32
@@ -333,7 +367,7 @@ int AsyncTCP::openTCP(bool isIpv6)
         servaddr6.sin6_port = htons(_port);
         ret = inet_pton(AF_INET6, _host.c_str(), &servaddr6.sin6_addr);
         if (ret <= 0) {
-            printf("==inet_pton AF_INET6 ret %d, errno %d, %s\n", ret, errno, strerror(errno));
+            printErrno("inet_pton AF_INET6");
             return -1;
         }
         connect(_tcp, (const struct sockaddr*)(&servaddr6), sizeof(servaddr6));// not check ret when non-blocking
@@ -344,7 +378,7 @@ int AsyncTCP::openTCP(bool isIpv6)
         servaddr.sin_port = htons(_port);
         ret = inet_pton(AF_INET, _host.c_str(), &servaddr.sin_addr);
         if (ret <= 0) {
-            printf("==inet_pton AF_INET ret %d, errno %d, %s\n", ret, errno, strerror(errno));
+            printErrno("inet_pton AF_INET");
             return -1;
         }
         connect(_tcp, (const struct sockaddr*)(&servaddr), sizeof(servaddr));// not check ret when non-blocking
@@ -363,13 +397,13 @@ int AsyncTCP::openTCP(bool isIpv6)
     if (ret > 0 && FD_ISSET(_tcp, &fdwrite)) {
         int error = -1;
         int optLen = sizeof(int);
-        getsockopt(_tcp, SOL_SOCKET, SO_ERROR, (void *)&error, (socklen_t *)&optLen);
+        getsockopt(_tcp, SOL_SOCKET, SO_ERROR, (char *)&error, (socklen_t *)&optLen);
         if (0 == error) {
             return 0; // connect socket successful.
         }
-        printf("==getsockopt error %d, %s\n", error, strerror(error));
+        printErrno("getsockopt");
     } else {
-        printf("==select ret %d, errno %d, %s\n", ret, errno, strerror(errno));
+        printErrno("select timeout");
     }
     return -1;
 }
