@@ -84,10 +84,10 @@ private:
     bool _quit;
     
     std::thread *_thread;
-    std::queue<TCPData *> sendQueue; // send to server
-    std::mutex sendMutex;
-    std::queue<TCPData *> getQueue; // get from server
-    std::mutex getMutex;
+    TCPData * _sendData; // send to server
+    std::mutex _sendMutex;
+    std::queue<TCPData *> _getQueue; // get from server
+    std::mutex _getMutex;
 };
 
 #endif // __ASYNC_TCP_H__

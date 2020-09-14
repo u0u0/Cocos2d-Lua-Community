@@ -89,6 +89,7 @@ AsyncTCP::AsyncTCP()
 ,_cb(nullptr)
 ,_quit(false)
 ,_thread(nullptr)
+,_sendData(nullptr)
 {
     cocos2d::Director::getInstance()->getScheduler()->schedule(CC_SCHEDULE_SELECTOR(AsyncTCP::update), this, 0, false);
 }
@@ -124,10 +125,16 @@ void AsyncTCP::send(unsigned char *buffer, size_t len)
         return;
     }
     
-    TCPData *data = new TCPData(0, buffer, len);
-    sendMutex.lock();
-    sendQueue.push(data);
-    sendMutex.unlock();
+    _sendMutex.lock();
+    if (_sendData) {
+        // merge package
+        _sendData->buffer = (unsigned char *)realloc(_sendData->buffer, _sendData->size + len);
+        memcpy(_sendData->buffer + _sendData->size, buffer, len);
+        _sendData->size += len;
+    } else {
+        _sendData = new TCPData(0, buffer, len);
+    }
+    _sendMutex.unlock();
 }
 
 void AsyncTCP::close()
@@ -137,10 +144,23 @@ void AsyncTCP::close()
 
 void AsyncTCP::notify(int state, unsigned char *msg, size_t size)
 {
-    TCPData *data = new TCPData(state, msg, size);
-    getMutex.lock();
-    getQueue.push(data);
-    getMutex.unlock();
+    bool needNew = true;
+    _getMutex.lock();
+    if (EVENT_DATA == state && !_getQueue.empty()) {
+        // merge data if last package is data
+        TCPData *data = _getQueue.back();
+        if (EVENT_DATA == data->state) {
+            data->buffer = (unsigned char *)realloc(data->buffer, data->size + size);
+            memcpy(data->buffer + data->size, msg, size);
+            data->size += size;
+            needNew = false;
+        }
+    }
+    if (needNew) {
+        TCPData *data = new TCPData(state, msg, size);
+        _getQueue.push(data);
+    }
+    _getMutex.unlock();
 }
 
 void AsyncTCP::waitThreadAndClean()
@@ -150,14 +170,13 @@ void AsyncTCP::waitThreadAndClean()
         delete _thread;
     }
     // clean cache
-    while (!sendQueue.empty()) {
-        TCPData *data = sendQueue.front();
-        sendQueue.pop();
-        delete data;
+    if (_sendData) {
+        delete _sendData;
+        _sendData = nullptr;
     }
-    while (!getQueue.empty()) {
-        TCPData *data = getQueue.front();
-        getQueue.pop();
+    while (!_getQueue.empty()) {
+        TCPData *data = _getQueue.front();
+        _getQueue.pop();
         delete data;
     }
 }
@@ -167,18 +186,20 @@ void AsyncTCP::update(float dt)
     while (true) {
         // get data from queue
         TCPData *data = nullptr;
-        getMutex.lock();
-        if (!getQueue.empty()) {
-            data = getQueue.front();
-            getQueue.pop();
+        _getMutex.lock();
+        if (!_getQueue.empty()) {
+            data = _getQueue.front();
+            _getQueue.pop();
         }
-        getMutex.unlock();
+        _getMutex.unlock();
         // not data, break
         if (!data) break;
         // notify lua
         _cb(data->state, data->buffer, data->size);
         // free data
         delete data;
+        // if last _cb call close(), exit loop
+        if (_quit) break;
     }
 }
 
@@ -207,26 +228,15 @@ void AsyncTCP::socketThread()
         
         if (recvTCP() < 0) break;
         
-        int rtn;
-        while (true) {
-            // get data from queue
-            TCPData *data = nullptr;
-            rtn = 0;
-            sendMutex.lock();
-            if (!sendQueue.empty()) {
-                data = sendQueue.front();
-                sendQueue.pop();
-            }
-            sendMutex.unlock();
-            // not data, break
-            if (!data) break;
-            // send data
-            rtn = sendTCP(data->buffer, data->size);
+        int rtn = 0;
+        _sendMutex.lock();
+        if (_sendData) {
+            rtn = sendTCP(_sendData->buffer, _sendData->size);
             // free data
-            delete data;
-            // closed
-            if (rtn < 0) break;
+            delete _sendData;
+            _sendData = nullptr;
         }
+        _sendMutex.unlock();
         if (rtn < 0) break; // closed
     }
     
