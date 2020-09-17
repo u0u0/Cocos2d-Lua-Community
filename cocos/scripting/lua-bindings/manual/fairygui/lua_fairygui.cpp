@@ -23419,6 +23419,45 @@ static int lua_register_fairygui_FUIInput(lua_State* tolua_S)
     return 1;
 }
 
+static int lua_fairygui_GBasicTextField_setUnderlineColor(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GBasicTextField* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GBasicTextField",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GBasicTextField*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GBasicTextField_setUnderlineColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        cocos2d::Color3B arg0;
+        ok &= luaval_to_color3b(tolua_S, 2, &arg0, "fairygui.GBasicTextField:setUnderlineColor");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GBasicTextField_setUnderlineColor'", nullptr);
+            return 0;
+        }
+        cobj->setUnderlineColor(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GBasicTextField:setUnderlineColor",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GBasicTextField_setUnderlineColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
 // GBasicTextField is extend from GTextField, and UIObjectFactory create this
 static int lua_register_fairygui_GBasicTextField(lua_State* tolua_S)
 {
@@ -23426,6 +23465,7 @@ static int lua_register_fairygui_GBasicTextField(lua_State* tolua_S)
     tolua_cclass(tolua_S,"GBasicTextField","fairygui.GBasicTextField","fairygui.GTextField",nullptr);
 
     tolua_beginmodule(tolua_S,"GBasicTextField");
+    tolua_function(tolua_S,"setUnderlineColor",lua_fairygui_GBasicTextField_setUnderlineColor);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(fairygui::GBasicTextField).name();
     g_luaType[typeName] = "fairygui.GBasicTextField";

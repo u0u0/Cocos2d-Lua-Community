@@ -1312,8 +1312,8 @@ void Label::enableUnderline(const Color4B& underlineColor)
     {
         _underlineNode = DrawNode::create();
         addChild(_underlineNode, 100000);
-        _contentDirty = true;
     }
+    _contentDirty = true;
     _underlineColor4B = underlineColor;
 }
 
