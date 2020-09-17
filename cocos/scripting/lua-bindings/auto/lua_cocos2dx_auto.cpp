@@ -55631,19 +55631,12 @@ int lua_cocos2dx_Label_enableUnderline(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::Label* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"cc.Label",0,&tolua_err)) goto tolua_lerror;
 #endif
-
     cobj = (cocos2d::Label*)tolua_tousertype(tolua_S,1,0);
-
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
@@ -55653,18 +55646,21 @@ int lua_cocos2dx_Label_enableUnderline(lua_State* tolua_S)
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Label_enableUnderline'", nullptr);
-            return 0;
-        }
+    if (argc == 0) {
         cobj->enableUnderline();
         lua_settop(tolua_S, 1);
         return 1;
+    } else if (argc == 1) {
+        cocos2d::Color4B arg0;
+        if (luaval_to_color4b(tolua_S, 2, &arg0, "cc.Label:enableUnderline")) {
+            cobj->enableUnderline(arg0);
+            lua_settop(tolua_S, 1);
+            return 1;
+        }
+        tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_Label_enableUnderline'", nullptr);
+        return 0;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Label:enableUnderline",argc, 0);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting 0~1 \n", "cc.Label:enableUnderline",argc);
     return 0;
 
 #if COCOS2D_DEBUG >= 1

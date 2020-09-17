@@ -184,7 +184,9 @@ void FUILabel::updateBMFontScale()
 
 void FUILabel::setUnderlineColor(const cocos2d::Color3B& value)
 {
-    //NOT IMPLEMENTED
+    if (_textFormat->underline) {
+        enableUnderline(cocos2d::Color4B(value));
+    }
 }
 
 NS_FGUI_END

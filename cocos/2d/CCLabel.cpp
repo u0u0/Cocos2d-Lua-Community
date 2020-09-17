@@ -1305,7 +1305,7 @@ void Label::enableBold()
     }
 }
 
-void Label::enableUnderline()
+void Label::enableUnderline(const Color4B& underlineColor)
 {
     // remove it, just in case to prevent adding two or more
     if (!_underlineNode)
@@ -1314,6 +1314,7 @@ void Label::enableUnderline()
         addChild(_underlineNode, 100000);
         _contentDirty = true;
     }
+    _underlineColor4B = underlineColor;
 }
 
 void Label::enableStrikethrough()
@@ -1541,7 +1542,8 @@ void Label::updateContent()
 
                 // Github issue #15214. Uses _displayedColor instead of _textColor for the underline.
                 // This is to have the same behavior of SystemFonts.
-                _underlineNode->drawLine(Vec2(_linesOffsetX[i],y), Vec2(_linesWidth[i] + _linesOffsetX[i],y), Color4F(_displayedColor));
+                Color4F color = _underlineColor4B.a > 0 ? Color4F(_underlineColor4B) : Color4F(_displayedColor);
+                _underlineNode->drawLine(Vec2(_linesOffsetX[i],y), Vec2(_linesWidth[i] + _linesOffsetX[i],y), color);
             }
         }
         else if (_textSprite)
@@ -1555,7 +1557,8 @@ void Label::updateContent()
                 // FIXME: system fonts don't report the height of the font correctly. only the size of the texture, which is POT
                 y += spriteSize.height / 2;
             // FIXME: Might not work with different vertical alignments
-            _underlineNode->drawLine(Vec2(0.0f,y), Vec2(spriteSize.width,y), Color4F(_textSprite->getDisplayedColor()));
+            Color4F color = _underlineColor4B.a > 0 ? Color4F(_underlineColor4B) : Color4F(_textSprite->getDisplayedColor());
+            _underlineNode->drawLine(Vec2(0.0f,y), Vec2(spriteSize.width,y), color);
         }
     }
 

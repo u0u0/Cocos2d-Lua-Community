@@ -370,7 +370,7 @@ public:
     /**
      * Enable underline
      */
-    void enableUnderline();
+    void enableUnderline(const Color4B& underlineColor = Color4B(0, 0, 0, 0));
 
     /**
      * Enables strikethrough.
@@ -807,6 +807,7 @@ protected:
 
     bool _boldEnabled;
     DrawNode* _underlineNode;
+    Color4B _underlineColor4B;
     bool _strikethroughEnabled;
     
     backend::UniformLocation _mvpMatrixLocation;
