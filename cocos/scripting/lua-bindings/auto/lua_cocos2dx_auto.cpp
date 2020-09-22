@@ -9,6 +9,10 @@
 #include "renderer/CCPipelineDescriptor.h"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
+#include "scripting/lua-bindings/manual/CCLuaStack.h"
+#include "scripting/lua-bindings/manual/CCLuaValue.h"
+#include "scripting/lua-bindings/manual/CCLuaEngine.h"
+#include "scripting/lua-bindings/manual/cocos2d/LuaScriptHandlerMgr.h"
 
 int lua_cocos2dx_Ref_release(lua_State* tolua_S)
 {
@@ -32477,23 +32481,23 @@ int lua_cocos2dx_FileUtils_writeStringToFile(lua_State* tolua_S)
         if (argc == 3) {
             std::string arg0;
             ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.FileUtils:writeStringToFile");
-
             if (!ok) { break; }
+            
             std::string arg1;
             ok &= luaval_to_std_string(tolua_S, 3,&arg1, "cc.FileUtils:writeStringToFile");
-
             if (!ok) { break; }
-            std::function<void (bool)> arg2;
-            do {
-			// Lambda binding for lua is not supported.
-			assert(false);
-		} while(0)
-		;
-
-            if (!ok) { break; }
-            cobj->writeStringToFile(arg0, arg1, arg2);
-            lua_settop(tolua_S, 1);
-            return 1;
+            
+            if (!toluafix_isfunction(tolua_S, 4, "LUA_FUNCTION", 0, &tolua_err)) break;
+            int arg2 = toluafix_ref_function(tolua_S, 4, 0);
+            ScriptHandlerMgr::HandlerType handlerType = ScriptHandlerMgr::getInstance()->addCustomHandler(cobj, arg2);
+            
+            cobj->writeStringToFile(arg0, arg1, [=](bool isSuccess) {
+                LuaStack *stack = LuaEngine::getInstance()->getLuaStack();
+                stack->pushBoolean(isSuccess);
+                stack->executeFunctionByHandler(arg2, 1);
+                ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, handlerType);
+            });
+            return 0;
         }
     }while(0);
     ok  = true;
