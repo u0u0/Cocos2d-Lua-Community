@@ -315,6 +315,9 @@ LUA_STRING HTTPRequest::getResponseDataLua(void)
 int HTTPRequest::getResponseDataLength(void)
 {
     CCAssert(m_state == kCCHTTPRequestStateCompleted, "Request not completed");
+    if (m_savePath.length() > 0) {
+        return (int)m_dltotal;
+    }
     return (int)m_responseDataLength;
 }
 

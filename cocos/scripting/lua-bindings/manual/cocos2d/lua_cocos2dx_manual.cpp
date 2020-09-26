@@ -2139,7 +2139,8 @@ static int tolua_cocos2dx_FileUtils_getDataFromFile(lua_State* tolua_S)
             auto data = FileUtils::getInstance()->getDataFromFile(arg0);
             if (!data.isNull())
                 lua_pushlstring(tolua_S, reinterpret_cast<const char*>(data.getBytes()), static_cast<size_t>(data.getSize()));
-
+            else
+                lua_pushnil(tolua_S);
             return 1;
         }
     }
