@@ -6,8 +6,9 @@
 
 #include "scripting/lua-bindings/manual/network/CCHTTPRequest.h"
 
+#define TMP_SUFFIX ".tmp"
+
 static bool isCurlInited = false;
-unsigned int HTTPRequest::s_id = 0;
 
 HTTPRequest *HTTPRequest::createWithUrlLua(LUA_FUNCTION listener,
                                                const char *url,
@@ -15,6 +16,19 @@ HTTPRequest *HTTPRequest::createWithUrlLua(LUA_FUNCTION listener,
 {
     HTTPRequest *request = new HTTPRequest();
     request->initWithListener(listener, url, method);
+    request->autorelease();
+    return request;
+}
+
+HTTPRequest* HTTPRequest::createForDownload(LUA_FUNCTION listener,
+                                            const char *url,
+                                            const char *savePath)
+{
+    CCAssert(savePath, "HTTPRequest::createForDownload() - invalid savePath");
+    
+    HTTPRequest *request = new HTTPRequest();
+    request->m_savePath = savePath;
+    request->initWithListener(listener, url, kCCHTTPRequestMethodGET);
     request->autorelease();
     return request;
 }
@@ -28,6 +42,34 @@ bool HTTPRequest::initWithListener(LUA_FUNCTION listener, const char *url, int m
 bool HTTPRequest::initWithUrl(const char *url, int method)
 {
     CCAssert(url, "HTTPRequest::initWithUrl() - invalid url");
+    
+    // init for download
+    m_resumeSize = 0;
+    if (m_savePath.length() > 0) {
+        string tmpFileName = m_savePath + TMP_SUFFIX;
+        size_t found = tmpFileName.find_last_of("/\\");
+        if (found == string::npos) {
+            CCLOG("HTTPRequest::initWithUrl() Can't find dirname in savePath");
+            return false;
+        }
+        // ensure directory is exist
+        auto fileUtils = FileUtils::getInstance();
+        string dir = tmpFileName.substr(0, found + 1);
+        if (false == fileUtils->isDirectoryExist(dir)) {
+            if (false == fileUtils->createDirectory(dir)) {
+                CCLOG("HTTPRequest::initWithUrl() Can't create dir");
+                return false;
+            }
+        }
+        // open temp file
+        string suitablePath = fileUtils->getSuitableFOpen(tmpFileName);
+        m_file = fopen(suitablePath.c_str(), "ab");
+        if (nullptr == m_file) {
+            CCLOG("HTTPRequest::initWithUrl() Can't open temp file");
+            return false;
+        }
+        m_resumeSize = ftell(m_file);
+    }
     
     // init curl global once
     if (!isCurlInited) {
@@ -45,33 +87,36 @@ bool HTTPRequest::initWithUrl(const char *url, int method)
     curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0L);
 
-    if (method == kCCHTTPRequestMethodPOST)
-    {
-        curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
-        curl_easy_setopt(m_curl, CURLOPT_COPYPOSTFIELDS, "");
+    switch (method) {
+        case kCCHTTPRequestMethodPOST:
+            curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
+            curl_easy_setopt(m_curl, CURLOPT_COPYPOSTFIELDS, "");
+            break;
+        case kCCHTTPRequestMethodPUT:
+            curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "PUT");
+            break;
+        case kCCHTTPRequestMethodDELETE:
+            curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+            break;
     }
-	else if(method == kCCHTTPRequestMethodPUT)
-	{
-		curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "PUT");
-	}
-	else if (method == kCCHTTPRequestMethodDELETE)
-	{
-		curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-	}
     
-    ++s_id;
-    // CCLOG("HTTPRequest[0x%04x] - create request with url: %s", s_id, url);
+    if (m_file) {
+        curl_easy_setopt(m_curl, CURLOPT_RESUME_FROM_LARGE, (curl_off_t)m_resumeSize);
+        // download mode, no opt timeout, use low speed limited and time.
+        curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 0);
+        curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_LIMIT, 1L);
+        curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_TIME, 10L);
+    }
+    
     return true;
 }
 
 HTTPRequest::~HTTPRequest(void)
 {
     cleanup();
-    if (m_listener)
-    {
+    if (m_listener) {
         LuaEngine::getInstance()->removeScriptHandler(m_listener);
     }
-    // CCLOG("HTTPRequest[0x%04x] - request removed", s_id);
 }
 
 void HTTPRequest::setRequestUrl(const char *url)
@@ -111,16 +156,14 @@ void HTTPRequest::setPOSTData(const char *data, size_t len)
     if (0 == len) {
         return;
     }
-    if (m_postData)
-    {
+    if (m_postData) {
         free(m_postData);
         m_postDataLen = 0;
         m_postData = NULL;
     }
     m_postData = malloc(len + 1);
     memset(m_postData, 0, len + 1);
-    if (NULL == m_postData)
-    {
+    if (NULL == m_postData) {
         return;
     }
     memcpy(m_postData, data, len);
@@ -165,16 +208,13 @@ const string HTTPRequest::getCookieString(void)
 void HTTPRequest::setAcceptEncoding(int acceptEncoding)
 {
     CCAssert(m_state == kCCHTTPRequestStateIdle, "HTTPRequest::setAcceptEncoding() - request not idle");
-    switch (acceptEncoding)
-    {
+    switch (acceptEncoding) {
         case kCCHTTPRequestAcceptEncodingGzip:
             curl_easy_setopt(m_curl, CURLOPT_ACCEPT_ENCODING, "gzip");
             break;
-            
         case kCCHTTPRequestAcceptEncodingDeflate:
             curl_easy_setopt(m_curl, CURLOPT_ACCEPT_ENCODING, "deflate");
             break;
-            
         default:
             curl_easy_setopt(m_curl, CURLOPT_ACCEPT_ENCODING, "identity");
     }
@@ -209,14 +249,12 @@ bool HTTPRequest::start(void)
     th.detach();//exit from main thread, auto exit
     
     Director::getInstance()->getScheduler()->scheduleUpdate(this, 0, false);
-    // CCLOG("HTTPRequest[0x%04x] - request start", s_id);
     return true;
 }
 
 void HTTPRequest::cancel(void)
 {
-    if (m_state == kCCHTTPRequestStateIdle || m_state == kCCHTTPRequestStateInProgress)
-    {
+    if (m_state == kCCHTTPRequestStateIdle || m_state == kCCHTTPRequestStateInProgress) {
         m_state = kCCHTTPRequestStateCancelled;
     }
 }
@@ -241,8 +279,7 @@ const HTTPRequestHeaders &HTTPRequest::getResponseHeaders(void)
 const string HTTPRequest::getResponseHeadersString()
 {
     string buf;
-    for (HTTPRequestHeadersIterator it = m_responseHeaders.begin(); it != m_responseHeaders.end(); ++it)
-    {
+    for (HTTPRequestHeadersIterator it = m_responseHeaders.begin(); it != m_responseHeaders.end(); ++it) {
         buf.append(*it);
     }
     return buf;
@@ -289,8 +326,7 @@ size_t HTTPRequest::saveResponseData(const char *filename)
     CCAssert(fp, "HTTPRequest::saveResponseData() - open file failure");
     
     size_t writedBytes = m_responseDataLength;
-    if (writedBytes > 0)
-    {
+    if (writedBytes > 0) {
         fwrite(m_responseBuffer, m_responseDataLength, 1, fp);
     }
     fclose(fp);
@@ -310,8 +346,7 @@ const string HTTPRequest::getErrorMessage(void)
 void HTTPRequest::checkCURLState(float dt)
 {
     CC_UNUSED_PARAM(dt);
-    if (m_curlState != kCCHTTPRequestCURLStateBusy)
-    {
+    if (m_curlState != kCCHTTPRequestCURLStateBusy) {
         Director::getInstance()->getScheduler()->unscheduleAllForTarget(this);
         release();
     }
@@ -319,10 +354,8 @@ void HTTPRequest::checkCURLState(float dt)
 
 void HTTPRequest::update(float dt)
 {
-    if (m_state == kCCHTTPRequestStateInProgress)
-    {
-        if (m_listener)
-        {
+    if (m_state == kCCHTTPRequestStateInProgress) {
+        if (m_listener) {
             LuaValueDict dict;
             
             dict["name"] = LuaValue::stringValue("progress");
@@ -339,29 +372,29 @@ void HTTPRequest::update(float dt)
     }
     
     Director::getInstance()->getScheduler()->unscheduleAllForTarget(this);
-    if (m_curlState != kCCHTTPRequestCURLStateIdle)
-    {
+    if (m_curlState != kCCHTTPRequestCURLStateIdle) {
         Director::getInstance()->getScheduler()->schedule(CC_SCHEDULE_SELECTOR(HTTPRequest::checkCURLState), this, 0, false);
     }
 
-    if (m_listener)
-    {
+    if (m_listener) {
         LuaValueDict dict;
 
-        switch (m_state)
-        {
+        switch (m_state) {
             case kCCHTTPRequestStateCompleted:
                 dict["name"] = LuaValue::stringValue("completed");
+                if (m_savePath.length() > 0) { // rename tmp file to savePath
+                    FileUtils::getInstance()->renameFile(m_savePath + TMP_SUFFIX, m_savePath);
+                }
                 break;
-                
             case kCCHTTPRequestStateCancelled:
                 dict["name"] = LuaValue::stringValue("cancelled");
                 break;
-                
             case kCCHTTPRequestStateFailed:
+                if (CURLE_RANGE_ERROR == m_errorCode) { // wrong offset or server not support range
+                    FileUtils::getInstance()->removeFile(m_savePath + TMP_SUFFIX);
+                }
                 dict["name"] = LuaValue::stringValue("failed");
                 break;
-                
             default:
                 dict["name"] = LuaValue::stringValue("unknown");
         }
@@ -374,15 +407,12 @@ void HTTPRequest::update(float dt)
 }
 
 // instance callback
-
 void HTTPRequest::onRequest(void)
 {
-    if (m_postFields.size() > 0)
-    {
+    if (m_postFields.size() > 0) {
         //curl_easy_setopt(m_curl, CURLOPT_POST, 1L);
         stringbuf buf;
-        for (Fields::iterator it = m_postFields.begin(); it != m_postFields.end(); ++it)
-        {
+        for (Fields::iterator it = m_postFields.begin(); it != m_postFields.end(); ++it) {
             char *part = curl_easy_escape(m_curl, it->first.c_str(), 0);
             buf.sputn(part, strlen(part));
             buf.sputc('=');
@@ -398,15 +428,13 @@ void HTTPRequest::onRequest(void)
     }
 
     struct curl_slist *chunk = NULL;
-    for (HTTPRequestHeadersIterator it = m_headers.begin(); it != m_headers.end(); ++it)
-    {
+    for (HTTPRequestHeadersIterator it = m_headers.begin(); it != m_headers.end(); ++it) {
         chunk = curl_slist_append(chunk, (*it).c_str());
     }
 
-	if (m_formPost)
-	{
-		curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, m_formPost);
-	}
+    if (m_formPost) {
+        curl_easy_setopt(m_curl, CURLOPT_HTTPPOST, m_formPost);
+    }
 
     curl_slist *cookies = NULL;
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, chunk);
@@ -414,8 +442,7 @@ void HTTPRequest::onRequest(void)
     curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &m_responseCode);
     curl_easy_getinfo(m_curl, CURLINFO_COOKIELIST, &cookies);
 
-    if (cookies)
-    {
+    if (cookies) {
         struct curl_slist *nc = cookies;
         stringbuf buf;
         while (nc)
@@ -431,13 +458,17 @@ void HTTPRequest::onRequest(void)
 
     curl_easy_cleanup(m_curl);
     m_curl = NULL;
-	if (m_formPost)
-	{
-		curl_formfree(m_formPost);
-		m_formPost = NULL;
-	}
+    if (m_formPost) {
+        curl_formfree(m_formPost);
+        m_formPost = NULL;
+    }
     curl_slist_free_all(chunk);
-    
+    // always close tmp file handler
+    if (m_file) {
+        fclose(m_file);
+        m_file = NULL;
+        m_resumeSize = 0;
+    }
     m_errorCode = code;
     m_errorMessage = (code == CURLE_OK) ? "" : curl_easy_strerror(code);
     m_state = (code == CURLE_OK) ? kCCHTTPRequestStateCompleted : kCCHTTPRequestStateFailed;
@@ -446,8 +477,13 @@ void HTTPRequest::onRequest(void)
 
 size_t HTTPRequest::onWriteData(void *buffer, size_t bytes)
 {
-    if (m_responseDataLength + bytes + 1 > m_responseBufferLength)
-    {
+    // download to file
+    if (m_file) {
+        fwrite(buffer, bytes, 1, m_file);
+        return bytes;
+    }
+    
+    if (m_responseDataLength + bytes + 1 > m_responseBufferLength) {
         m_responseBufferLength += BUFFER_CHUNK_SIZE;
         m_responseBuffer = realloc(m_responseBuffer, m_responseBufferLength);
     }
@@ -462,7 +498,7 @@ size_t HTTPRequest::onWriteHeader(void *buffer, size_t bytes)
 {
     char *headerBuffer = new char[bytes + 1];
     headerBuffer[bytes] = 0;
-    memcpy(headerBuffer, buffer, bytes);    
+    memcpy(headerBuffer, buffer, bytes);
     m_responseHeaders.push_back(string(headerBuffer));
     delete []headerBuffer;
     return bytes;
@@ -470,8 +506,8 @@ size_t HTTPRequest::onWriteHeader(void *buffer, size_t bytes)
 
 int HTTPRequest::onProgress(double dltotal, double dlnow, double ultotal, double ulnow)
 {
-    m_dltotal = dltotal;
-    m_dlnow = dlnow;
+    m_dltotal = dltotal + m_resumeSize;
+    m_dlnow = dlnow + m_resumeSize;
     m_ultotal = ultotal;
     m_ulnow = ulnow;
     
@@ -484,18 +520,19 @@ void HTTPRequest::cleanup(void)
     m_responseBufferLength = 0;
     m_responseDataLength = 0;
     m_postDataLen = 0;
-    if (m_postData)
-    {
+    if (m_postData) {
         free(m_postData);
         m_postData = NULL;
     }
-    if (m_responseBuffer)
-    {
+    if (m_responseBuffer) {
         free(m_responseBuffer);
         m_responseBuffer = NULL;
     }
-    if (m_curl)
-    {
+    if (m_file) {
+        fclose(m_file);
+        m_file = NULL;
+    }
+    if (m_curl) {
         curl_easy_cleanup(m_curl);
         m_curl = NULL;
     }

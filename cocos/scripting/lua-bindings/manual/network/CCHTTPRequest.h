@@ -42,6 +42,10 @@ public:
     static HTTPRequest* createWithUrlLua(LUA_FUNCTION listener,
                                            const char *url,
                                            int method = kCCHTTPRequestMethodGET);
+    
+    static HTTPRequest* createForDownload(LUA_FUNCTION listener,
+                                           const char *url,
+                                           const char *savePath);
 
     ~HTTPRequest(void);
 
@@ -116,6 +120,8 @@ public:
 private:
     HTTPRequest(void)
     : m_listener(0)
+    , m_file(NULL)
+    , m_resumeSize(0)
     , m_state(kCCHTTPRequestStateIdle)
     , m_errorCode(0)
     , m_responseCode(0)
@@ -145,10 +151,12 @@ private:
         BUFFER_CHUNK_SIZE = 32768, // 32 KB
     };
 
-    static unsigned int s_id;
     string m_url;
     int m_listener;
     int m_curlState;
+    string m_savePath;
+    FILE *m_file;
+    size_t m_resumeSize;
 
     CURL *m_curl;
 	curl_httppost *m_formPost;

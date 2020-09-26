@@ -100,6 +100,40 @@ function network.createHTTPRequest(callback, url, method)
 end
 
 --[[
+  Create a http for download url and save to path.
+  @function createHTTPDownload
+  @param function callback, connection status change callback
+  @param string url, the request url
+  @param string savePath, fullpath for save
+  @return cc.HTTPRequest
+
+  example:
+  local function onRequestCallback(event)
+    local request = event.request
+    if event.name == "completed" then
+      local code = request:getResponseStatusCode()
+      if code == 200 or code == 206 then -- 206 resume from break-point
+        print("download success")
+        return
+      end
+      print("HTTP unkonw response code:", code) -- get error
+    elseif event.name == "progress" then
+      print("progress" .. event.dltotal)
+    else
+      print(event.name) -- get error
+      print(request:getErrorCode(), request:getErrorMessage())
+    end
+  end
+
+  local savePath = cc.FileUtils:getInstance():getWritablePath() .. "download.data"
+  local request = network.createHTTPDownload(onRequestCallback, "https://baidu.com", savePath)
+  request:start()
+]]--
+function network.createHTTPDownload(callback, url, savePath)
+    return cc.HTTPRequest:createForDownload(callback, url, savePath)
+end
+
+--[[
   Upload a file through a HTTPRequest instance.
   @function uploadFile
   @param callback As same as the first parameter of network.createHTTPRequest.

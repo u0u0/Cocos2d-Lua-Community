@@ -34,6 +34,37 @@ tolua_lerror:
 #endif
 }
 
+static int tolua_HTTPRequest_createForDownload(lua_State* tolua_S)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (
+            !tolua_isusertable(tolua_S,1,"HTTPRequest",0,&tolua_err) ||
+            (tolua_isvaluenil(tolua_S,2,&tolua_err) || !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err)) ||
+            !tolua_isstring(tolua_S,3,0,&tolua_err) ||
+            !tolua_isstring(tolua_S,4,1,&tolua_err) ||
+            !tolua_isnoobj(tolua_S,5,&tolua_err)
+       )
+        goto tolua_lerror;
+    else
+#endif
+    {
+        LUA_FUNCTION listener = (toluafix_ref_function(tolua_S,2,0));
+        const char* url = ((const char*)tolua_tostring(tolua_S,3,0));
+        const char* path = ((const char*)tolua_tostring(tolua_S,4,0));
+        {
+            HTTPRequest *tolua_ret = HTTPRequest::createForDownload(listener,url,path);
+            tolua_pushusertype(tolua_S,(void*)tolua_ret,"HTTPRequest");
+        }
+    }
+    return 1;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'createForDownload'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int tolua_HTTPRequest_setRequestUrl(lua_State* tolua_S)
 {
 #if COCOS2D_DEBUG >= 1
@@ -702,6 +733,7 @@ TOLUA_API int register_http_manual(lua_State* tolua_S)
 	tolua_cclass(tolua_S, "HTTPRequest", "HTTPRequest", "cc.Ref", NULL);
 	tolua_beginmodule(tolua_S, "HTTPRequest");
 	tolua_function(tolua_S, "createWithUrl", tolua_HTTPRequest_createWithUrl);
+    tolua_function(tolua_S, "createForDownload", tolua_HTTPRequest_createForDownload);
 	tolua_function(tolua_S, "setRequestUrl", tolua_HTTPRequest_setRequestUrl);
 	tolua_function(tolua_S, "getRequestUrl", tolua_HTTPRequest_getRequestUrl);
 	tolua_function(tolua_S, "addRequestHeader", tolua_HTTPRequest_addRequestHeader);
