@@ -105,7 +105,7 @@ bool HTTPRequest::initWithUrl(const char *url, int method)
         // download mode, no opt timeout, use low speed limited and time.
         curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 0);
         curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_LIMIT, 1L);
-        curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_TIME, 10L);
+        curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_TIME, 5L);
     }
     
     return true;
@@ -224,7 +224,11 @@ void HTTPRequest::setTimeout(int timeout)
 {
     CCAssert(m_state == kCCHTTPRequestStateIdle, "HTTPRequest::setTimeout() - request not idle");
     // CURLOPT_CONNECTTIMEOUT is ok, Only change data timeout.
-    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, timeout);
+    if (m_file) {
+        curl_easy_setopt(m_curl, CURLOPT_LOW_SPEED_TIME, (long)timeout);
+    } else {
+        curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, (long)timeout);
+    }
 }
 
 bool HTTPRequest::start(void)
