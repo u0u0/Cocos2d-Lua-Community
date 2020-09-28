@@ -20,17 +20,17 @@ Cocos2d-Lua-Community is a improved of Cocos2d-x 4.0, and easy to use Lua game e
 
 ## Develop Requirements
 
-* Mac OS X 10.9+, Xcode 10+
+* Mac OS X 10.11+, Xcode 10+
 * Windows 7+, Visual Studio 2019
 * Python 3.5+
 * Android: NDK r20+, Android Studio 3.4+
-* Cmake 3.16+ (In Android Studio's cmake plugin 3.6+)
+* Cmake 3.16+ (In Android Studio's cmake plugin 3.10+)
 
 ## Runtime Requirements
 
 * iOS 9.0+ for iPhone / iPad games
 * Android 3.0.0+ for Android
-* OS X v10.9+ for Mac games
+* Mac OS X v10.11+ for Mac games
 * Windows 7+ for Win games, [Microsoft Visual C++ Redistributable for Visual Studio 2019 x86](https://aka.ms/vs/16/release/VC_redist.x86.exe), [Microsoft Visual C++ Redistributable for Visual Studio 2019 x64](https://aka.ms/vs/16/release/VC_redist.x64.exe)
 
 ## Lua Game Runner

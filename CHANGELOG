@@ -1,3 +1,46 @@
+Cocos2d-Lua-Community v4.0.1 Release
+
+[新增] LuaGameRunner添加Log to File功能。
+[新增] 集成lua-protobuf（https://github.com/starwing/lua-protobuf）
+[新增] TiledMap添加collection of images类型的tileset支持。
+[新增] TiledMap添加对编辑器碰撞数据的解析支持。
+[新增] Linux支持。（注：EditBox实现不完整）
+[新增] shader添加setUniformXXX绑定函数。
+[新增] 添加LuaLoadChunksFromZIP绑定。
+[新增] NodeEx.lua添加对鼠标事件的支持。
+[新增] Mac添加系统字体描边支持。
+[新增] 新加一个异步tcp的实现，用来替代SimpleTCP和LuaSocket。
+[新增] 新加network.createHTTPDownload，直接下载到文件。
+
+[改进] 优化Lua搜索路径，去掉系统路径。
+[改进] 同步3.7中Luaj的改进。
+[改进] DragonBone的类的public变量改为Lua的set/get封装方式。
+[改进] FairyGUI runtime和Luabinding的大量改进。
+[改进] Spine runtime同步到3.8最新代码。
+[改进] 同步4.7对ccui.RichText的排版修正。
+[改进] RenderTexture内存泄漏和crash修正。
+[改进] auto batch MaterialID 排序修正。
+[改进] Win32 fix for FileUtils::listFilesRecursively returning no results.
+[改进] Fix Label::draw skips drawing when batchNodes are more than one and have empty quads.
+[改进] ListView innercontainer size fix, when inner item was scaled
+[改进] 改进RDAudio::pause()，优化Android下暂停的性能损耗。
+[改进] Android 显示刘海区域。
+[改进] pb解析double和float再优化，fix android release版本crash.
+[改进] Mac和Linux使用64位luajit，解决最新mac系统(PANIC: unprotected error in call to Lua API (not enough memory))
+[改进] update luajit and tool to luajit master commit 2020.7.13
+[改进] FileUtils的writeStringToFile绑定添加异步回调。
+
+[修正] NodeEx.lua的触摸事件点击只调用Node的hitTest，避免调用ccui.Widget的hitTest产生不正确的判断。
+[修正] iOS和mac的archive不弹出Organizer 界面的问题。
+[修正] ccui.Button 设置字体顺序导致的size不对。
+[修正] 部分Android模拟器的Directx模式下，红屏的问题。
+[修正] DrawNode和label未响应自定义blendFunc.
+[修正] lua_spSkeletonData中的内存泄漏。
+[修正] Mac的LuaGameRunner可ctrl+c 复制log。
+[修正] mac editbox crash fix when dealloc.
+[修正] Android权限申请crash fix。
+[修正] Cocos2d.lua sync fix from 3.7
+
 Cocos2d-Lua-Community v4.0.0 Release
 
 [Overview]    First release of Cocos2d-Lua-Community, a improved of Cocos2d-x 4.0, 
