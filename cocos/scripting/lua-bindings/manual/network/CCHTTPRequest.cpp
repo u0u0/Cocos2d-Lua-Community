@@ -68,6 +68,7 @@ bool HTTPRequest::initWithUrl(const char *url, int method)
             CCLOG("HTTPRequest::initWithUrl() Can't open temp file");
             return false;
         }
+        fseek(m_file, 0L, SEEK_END);
         m_resumeSize = ftell(m_file);
     }
     
