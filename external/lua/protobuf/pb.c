@@ -424,7 +424,10 @@ static int struct_unpack(lua_State *L)
             }
         case 'I':
             {
-                lua_pushnumber(L, *(uint32_t*)unpack_fixed32(buffer, out));
+                // use union to avoid crash on Android (signal 7)
+                uint32_t* buf = (uint32_t*)unpack_fixed32(buffer, out);
+                int i = *buf;
+                lua_pushnumber(L, (lua_Number)i);
                 break;
             }
         case 'Q':
