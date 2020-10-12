@@ -32479,6 +32479,7 @@ int lua_cocos2dx_FileUtils_writeStringToFile(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     do{
         if (argc == 3) {
+            tolua_Error err;
             std::string arg0;
             ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.FileUtils:writeStringToFile");
             if (!ok) { break; }
@@ -32487,7 +32488,7 @@ int lua_cocos2dx_FileUtils_writeStringToFile(lua_State* tolua_S)
             ok &= luaval_to_std_string(tolua_S, 3,&arg1, "cc.FileUtils:writeStringToFile");
             if (!ok) { break; }
             
-            if (!toluafix_isfunction(tolua_S, 4, "LUA_FUNCTION", 0, &tolua_err)) break;
+            if (!toluafix_isfunction(tolua_S, 4, "LUA_FUNCTION", 0, &err)) break;
             int arg2 = toluafix_ref_function(tolua_S, 4, 0);
             ScriptHandlerMgr::HandlerType handlerType = ScriptHandlerMgr::getInstance()->addCustomHandler(cobj, arg2);
             
