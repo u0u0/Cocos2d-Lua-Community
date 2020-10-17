@@ -19223,6 +19223,110 @@ int lua_register_fairygui_GProgressBar(lua_State* tolua_S)
 	return 1;
 }
 
+static int lua_fairygui_GSlider_get_changeOnClick(lua_State* L)
+{
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GSlider_get_changeOnClick'", nullptr);
+        return 0;
+    }
+#endif
+
+    lua_pushboolean(L, cobj->changeOnClick);
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GSlider_get_changeOnClick'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_set_changeOnClick(lua_State* L)
+{
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GSlider_set_changeOnClick'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->changeOnClick = lua_toboolean(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GSlider_set_changeOnClick'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_get_canDrag(lua_State* L)
+{
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GSlider_get_canDrag'", nullptr);
+        return 0;
+    }
+#endif
+
+    lua_pushboolean(L, cobj->canDrag);
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GSlider_get_canDrag'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_set_canDrag(lua_State* L)
+{
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_GSlider_set_canDrag'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->canDrag = lua_toboolean(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_GSlider_set_canDrag'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GSlider_setValue(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -19470,6 +19574,10 @@ static int lua_register_fairygui_GSlider(lua_State* tolua_S)
 	tolua_cclass(tolua_S,"GSlider","fairygui.GSlider","fairygui.GComponent",nullptr);
 
 	tolua_beginmodule(tolua_S,"GSlider");
+    // variable
+    tolua_variable(tolua_S, "changeOnClick", lua_fairygui_GSlider_get_changeOnClick, lua_fairygui_GSlider_set_changeOnClick);
+    tolua_variable(tolua_S, "canDrag", lua_fairygui_GSlider_get_canDrag, lua_fairygui_GSlider_set_canDrag);
+    // function
 	tolua_function(tolua_S,"setValue",lua_fairygui_GSlider_setValue);
 	tolua_function(tolua_S,"setMax",lua_fairygui_GSlider_setMax);
 	tolua_function(tolua_S,"getValue",lua_fairygui_GSlider_getValue);
