@@ -19177,6 +19177,78 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GProgressBar_setMin(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GProgressBar* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GProgressBar",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GProgressBar*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GProgressBar_setMin'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        double arg0;
+        ok &= luaval_to_number(tolua_S, 2,&arg0, "fairygui.GProgressBar:setMin");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GProgressBar_setMin'", nullptr);
+            return 0;
+        }
+        cobj->setMin(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GProgressBar:setMin",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GProgressBar_setMin'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GProgressBar_getMin(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GProgressBar* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GProgressBar",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GProgressBar*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GProgressBar_getMin'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        double ret = cobj->getMin();
+        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GProgressBar:getMin",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GProgressBar_getMin'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GProgressBar_create(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -19208,14 +19280,16 @@ int lua_register_fairygui_GProgressBar(lua_State* tolua_S)
 	tolua_cclass(tolua_S,"GProgressBar","fairygui.GProgressBar","fairygui.GComponent",nullptr);
 
 	tolua_beginmodule(tolua_S,"GProgressBar");
-	tolua_function(tolua_S,"setValue",lua_fairygui_GProgressBar_setValue);
-	tolua_function(tolua_S,"setMax",lua_fairygui_GProgressBar_setMax);
-	tolua_function(tolua_S,"getValue",lua_fairygui_GProgressBar_getValue);
-	tolua_function(tolua_S,"getTitleType",lua_fairygui_GProgressBar_getTitleType);
-	tolua_function(tolua_S,"tweenValue",lua_fairygui_GProgressBar_tweenValue);
-	tolua_function(tolua_S,"getMax",lua_fairygui_GProgressBar_getMax);
-	tolua_function(tolua_S,"setTitleType",lua_fairygui_GProgressBar_setTitleType);
-	tolua_function(tolua_S,"create", lua_fairygui_GProgressBar_create);
+    tolua_function(tolua_S,"setTitleType",lua_fairygui_GProgressBar_setTitleType);
+    tolua_function(tolua_S,"getTitleType",lua_fairygui_GProgressBar_getTitleType);
+    tolua_function(tolua_S,"setMin",lua_fairygui_GProgressBar_setMin);
+    tolua_function(tolua_S,"getMin",lua_fairygui_GProgressBar_getMin);
+    tolua_function(tolua_S,"getMax",lua_fairygui_GProgressBar_getMax);
+    tolua_function(tolua_S,"setMax",lua_fairygui_GProgressBar_setMax);
+    tolua_function(tolua_S,"setValue",lua_fairygui_GProgressBar_setValue);
+    tolua_function(tolua_S,"getValue",lua_fairygui_GProgressBar_getValue);
+    tolua_function(tolua_S,"tweenValue",lua_fairygui_GProgressBar_tweenValue);
+    tolua_function(tolua_S,"create", lua_fairygui_GProgressBar_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::GProgressBar).name();
 	g_luaType[typeName] = "fairygui.GProgressBar";
@@ -19543,6 +19617,150 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GSlider_getMin(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GSlider_getMin'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        double ret = cobj->getMin();
+        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GSlider:getMin",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GSlider_getMin'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_setMin(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GSlider* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GSlider_setMin'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        double arg0;
+        ok &= luaval_to_number(tolua_S, 2,&arg0, "fairygui.GSlider:setMin");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GSlider_setMin'", nullptr);
+            return 0;
+        }
+        cobj->setMin(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GSlider:setMin",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GSlider_setMin'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_getWholeNumbers(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GSlider* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GSlider_getWholeNumbers'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) {
+        bool ret = cobj->getWholeNumbers();
+        tolua_pushboolean(tolua_S,(int)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GSlider:getWholeNumbers",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GSlider_getWholeNumbers'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GSlider_setWholeNumbers(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GSlider* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GSlider",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GSlider*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GSlider_setWholeNumbers'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        bool arg0;
+        ok &= luaval_to_boolean(tolua_S, 2, &arg0, "fairygui.GSlider:setWholeNumbers");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GSlider_setWholeNumbers'", nullptr);
+            return 0;
+        }
+        cobj->setWholeNumbers(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GSlider:setWholeNumbers",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GSlider_setWholeNumbers'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GSlider_create(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -19578,12 +19796,16 @@ static int lua_register_fairygui_GSlider(lua_State* tolua_S)
     tolua_variable(tolua_S, "changeOnClick", lua_fairygui_GSlider_get_changeOnClick, lua_fairygui_GSlider_set_changeOnClick);
     tolua_variable(tolua_S, "canDrag", lua_fairygui_GSlider_get_canDrag, lua_fairygui_GSlider_set_canDrag);
     // function
-	tolua_function(tolua_S,"setValue",lua_fairygui_GSlider_setValue);
-	tolua_function(tolua_S,"setMax",lua_fairygui_GSlider_setMax);
-	tolua_function(tolua_S,"getValue",lua_fairygui_GSlider_getValue);
-	tolua_function(tolua_S,"getTitleType",lua_fairygui_GSlider_getTitleType);
-	tolua_function(tolua_S,"getMax",lua_fairygui_GSlider_getMax);
-	tolua_function(tolua_S,"setTitleType",lua_fairygui_GSlider_setTitleType);
+    tolua_function(tolua_S,"getTitleType",lua_fairygui_GSlider_getTitleType);
+    tolua_function(tolua_S,"setTitleType",lua_fairygui_GSlider_setTitleType);
+    tolua_function(tolua_S,"getMin",lua_fairygui_GSlider_getMin);
+    tolua_function(tolua_S,"setMin",lua_fairygui_GSlider_setMin);
+    tolua_function(tolua_S,"getMax",lua_fairygui_GSlider_getMax);
+    tolua_function(tolua_S,"setMax",lua_fairygui_GSlider_setMax);
+    tolua_function(tolua_S,"getValue",lua_fairygui_GSlider_getValue);
+    tolua_function(tolua_S,"setValue",lua_fairygui_GSlider_setValue);
+    tolua_function(tolua_S,"getWholeNumbers",lua_fairygui_GSlider_getWholeNumbers);
+    tolua_function(tolua_S,"setWholeNumbers",lua_fairygui_GSlider_setWholeNumbers);
 	tolua_function(tolua_S,"create", lua_fairygui_GSlider_create);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::GSlider).name();
