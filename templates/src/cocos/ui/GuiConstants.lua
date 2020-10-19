@@ -227,3 +227,9 @@ ccui.VideoPlayerEvent = {
     STOPPED= 2,
     COMPLETED =3,
 }
+
+ccui.MovementEventType = {
+    START = 0,
+    COMPLETE = 1,
+    LOOP_COMPLETE = 2,
+}
