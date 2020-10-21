@@ -26512,6 +26512,591 @@ static int lua_register_fairygui_GTreeNode(lua_State* tolua_S)
     return 1;
 }
 
+static int lua_fairygui_TextFormat_set_face(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_face'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->face = lua_tostring(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_face'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_fontSize(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_fontSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->fontSize = (float)lua_tonumber(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_fontSize'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_color(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_color'", nullptr);
+        return 0;
+    }
+#endif
+
+    luaval_to_color3b(L, 2, &cobj->color, "fairygui.TextFormat:color");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_color'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_bold(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_bold'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->bold = (bool)lua_toboolean(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_bold'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_italics(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_italics'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->italics = (bool)lua_toboolean(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_italics'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_underline(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_underline'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->underline = (bool)lua_toboolean(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_underline'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_lineSpacing(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_lineSpacing'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->lineSpacing = (int)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_lineSpacing'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_letterSpacing(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_letterSpacing'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->letterSpacing = (int)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_letterSpacing'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_align(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_align'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->align = (cocos2d::TextHAlignment)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_align'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_verticalAlign(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_verticalAlign'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->verticalAlign = (cocos2d::TextVAlignment)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_verticalAlign'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_outlineColor(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_outlineColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    luaval_to_color3b(L, 2, &cobj->outlineColor, "fairygui.TextFormat:outlineColor");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_outlineColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_outlineSize(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_outlineSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->outlineSize = (int)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_outlineSize'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_shadowColor(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_shadowColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    luaval_to_color3b(L, 2, &cobj->shadowColor, "fairygui.TextFormat:shadowColor");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_shadowColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_shadowOffset(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_shadowOffset'", nullptr);
+        return 0;
+    }
+#endif
+
+    luaval_to_size(L, 2, &cobj->shadowOffset);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_shadowOffset'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_shadowBlurRadius(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_shadowBlurRadius'", nullptr);
+        return 0;
+    }
+#endif
+
+    cobj->shadowBlurRadius = (int)lua_tointeger(L, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_shadowBlurRadius'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_set_glowColor(lua_State* L)
+{
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(L,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_TextFormat_set_glowColor'", nullptr);
+        return 0;
+    }
+#endif
+
+    luaval_to_color3b(L, 2, &cobj->glowColor, "fairygui.TextFormat:glowColor");
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_TextFormat_set_glowColor'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_setFormat(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_TextFormat_setFormat'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        fairygui::TextFormat *format;
+        luaval_to_object<fairygui::TextFormat>(tolua_S,2,"fairygui.TextFormat",&format,"fairygui.TextFormat:setFormat");
+        cobj->setFormat(*format);
+        return 0;
+    }
+    luaL_error(tolua_S,"%s has wrong number of arguments: %d, was expecting %d \n","fairygui.TextFormat:setFormat",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_TextFormat_setFormat'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_enableEffect(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_TextFormat_enableEffect'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        int effectFlag = (int)lua_tointeger(tolua_S, 2);
+        cobj->enableEffect(effectFlag);
+        return 0;
+    }
+    luaL_error(tolua_S,"%s has wrong number of arguments: %d, was expecting %d \n","fairygui.TextFormat:enableEffect",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_TextFormat_enableEffect'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_disableEffect(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_TextFormat_disableEffect'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        int effectFlag = (int)lua_tointeger(tolua_S, 2);
+        cobj->disableEffect(effectFlag);
+        return 0;
+    }
+    luaL_error(tolua_S,"%s has wrong number of arguments: %d, was expecting %d \n","fairygui.TextFormat:disableEffect",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_TextFormat_disableEffect'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_TextFormat_hasEffect(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::TextFormat* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.TextFormat",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::TextFormat*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_TextFormat_hasEffect'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        int effectFlag = (int)lua_tointeger(tolua_S, 2);
+        bool rtn = cobj->hasEffect(effectFlag);
+        lua_pushboolean(tolua_S, (int)rtn);
+        return 1;
+    }
+    luaL_error(tolua_S,"%s has wrong number of arguments: %d, was expecting %d \n","fairygui.TextFormat:hasEffect",argc,1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_TextFormat_hasEffect'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_register_fairygui_TextFormat(lua_State* tolua_S)
+{
+    tolua_usertype(tolua_S,"fairygui.TextFormat");
+    tolua_cclass(tolua_S,"TextFormat","fairygui.TextFormat","",nullptr);
+
+    tolua_beginmodule(tolua_S,"TextFormat");
+    // variable
+    tolua_variable(tolua_S, "face", nullptr, lua_fairygui_TextFormat_set_face);
+    tolua_variable(tolua_S, "fontSize", nullptr, lua_fairygui_TextFormat_set_fontSize);
+    tolua_variable(tolua_S, "color", nullptr, lua_fairygui_TextFormat_set_color);
+    tolua_variable(tolua_S, "bold", nullptr, lua_fairygui_TextFormat_set_bold);
+    tolua_variable(tolua_S, "italics", nullptr, lua_fairygui_TextFormat_set_italics);
+    tolua_variable(tolua_S, "underline", nullptr, lua_fairygui_TextFormat_set_underline);
+    tolua_variable(tolua_S, "lineSpacing", nullptr, lua_fairygui_TextFormat_set_lineSpacing);
+    tolua_variable(tolua_S, "letterSpacing", nullptr, lua_fairygui_TextFormat_set_letterSpacing);
+    tolua_variable(tolua_S, "align", nullptr, lua_fairygui_TextFormat_set_align);
+    tolua_variable(tolua_S, "verticalAlign", nullptr, lua_fairygui_TextFormat_set_verticalAlign);
+    tolua_variable(tolua_S, "outlineColor", nullptr, lua_fairygui_TextFormat_set_outlineColor);
+    tolua_variable(tolua_S, "outlineSize", nullptr, lua_fairygui_TextFormat_set_outlineSize);
+    tolua_variable(tolua_S, "shadowColor", nullptr, lua_fairygui_TextFormat_set_shadowColor);
+    tolua_variable(tolua_S, "shadowOffset", nullptr, lua_fairygui_TextFormat_set_shadowOffset);
+    tolua_variable(tolua_S, "shadowBlurRadius", nullptr, lua_fairygui_TextFormat_set_shadowBlurRadius);
+    tolua_variable(tolua_S, "glowColor", nullptr, lua_fairygui_TextFormat_set_glowColor);
+    // function
+    tolua_function(tolua_S,"setFormat",lua_fairygui_TextFormat_setFormat);
+    tolua_function(tolua_S,"enableEffect",lua_fairygui_TextFormat_enableEffect);
+    tolua_function(tolua_S,"disableEffect",lua_fairygui_TextFormat_disableEffect);
+    tolua_function(tolua_S,"hasEffect",lua_fairygui_TextFormat_hasEffect);
+    tolua_endmodule(tolua_S);
+    std::string typeName = typeid(fairygui::TextFormat).name();
+    g_luaType[typeName] = "fairygui.TextFormat";
+    g_typeCast["TextFormat"] = "fairygui.TextFormat";
+    return 1;
+}
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -26560,6 +27145,7 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
         lua_register_fairygui_PackageItem(tolua_S);
         lua_register_fairygui_GTree(tolua_S);
         lua_register_fairygui_GTreeNode(tolua_S);
+        lua_register_fairygui_TextFormat(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}

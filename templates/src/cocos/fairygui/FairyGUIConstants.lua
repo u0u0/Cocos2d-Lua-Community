@@ -225,3 +225,9 @@ fairygui.ObjectPropID = {
 	FontSize = 8,
 	Selected = 9
 }
+
+fairygui.TextEffect = {
+	OUTLINE = 1,
+	SHADOW = 2,
+	GLOW = 4
+}
