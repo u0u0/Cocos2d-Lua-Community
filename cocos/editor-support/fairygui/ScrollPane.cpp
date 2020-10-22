@@ -84,6 +84,10 @@ _hover(false)
     _owner->addEventListener(UIEventType::TouchBegin, CC_CALLBACK_1(ScrollPane::onTouchBegin, this));
     _owner->addEventListener(UIEventType::TouchMove, CC_CALLBACK_1(ScrollPane::onTouchMove, this));
     _owner->addEventListener(UIEventType::TouchEnd, CC_CALLBACK_1(ScrollPane::onTouchEnd, this));
+    _owner->addEventListener(UIEventType::Exit, [this](EventContext*) {
+        if (_draggingPane == this)
+            _draggingPane = nullptr;
+    });
 }
 
 ScrollPane::~ScrollPane()
@@ -99,6 +103,9 @@ ScrollPane::~ScrollPane()
         _header->release();
     if (_footer)
         _footer->release();
+
+    if (_draggingPane == this)
+        _draggingPane = nullptr;
 }
 
 void ScrollPane::setup(ByteBuffer* buffer)
