@@ -17236,7 +17236,6 @@ static int lua_fairygui_GList_getSelection(lua_State* tolua_S)
 {
 	int argc = 0;
 	fairygui::GList* cobj = nullptr;
-	bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
@@ -17251,17 +17250,13 @@ static int lua_fairygui_GList_getSelection(lua_State* tolua_S)
 #endif
 
 	argc = lua_gettop(tolua_S)-1;
-	if (argc == 1) {
+	if (argc == 0) {
 		std::vector<int> arg0;
-		ok &= luaval_to_std_vector_int(tolua_S, 2, &arg0, "fairygui.GList:getSelection");
-		if (!ok) {
-			tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GList_getSelection'", nullptr);
-			return 0;
-		}
 		cobj->getSelection(arg0);
-        return 0;
+        ccvector_int_to_luaval(tolua_S, arg0);
+        return 1;
 	}
-	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GList:getSelection",argc, 1);
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GList:getSelection",argc, 0);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
