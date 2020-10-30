@@ -24901,6 +24901,32 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_PackageItem_get_spriteFrame(lua_State* L)
+{
+    fairygui::PackageItem* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(L,1,"fairygui.PackageItem",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::PackageItem*)tolua_tousertype(L, 1, 0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(L,"invalid 'cobj' in function 'lua_fairygui_PackageItem_get_spriteFrame'", nullptr);
+        return 0;
+    }
+#endif
+
+    object_to_luaval<cocos2d::SpriteFrame>(L, "cc.SpriteFrame", cobj->spriteFrame);
+    return 1;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(L,"#ferror in function 'lua_fairygui_PackageItem_get_spriteFrame'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_PackageItem_load(lua_State* tolua_S)
 {
     int argc = 0;
@@ -25014,6 +25040,7 @@ static int lua_register_fairygui_PackageItem(lua_State* tolua_S)
     tolua_variable(tolua_S, "width", lua_fairygui_PackageItem_get_width, nullptr);
     tolua_variable(tolua_S, "height", lua_fairygui_PackageItem_get_height, nullptr);
     tolua_variable(tolua_S, "file", lua_fairygui_PackageItem_get_file, nullptr);
+    tolua_variable(tolua_S, "spriteFrame", lua_fairygui_PackageItem_get_spriteFrame, nullptr);
     // function
     tolua_function(tolua_S, "load", lua_fairygui_PackageItem_load);
     tolua_function(tolua_S, "getBranch", lua_fairygui_PackageItem_getBranch);
