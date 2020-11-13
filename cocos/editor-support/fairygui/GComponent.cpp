@@ -444,9 +444,14 @@ void GComponent::removeController(GController* c)
 void GComponent::applyController(GController* c)
 {
     _applyingController = c;
-
-    for (const auto& child : _children)
+    // CAN NOT USE 'for (const auto& child : _children)',
+    // child may recursive call applyController,
+    // then broken iterators on Win32. <fix by u0u0>
+    ssize_t cnt = (ssize_t)_children.size();
+    for (ssize_t i = 0; i < cnt; i++) {
+        GObject* child = _children.at(i);
         child->handleControllerChanged(c);
+    }
 
     _applyingController = nullptr;
 
