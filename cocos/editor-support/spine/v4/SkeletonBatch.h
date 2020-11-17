@@ -35,7 +35,6 @@
 
 #include <spine/spine.h>
 #include <vector>
-#include "renderer/backend/ProgramState.h"
 
 namespace spine {
     
@@ -51,10 +50,8 @@ namespace spine {
 		void deallocateVertices(uint32_t numVertices);
 		unsigned short* allocateIndices(uint32_t numIndices);
 		void deallocateIndices(uint32_t numVertices);
-		cocos2d::TrianglesCommand* addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, cocos2d::backend::ProgramState* programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
+		cocos2d::TrianglesCommand* addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
         
-		void updateProgramStateLayout(cocos2d::backend::ProgramState* programState);
-
     protected:
         SkeletonBatch ();
         virtual ~SkeletonBatch ();
@@ -64,9 +61,7 @@ namespace spine {
 		cocos2d::TrianglesCommand* nextFreeCommand ();
 
         cocos2d::TrianglesCommand* createNewTrianglesCommand();
-
-        // the default program state for batch draw
-        cocos2d::backend::ProgramState*                     _programState = nullptr;
+        std::shared_ptr<cocos2d::backend::ProgramState>     _programState = nullptr;
         cocos2d::backend::UniformLocation                   _locMVP;
         cocos2d::backend::UniformLocation                   _locTexture;
 		
