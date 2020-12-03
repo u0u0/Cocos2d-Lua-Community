@@ -550,7 +550,8 @@ void TMXLayer::tilesUpdate(float dt)
         uint32_t gid = data->gids[data->frameIndex];
         data->leftTime = data->durations[data->frameIndex];
         setTileTexture(data->tile, gid);
-        setupTileSprite(data->tile, data->pos, gid);
+        // no need change sprite's other properties
+        //setupTileSprite(data->tile, data->pos, gid);
     }
 }
 
