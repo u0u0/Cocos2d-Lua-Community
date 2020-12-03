@@ -353,7 +353,11 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             }
             _recordFirstGID = false;
             
+            // support tsx in sub dir
+            std::string bkTMXFileName = _TMXFileName;
+            _TMXFileName = extTilesetName;
             parseXMLFile(extTilesetName);
+            _TMXFileName = bkTMXFileName;
         } else {
             TMXTilesetInfo *tileset = new (std::nothrow) TMXTilesetInfo();
             tileset->_name = attributeDict["name"].asString();
@@ -680,7 +684,7 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             ValueMap& dict = _tileProperties.at(_parentGID).asValueMap();
             // one frame data hava two properites, make a pairs.
             ValueVector& vector = dict["animation"].asValueVector();
-            vector.push_back(Value(attributeDict["tileid"].asUnsignedInt() + 1));// gid++
+            vector.push_back(Value(attributeDict["tileid"].asUnsignedInt() + _parentGID));
             vector.push_back(attributeDict["duration"]);
         }
     } else if (elementName == "text") {

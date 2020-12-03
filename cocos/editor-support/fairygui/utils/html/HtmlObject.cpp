@@ -131,7 +131,8 @@ void HtmlObject::createImage()
 
     _ui = loader;
 
-    loader->setSize(width, height);
+    if (width > 0 && height > 0)
+        loader->setSize(width, height);
     loader->setFill(LoaderFillType::SCALE_FREE);
     loader->setURL(src);
 }
