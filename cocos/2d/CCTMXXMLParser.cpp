@@ -681,10 +681,11 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
     } else if (elementName == "frame") {
         // parse tile animation belog to tile properties, auto add key "animation"
         if (_parentElement == TMXPropertyTile) {
+            TMXTilesetInfo* info = _tilesets.back();
             ValueMap& dict = _tileProperties.at(_parentGID).asValueMap();
             // one frame data hava two properites, make a pairs.
             ValueVector& vector = dict["animation"].asValueVector();
-            vector.push_back(Value(attributeDict["tileid"].asUnsignedInt() + _parentGID));
+            vector.push_back(Value(attributeDict["tileid"].asUnsignedInt() + info->_firstGid));
             vector.push_back(attributeDict["duration"]);
         }
     } else if (elementName == "text") {
