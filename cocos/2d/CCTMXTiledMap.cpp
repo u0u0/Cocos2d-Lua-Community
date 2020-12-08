@@ -184,8 +184,7 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
             for(auto it = tilesetInfo->_images.begin(); it != tilesetInfo->_images.end(); ++it) {
                 Texture2D *texture = textureCache->addImage(it->second->sourceImage);
                 CC_ASSERT(texture != nullptr);
-                // By default all the tiles are aliased, avoid black line.
-                texture->setAliasTexParameters();
+                texture->setAntiAliasTexParameters();// AntiAlias work with Sprite's fixArtifacts
                 it->second->imageSize = texture->getContentSizeInPixels();
                 texture->retain();
             }
