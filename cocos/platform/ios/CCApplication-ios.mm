@@ -28,6 +28,7 @@
 #import <UIKit/UIKit.h>
 
 #import "math/CCGeometry.h"
+#import "platform/apple/NSObject-apple.h"
 #import "platform/ios/CCDirectorCaller-ios.h"
 #import "base/ccUtils.h"
 
@@ -127,12 +128,9 @@ bool Application::openURL(const std::string &url)
     NSURL* nsUrl = [NSURL URLWithString:msg];
     
     id application = [UIApplication sharedApplication];
-    if ([application respondsToSelector:@selector(openURL:options:completionHandler:)] )
-    {
+    if (isObjHasSelector(application, @"openURL:options:completionHandler:")) {
         [application openURL:nsUrl options:@{} completionHandler:nil];
-    }
-    else
-    {
+    } else {
         return [application openURL:nsUrl];
     }
 }

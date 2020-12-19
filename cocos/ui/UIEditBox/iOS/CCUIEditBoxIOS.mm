@@ -29,7 +29,7 @@
 #import "ui/UIEditBox/iOS/CCUIEditBoxIOS.h"
 #import "ui/UIEditBox/iOS/CCUISingleLineTextField.h"
 #import "ui/UIEditBox/iOS/CCUIMultilineTextField.h"
-
+#import "platform/apple/NSObject-apple.h"
 #import "platform/ios/CCEAGLView-ios.h"
 #include "base/CCDirector.h"
 
@@ -368,7 +368,7 @@
     CCEAGLView *eaglview = (CCEAGLView *) view->getEAGLView();
     
     if ([eaglview isKeyboardShown]) {
-        [self performSelector:@selector(animationSelector) withObject:nil afterDelay:0.0f];
+        [self performSelectorOnMainThread:@selector(animationSelector) withObject:nil waitUntilDone:NO];
     }
     
     getEditBoxImplIOS()->editBoxEditingDidBegin();
@@ -450,7 +450,7 @@
     CCEAGLView *eaglview = (CCEAGLView *)view->getEAGLView();
     
     if ([eaglview isKeyboardShown]) {
-        [self performSelector:@selector(animationSelector) withObject:nil afterDelay:0.0f];
+        [self performSelectorOnMainThread:@selector(animationSelector) withObject:nil waitUntilDone:NO];
     }
     
     getEditBoxImplIOS()->editBoxEditingDidBegin();

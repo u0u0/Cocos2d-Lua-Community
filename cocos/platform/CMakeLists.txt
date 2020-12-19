@@ -61,12 +61,14 @@ elseif(APPLE)
         platform/apple/CCFileUtils-apple.h
         platform/apple/CCDevice-apple.h
         platform/apple/ReachabilityIOSMac.h
+        platform/apple/NSObject-apple.h
         )
     set(COCOS_PLATFORM_SPECIFIC_SRC
         platform/apple/CCFileUtils-apple.mm
         platform/apple/CCDevice-apple.mm
         platform/apple/ReachabilityIOSMac.m
         platform/apple/CCNetwork-apple.mm
+        platform/apple/NSObject-apple.m
         )
     if(MACOSX)
         set(COCOS_PLATFORM_SPECIFIC_HEADER

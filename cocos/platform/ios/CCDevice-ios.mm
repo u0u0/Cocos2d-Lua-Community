@@ -31,6 +31,7 @@
 #include "base/CCEventAcceleration.h"
 #include "base/CCDirector.h"
 #include "platform/apple/CCDevice-apple.h"
+#import "platform/apple/NSObject-apple.h"
 
 // Accelerometer
 #if !defined(CC_TARGET_OS_TVOS)
@@ -296,7 +297,7 @@ int Device::getDPI()
     {
         float scale = 1.0f;
 
-        if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        if (isObjHasSelector([UIScreen mainScreen], @"scale")) {
             scale = [[UIScreen mainScreen] scale];
         }
 
