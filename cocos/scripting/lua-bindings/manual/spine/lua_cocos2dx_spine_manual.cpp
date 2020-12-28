@@ -262,12 +262,12 @@ int executeSpineEvent(LuaSkeletonAnimation* skeletonAnimation, int handler, Even
         LuaValueDict eventData;
         spine::EventData &data = (spine::EventData &)event->getData();
         eventData.insert(eventData.end(), LuaValueDict::value_type("name", LuaValue::stringValue(data.getName().buffer())));
-        eventData.insert(eventData.end(), LuaValueDict::value_type("intValue", LuaValue::intValue(data.getIntValue())));
-        eventData.insert(eventData.end(), LuaValueDict::value_type("floatValue", LuaValue::floatValue(data.getFloatValue())));
-        eventData.insert(eventData.end(), LuaValueDict::value_type("stringValue", LuaValue::stringValue(data.getStringValue().buffer())));
+        eventData.insert(eventData.end(), LuaValueDict::value_type("intValue", LuaValue::intValue(event->getIntValue())));
+        eventData.insert(eventData.end(), LuaValueDict::value_type("floatValue", LuaValue::floatValue(event->getFloatValue())));
+        eventData.insert(eventData.end(), LuaValueDict::value_type("stringValue", LuaValue::stringValue(event->getStringValue().buffer())));
         eventData.insert(eventData.end(), LuaValueDict::value_type("audioPath", LuaValue::stringValue(data.getAudioPath().buffer())));
-        eventData.insert(eventData.end(), LuaValueDict::value_type("volume", LuaValue::floatValue(data.getVolume())));
-        eventData.insert(eventData.end(), LuaValueDict::value_type("balance", LuaValue::floatValue(data.getBalance())));
+        eventData.insert(eventData.end(), LuaValueDict::value_type("volume", LuaValue::floatValue(event->getVolume())));
+        eventData.insert(eventData.end(), LuaValueDict::value_type("balance", LuaValue::floatValue(event->getBalance())));
         spineEvent.insert(spineEvent.end(), LuaValueDict::value_type("eventData", LuaValue::dictValue(eventData)));
     }
     
