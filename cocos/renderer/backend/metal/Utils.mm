@@ -241,7 +241,7 @@ void Utils::getTextureBytes(std::size_t origX, std::size_t origY, std::size_t re
             [copiedTexture getBytes:image bytesPerRow:bytePerRow fromRegion:imageRegion mipmapLevel:0];
             swizzleImage(image, rectWidth, rectHeight, texture.pixelFormat);
         }
-        Director::getInstance()->getScheduler()->performFunctionInCocosThread([&](){
+        Director::getInstance()->getScheduler()->performFunctionInCocosThread([callback, image, rectWidth, rectHeight]() mutable {
             callback(image, rectWidth, rectHeight);
             CC_SAFE_DELETE_ARRAY(image);
         });
