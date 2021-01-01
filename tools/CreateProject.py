@@ -45,15 +45,17 @@ def initDict(names, isLandscape):
         replacementDict["__SCREEN_ISLANDSCAPE__"] = "true"
         replacementDict["__SCREEN_WIDTH__"] = "960"
         replacementDict["__SCREEN_HEIGHT__"] = "640"
-        replacementDict["__SCREEN_ORIENTATION_IOS5__"] = "UIInterfaceOrientationIsLandscape"
-        replacementDict["__SCREEN_ORIENTATION_IOS6__"] = "UIInterfaceOrientationMaskLandscape"
+        replacementDict["__SCREEN_ORIENTATION_IOS1__"] = "UIInterfaceOrientationLandscapeLeft"
+        replacementDict["__SCREEN_ORIENTATION_IOS2__"] = "UIInterfaceOrientationLandscapeRight"
+        replacementDict["__SCREEN_ORIENTATION_IOS_MASK__"] = "UIInterfaceOrientationMaskLandscape"
         replacementDict["__SCREEN_ORIENTATION_ANDROID__"] = "sensorLandscape"
     else:
         replacementDict["__SCREEN_ISLANDSCAPE__"] = "false"
         replacementDict["__SCREEN_WIDTH__"] = "640"
         replacementDict["__SCREEN_HEIGHT__"] = "960"
-        replacementDict["__SCREEN_ORIENTATION_IOS5__"] = "UIInterfaceOrientationIsPortrait"
-        replacementDict["__SCREEN_ORIENTATION_IOS6__"] = "UIInterfaceOrientationMaskPortraitUpsideDown"
+        replacementDict["__SCREEN_ORIENTATION_IOS1__"] = "UIInterfaceOrientationPortrait"
+        replacementDict["__SCREEN_ORIENTATION_IOS2__"] = "UIInterfaceOrientationPortraitUpsideDown"
+        replacementDict["__SCREEN_ORIENTATION_IOS_MASK__"] = "UIInterfaceOrientationMaskPortrait"
         replacementDict["__SCREEN_ORIENTATION_ANDROID__"] = "portrait"
 
 def stringReplace(s):
