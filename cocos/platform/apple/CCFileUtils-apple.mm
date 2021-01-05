@@ -337,7 +337,7 @@ std::string FileUtilsApple::getPathForDirectory(const std::string &dir, const st
     if(path[0] == '/')
     {
         BOOL isDir = false;
-        if([s_fileManager fileExistsAtPath:[NSString stringWithUTF8String:dir.c_str()]
+        if([s_fileManager fileExistsAtPath:[NSString stringWithUTF8String:path.c_str()]
                                isDirectory:&isDir]) {
             return isDir ? path : "";
         }
