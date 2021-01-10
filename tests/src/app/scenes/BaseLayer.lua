@@ -16,9 +16,11 @@ function BaseLayer:ctor()
 	btn:setTitleFontSize(26)
 	btn:addTouchEventListener(function(sender, eventType)
 		if 2 == eventType then
-			self:getParent():openScrollView()
-			self:removeSelf()
-			audio.stopAll()
+			self:performWithDelay(function()
+				self:getParent():openScrollView()
+				self:removeSelf()
+				audio.stopAll()
+			end, 0) -- not remove in callback, avoid user camera visit fail on touch event dispatch
 		end
 	end)
 end
