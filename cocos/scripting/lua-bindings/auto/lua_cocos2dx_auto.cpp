@@ -20551,9 +20551,63 @@ int lua_cocos2dx_Image_constructor(lua_State* tolua_S)
     return 0;
 }
 
-static int lua_cocos2dx_Image_finalize(lua_State* tolua_S)
+int lua_cocos2dx_Image_getColorAt(lua_State* tolua_S)
 {
-    printf("luabindings: finalizing LUA object (Image)");
+    int argc = 0;
+    cocos2d::Image* cobj = nullptr;
+    
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+    
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.Image",0,&tolua_err)) goto tolua_lerror;
+#endif
+    
+    cobj = (cocos2d::Image*)tolua_tousertype(tolua_S,1,0);
+    
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Image_getColorAt'", nullptr);
+        return 0;
+    }
+#endif
+    
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 2)
+    {
+#if COCOS2D_DEBUG >= 1
+        int bitPerPixel = cobj->getBitPerPixel();
+        if (bitPerPixel != 32) {
+            tolua_error(tolua_S,"cc.Image:getColorAt ONLY work for Image 8888", nullptr);
+            return 0;
+        }
+#endif
+        lua_Integer px = lua_tointeger(tolua_S, 2);
+        lua_Integer py = lua_tointeger(tolua_S, 3);
+        unsigned char *data = cobj->getData();
+        cobj->getWidth();
+        uint32_t *pixel = (uint32_t *)data;
+        pixel += py * cobj->getWidth() + px;
+        
+        Color4B color;
+        color.r = *pixel & 0xff;
+        color.g = (*pixel >> 8) & 0xff;
+        color.b = (*pixel >> 16) & 0xff;
+        color.a = (*pixel >> 24) & 0xff;
+        
+        color4b_to_luaval(tolua_S, color);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Image:getColorAt",argc, 2);
+    return 0;
+    
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Image_getColorAt'.",&tolua_err);
+#endif
+    
     return 0;
 }
 
@@ -20580,6 +20634,7 @@ int lua_register_cocos2dx_Image(lua_State* tolua_S)
         tolua_function(tolua_S,"saveToFile",lua_cocos2dx_Image_saveToFile);
         tolua_function(tolua_S,"setPVRImagesHavePremultipliedAlpha", lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha);
         tolua_function(tolua_S,"setPNGPremultipliedAlphaEnabled", lua_cocos2dx_Image_setPNGPremultipliedAlphaEnabled);
+        tolua_function(tolua_S,"getColorAt",lua_cocos2dx_Image_getColorAt);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Image).name();
     g_luaType[typeName] = "cc.Image";
