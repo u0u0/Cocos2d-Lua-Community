@@ -17,6 +17,7 @@
 #include "platform/CCFileUtils.h"
 #include "cocos/audio/RDAudio.h"
 #include "cocos/audio/RDAudioOgg.h"
+#include "cocos/audio/RDAudioAAC.h"
 #include "cocos2d.h"
 
 // singleton stuff
@@ -144,12 +145,24 @@ void RDAudio::threadLoop()
         // decode
         cocos2d::Data data = cocos2d::FileUtils::getInstance()->getDataFromFile(asyncStruct->filename);
         if (data.getSize() > 0) {
-            int rtn = decodeOgg(data.getBytes(),
-                                data.getSize(),
-                                &asyncStruct->pcmData,
-                                &asyncStruct->channels,
-                                &asyncStruct->rate,
-                                &asyncStruct->size);
+            int rtn = -1;
+            std::string ext = cocos2d::FileUtils::getInstance()->getFileExtension(asyncStruct->filename);
+            if (ext == ".ogg") {
+                rtn = decodeOgg(data.getBytes(),
+                                    data.getSize(),
+                                    &asyncStruct->pcmData,
+                                    &asyncStruct->channels,
+                                    &asyncStruct->rate,
+                                    &asyncStruct->size);
+            } else if (ext == ".aac") {
+                rtn = decodeAAC(data.getBytes(),
+                                    data.getSize(),
+                                    &asyncStruct->pcmData,
+                                    &asyncStruct->channels,
+                                    &asyncStruct->rate,
+                                    &asyncStruct->size);
+            }
+            
             if (rtn < 0) {
                 if (asyncStruct->pcmData) {
                     free(asyncStruct->pcmData);
@@ -200,7 +213,7 @@ void RDAudio::scheduleLoop(float)
             }
         }
     } else {
-        cocos2d::log("Fail to decode file: %s, ONLY support ogg now!", asyncStruct->filename.c_str());
+        cocos2d::log("Fail to decode file: %s, ONLY support ogg and aac!", asyncStruct->filename.c_str());
     }
     // callback to lua
     asyncStruct->cb(asyncStruct->funcID, bufferID);

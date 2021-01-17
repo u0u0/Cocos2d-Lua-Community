@@ -52,13 +52,14 @@ function TestCase:ctor()
 		:pos(display.cx, display.height - 100)
 		:addTo(self)
 
-	btn:setTitleText("Preload oggs")
+	btn:setTitleText("Preload audio files")
 	btn:setTitleFontSize(30)
 	btn:setTitleColor(cc.c3b(255, 255, 0))
 	btn:addTouchEventListener(function(sender, eventType)
 		if 2 == eventType then
 			audio.loadFile("audio/bgm.ogg", loadedCB)
 			audio.loadFile("audio/effect.ogg", loadedCB)
+			audio.loadFile("audio/bgm.aac", loadedCB)
 			btn:setVisible(false)
 		end
 	end)
