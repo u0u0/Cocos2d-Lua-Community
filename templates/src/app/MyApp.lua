@@ -11,6 +11,7 @@ function MyApp:ctor()
 end
 
 function MyApp:run()
+	cc.Label:setTTFScaleFactor(display.contentScaleFactor) -- make TTF Label Anti-Aliasing
     cc.FileUtils:getInstance():addSearchPath("res/")
     self:enterScene("MainScene")
 end

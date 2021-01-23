@@ -56244,10 +56244,35 @@ int lua_cocos2dx_Label_createWithSystemFont(lua_State* tolua_S)
 #endif
     return 0;
 }
-static int lua_cocos2dx_Label_finalize(lua_State* tolua_S)
+
+int lua_cocos2dx_Label_setTTFScaleFactor(lua_State* tolua_S)
 {
-    printf("luabindings: finalizing LUA object (Label)");
+    int argc = 0;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertable(tolua_S,1,"cc.Label",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 1) {
+        float arg0;
+        ok &= luaval_to_float(tolua_S, 2, &arg0, "cc.Label:setTTFScaleFactor");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Label_setTTFScaleFactor'", nullptr);
+            return 0;
+        }
+        cocos2d::Label::setTTFScaleFactor(arg0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.Label:setTTFScaleFactor", argc, 1);
     return 0;
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Label_setTTFScaleFactor'.",&tolua_err);
+    return 0;
+#endif
 }
 
 int lua_register_cocos2dx_Label(lua_State* tolua_S)
@@ -56329,6 +56354,7 @@ int lua_register_cocos2dx_Label(lua_State* tolua_S)
         tolua_function(tolua_S,"create", lua_cocos2dx_Label_create);
         tolua_function(tolua_S,"createWithCharMap", lua_cocos2dx_Label_createWithCharMap);
         tolua_function(tolua_S,"createWithSystemFont", lua_cocos2dx_Label_createWithSystemFont);
+        tolua_function(tolua_S,"setTTFScaleFactor", lua_cocos2dx_Label_setTTFScaleFactor);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Label).name();
     g_luaType[typeName] = "cc.Label";

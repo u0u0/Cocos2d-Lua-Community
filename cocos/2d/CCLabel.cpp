@@ -2,7 +2,8 @@
  Copyright (c) 2013      Zynga Inc.
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
+ Copyright (c) 2021 cocos2d-lua.org
+ 
  http://www.cocos2d-x.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,6 +52,7 @@
 
 NS_CC_BEGIN
 
+static float s_TTFScaleFactor = 1.0f;
 
 namespace {
     void updateBlend(backend::BlendDescriptor &blendDescriptor, BlendFunc blendFunc)
@@ -206,6 +208,11 @@ Label::BatchCommand::~BatchCommand()
 std::array<CustomCommand*, 3> Label::BatchCommand::getCommandArray()
 {
     return std::array<CustomCommand*, 3>{&textCommand, &shadowCommand, &outLineCommand};
+}
+
+void Label::setTTFScaleFactor(float v)
+{
+    s_TTFScaleFactor = v;
 }
 
 Label* Label::create()
@@ -414,6 +421,9 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
 , _boldEnabled(false)
 , _underlineNode(nullptr)
 , _strikethroughEnabled(false)
+, _nodeScaleX(1)
+, _nodeScaleY(1)
+, _ttfContentSize(0, 0)
 {
     setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     reset();
@@ -448,7 +458,7 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
         {
             _fontAtlas = nullptr;
             auto lineHeight = _lineHeight;
-            this->setTTFConfig(_fontConfig);
+            this->setTTFConfigInternal(_fontConfig);
             if (_currentLabelType != LabelType::STRING_TEXTURE)
             {
                 setLineHeight(lineHeight);
@@ -511,7 +521,7 @@ void Label::reset()
     _bmFontPath = "";
     _systemFontDirty = false;
     _systemFont = "Helvetica";
-    _systemFontSize = CC_DEFAULT_FONT_LABEL_SIZE;
+    _systemFontSize = 0.0f;
 
     if (_horizontalKernings)
     {
@@ -841,8 +851,13 @@ void Label::setDimensions(float width, float height)
     }
     if (height != _labelHeight || width != _labelWidth)
     {
-        _labelWidth = width;
-        _labelHeight = height;
+        if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+            _labelWidth = width * s_TTFScaleFactor;
+            _labelHeight = height * s_TTFScaleFactor;
+        } else {
+            _labelWidth = width;
+            _labelHeight = height;
+        }
         _labelDimensions.width = width;
         _labelDimensions.height = height;
 
@@ -860,9 +875,7 @@ void Label::setDimensions(float width, float height)
 void Label::restoreFontSize()
 {
     if(_currentLabelType == LabelType::TTF){
-        auto ttfConfig = this->getTTFConfig();
-        ttfConfig.fontSize = _originalFontSize;
-        this->setTTFConfigInternal(ttfConfig);
+        this->setTTFConfigInternal(_fontConfig);
     }else if(_currentLabelType == LabelType::BMFONT){
         this->setBMFontSizeInternal(_originalFontSize);
     }else if(_currentLabelType == LabelType::STRING_TEXTURE){
@@ -1037,7 +1050,7 @@ bool Label::isHorizontalClamped(float letterPositionX, int lineIndex)
     bool letterOverClamp = (letterPositionX > _contentSize.width || letterPositionX < 0);
     if (!_enableWrap) {
         return letterOverClamp;
-    }else{
+    } else {
         return (wordWidth > this->_contentSize.width && letterOverClamp);
     }
 }
@@ -1045,15 +1058,12 @@ bool Label::isHorizontalClamped(float letterPositionX, int lineIndex)
 bool Label::updateQuads()
 {
     bool ret = true;
-    for (auto&& batchNode : _batchNodes)
-    {
+    for (auto&& batchNode : _batchNodes) {
         batchNode->getTextureAtlas()->removeAllQuads();
     }
     
-    for (int ctr = 0; ctr < _lengthOfString; ++ctr)
-    {
-        if (_lettersInfo[ctr].valid)
-        {
+    for (int ctr = 0; ctr < _lengthOfString; ++ctr) {
+        if (_lettersInfo[ctr].valid) {
             auto& letterDef = _fontAtlas->_letterDefinitions[_lettersInfo[ctr].utf32Char];
             
             _reusedRect.size.height = letterDef.height;
@@ -1063,15 +1073,13 @@ bool Label::updateQuads()
 
             auto py = _lettersInfo[ctr].positionY + _letterOffsetY;
             if (_labelHeight > 0.f) {
-                if (py > _tailoredTopY)
-                {
+                if (py > _tailoredTopY) {
                     auto clipTop = py - _tailoredTopY;
                     _reusedRect.origin.y += clipTop;
                     _reusedRect.size.height -= clipTop;
                     py -= clipTop;
                 }
-                if (py - letterDef.height * _bmfontScale < _tailoredBottomY)
-                {
+                if (py - letterDef.height * _bmfontScale < _tailoredBottomY) {
                     _reusedRect.size.height = (py < _tailoredBottomY) ? 0.f : (py - _tailoredBottomY);
                 }
             }
@@ -1079,25 +1087,22 @@ bool Label::updateQuads()
             auto lineIndex = _lettersInfo[ctr].lineIndex;
             auto px = _lettersInfo[ctr].positionX + letterDef.width/2 * _bmfontScale + _linesOffsetX[lineIndex];
 
-            if(_labelWidth > 0.f){
+            if (_labelWidth > 0.f) {
                 if (this->isHorizontalClamped(px, lineIndex)) {
-                    if(_overflow == Overflow::CLAMP){
+                    if (_overflow == Overflow::CLAMP) {
                         _reusedRect.size.width = 0;
-                    }else if(_overflow == Overflow::SHRINK){
+                    } else if (_overflow == Overflow::SHRINK) {
                         if (_contentSize.width > letterDef.width) {
                             ret = false;
                             break;
-                        }else{
+                        } else {
                             _reusedRect.size.width = 0;
                         }
-
                     }
                 }
             }
 
-
-            if (_reusedRect.size.height > 0.f && _reusedRect.size.width > 0.f)
-            {
+            if (_reusedRect.size.height > 0.f && _reusedRect.size.width > 0.f) {
                 _reusedLetter->setTextureRect(_reusedRect, false, _reusedRect.size);
                 float letterPositionX = _lettersInfo[ctr].positionX + _linesOffsetX[_lettersInfo[ctr].lineIndex];
                 _reusedLetter->setPosition(letterPositionX, py);
@@ -1105,22 +1110,19 @@ bool Label::updateQuads()
                 _lettersInfo[ctr].atlasIndex = index;
 
                 this->updateLetterSpriteScale(_reusedLetter);
-
                 _batchNodes.at(letterDef.textureID)->insertQuadFromSprite(_reusedLetter, index);
             }
         }     
     }
-
 
     return ret;
 }
 
 bool Label::setTTFConfigInternal(const TTFConfig& ttfConfig)
 {
+    const_cast<TTFConfig*>(&ttfConfig)->fontSize = _originalFontSize * s_TTFScaleFactor; // fix TTF font size
     FontAtlas *newAtlas = FontAtlasCache::getFontAtlasTTF(&ttfConfig);
-
-    if (!newAtlas)
-    {
+    if (!newAtlas) {
         reset();
         return false;
     }
@@ -1130,16 +1132,13 @@ bool Label::setTTFConfigInternal(const TTFConfig& ttfConfig)
 
     _fontConfig = ttfConfig;
 
-    if (_fontConfig.outlineSize > 0)
-    {
+    if (_fontConfig.outlineSize > 0) {
         _fontConfig.distanceFieldEnabled = false;
         _useDistanceField = false;
         _useA8Shader = false;
         _currLabelEffect = LabelEffect::OUTLINE;
         updateShaderProgram();
-    }
-    else
-    {
+    } else {
         _currLabelEffect = LabelEffect::NORMAL;
         updateShaderProgram();
     }
@@ -1153,6 +1152,7 @@ bool Label::setTTFConfigInternal(const TTFConfig& ttfConfig)
     if (_fontConfig.strikethrough)
         this->enableStrikethrough();
 
+    setScale(_nodeScaleX, _nodeScaleY); // scale for TTF
     return true;
 }
 
@@ -1170,7 +1170,7 @@ void Label::scaleFontSizeDown(float fontSize)
     if(_currentLabelType == LabelType::TTF){
         auto ttfConfig = this->getTTFConfig();
         ttfConfig.fontSize = fontSize;
-        this->setTTFConfigInternal(ttfConfig);
+        this->setTTFConfig(ttfConfig);
     }else if(_currentLabelType == LabelType::BMFONT){
         if (std::abs(fontSize) < FLT_EPSILON) {
             fontSize = 0.1f;
@@ -1195,7 +1195,7 @@ void Label::enableGlow(const Color4B& glowColor)
             auto config = _fontConfig;
             config.outlineSize = 0;
             config.distanceFieldEnabled = true;
-            setTTFConfig(config);
+            setTTFConfigInternal(config);
             _contentDirty = true;
         }
         _currLabelEffect = LabelEffect::GLOW;
@@ -1223,7 +1223,7 @@ void Label::enableOutline(const Color4B& outlineColor,int outlineSize /* = -1 */
             if (outlineSize > 0 && _fontConfig.outlineSize != outlineSize)
             {
                 _fontConfig.outlineSize = outlineSize;
-                setTTFConfig(_fontConfig);
+                setTTFConfigInternal(_fontConfig);
             }
         }
         else if (_effectColorF != outlineColor || _outlineSize != outlineSize)
@@ -1343,7 +1343,7 @@ void Label::disableEffect(LabelEffect effect)
                 if (_currentLabelType == LabelType::TTF)
                 {
                     _fontConfig.outlineSize = 0;
-                    setTTFConfig(_fontConfig);
+                    setTTFConfigInternal(_fontConfig);
                 }
                 _currLabelEffect = LabelEffect::NORMAL;
                 _contentDirty = true;
@@ -1915,12 +1915,16 @@ void Label::setSystemFontName(const std::string& systemFont)
 
 void Label::setSystemFontSize(float fontSize)
 {
+    if (fontSize == 0.0f) {
+        fontSize = CC_DEFAULT_FONT_LABEL_SIZE;
+    }
     if (_systemFontSize != fontSize)
     {
-        _systemFontSize = fontSize;
-        _originalFontSize = fontSize;
+        _originalFontSize = fontSize; // backup first
+        _systemFontSize = fontSize * s_TTFScaleFactor; // fix system font size
         _currentLabelType = LabelType::STRING_TEXTURE;
         _systemFontDirty = true;
+        setScale(_nodeScaleX, _nodeScaleY); // scale for system font
     }
 }
 
@@ -2217,14 +2221,22 @@ const Size& Label::getContentSize() const
     {
         const_cast<Label*>(this)->updateContent();
     }
+    // system font and TTF
+    if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+        const_cast<Size*>(&_ttfContentSize)->setSize(ceil(_contentSize.width / s_TTFScaleFactor),
+                                                     ceil(_contentSize.height / s_TTFScaleFactor));
+        return _ttfContentSize;
+    }
     return _contentSize;
 }
 
 Rect Label::getBoundingBox() const
 {
     const_cast<Label*>(this)->getContentSize();
-
-    return Node::getBoundingBox();
+    
+    const Size size = getContentSize();
+    Rect rect(0, 0, size.width, size.height);
+    return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
 }
 
 void Label::setBlendFunc(const BlendFunc &blendFunc)
@@ -2319,15 +2331,72 @@ void Label::setGlobalZOrder(float globalZOrder)
     }
 }
 
+void Label::setScaleX(float scaleX)
+{
+    _nodeScaleX = scaleX;
+    if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+        Node::setScaleX(scaleX / s_TTFScaleFactor);
+    } else {
+        Node::setScaleX(scaleX);
+    }
+}
+
+void Label::setScaleY(float scaleY)
+{
+    _nodeScaleY = scaleY;
+    if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+        Node::setScaleY(scaleY / s_TTFScaleFactor);
+    } else {
+        Node::setScaleY(scaleY);
+    }
+}
+
+void Label::setScale(float scale)
+{
+    _nodeScaleX = _nodeScaleY = scale;
+    if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+        Node::setScale(scale / s_TTFScaleFactor);
+    } else {
+        Node::setScale(scale);
+    }
+}
+
+void Label::setScale(float scaleX, float scaleY)
+{
+    _nodeScaleX = scaleX;
+    _nodeScaleY = scaleY;
+    if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+        Node::setScale(scaleX / s_TTFScaleFactor, scaleY / s_TTFScaleFactor);
+    } else {
+        Node::setScale(scaleX, scaleY);
+    }
+}
+
+float Label::getScaleX() const
+{
+    return _nodeScaleX;
+}
+
+float Label::getScaleY() const
+{
+    return _nodeScaleY;
+}
+
+float Label::getScale() const
+{
+    CCASSERT( _nodeScaleX == _nodeScaleY, "Label#scale. _nodeScaleX != _nodeScaleY. Don't know which one to return");
+    return _nodeScaleX;
+}
+
 float Label::getRenderingFontSize()const
 {
     float fontSize;
     if (_currentLabelType == LabelType::BMFONT) {
         fontSize = _bmFontSize;
     }else if(_currentLabelType == LabelType::TTF){
-        fontSize = this->getTTFConfig().fontSize;
+        fontSize = _originalFontSize;
     }else if(_currentLabelType == LabelType::STRING_TEXTURE){
-        fontSize = _systemFontSize;
+        fontSize = _originalFontSize;
     }else{ //FIXME: find a way to calculate char map font size
         fontSize = this->getLineHeight();
     }
