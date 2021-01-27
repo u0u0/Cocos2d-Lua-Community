@@ -69,7 +69,7 @@ namespace utils
      * base filename ("hello.png" etc.), don't use a relative path containing directory names.("mydir/hello.png" etc.).
      * @since v3.2
      */
-    CC_DLL void  captureScreen(const std::function<void(bool, const std::string&)>& afterCaptured, const std::string& filename);
+    CC_DLL void captureScreen(std::function<void(Image*)> imageCallback);
 
     /** Capture a specific Node.
     * @param startNode specify the snapshot Node. It should be cocos2d::Scene

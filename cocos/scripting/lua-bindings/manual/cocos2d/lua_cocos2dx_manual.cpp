@@ -5919,28 +5919,99 @@ static int tolua_cocos2d_utils_captureScreen(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
     if (!tolua_istable(tolua_S,1,0, &tolua_err) ||
-        !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err) ||
-        !tolua_isstring(tolua_S, 3, 0, &tolua_err)
+        !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err)
         )
         goto tolua_lerror;
     else
 #endif
     {
         LUA_FUNCTION handler = toluafix_ref_function(tolua_S,2,0);
-        std::string  fileName = tolua_tocppstring(tolua_S, 3, "");
-        cocos2d::utils::captureScreen([=](bool succeed, const std::string& name ){
-
-            tolua_pushboolean(tolua_S, succeed);
-            tolua_pushstring(tolua_S, name.c_str());
-            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 2);
-            LuaEngine::getInstance()->removeScriptHandler(handler);
-        }, fileName);
-
+        std::string fileName = "";
+        if (tolua_isstring(tolua_S, 3, 0, &tolua_err)) {
+            fileName = tolua_tocppstring(tolua_S, 3, "");
+        }
+        
+        cocos2d::utils::captureScreen([=](cocos2d::Image *image) {
+            // failed
+            if (!image) {
+                tolua_pushboolean(tolua_S, false);
+                tolua_pushstring(tolua_S, fileName.c_str());
+                LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 2);
+                LuaEngine::getInstance()->removeScriptHandler(handler);
+            }
+            
+            // not save to file, just return (image)
+            if (fileName.length() == 0) {
+                // NOTE: need call image:release() in Lua code.
+                object_to_luaval<cocos2d::Image>(tolua_S,"cc.Image",(cocos2d::Image *)image);
+                LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+                LuaEngine::getInstance()->removeScriptHandler(handler);
+                return;
+            }
+            
+            // save to file, return (isSuccess, fullPath)
+            std::string outputFile = "";
+            if (FileUtils::getInstance()->isAbsolutePath(fileName)) {
+                outputFile = fileName;
+            } else {
+                CCASSERT(fileName.find('/') == std::string::npos, "The existence of a relative path is not guaranteed!");
+                outputFile = FileUtils::getInstance()->getWritablePath() + fileName;
+            }
+            // Save image in AsyncTaskPool::TaskType::TASK_IO thread, and callback to Lua in mainThread
+            std::function<void(void*)> mainThread = [tolua_S, handler, outputFile](void*) {
+                tolua_pushboolean(tolua_S, true);
+                tolua_pushstring(tolua_S, outputFile.c_str());
+                LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 2);
+                LuaEngine::getInstance()->removeScriptHandler(handler);
+            };
+            AsyncTaskPool::getInstance()->enqueue(AsyncTaskPool::TaskType::TASK_IO, std::move(mainThread), nullptr, [image, outputFile]()
+            {
+                image->saveToFile(outputFile);
+                delete image;
+            });
+        });
         return 0;
     }
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'tolua_cocos2d_utils_captureScreen'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int tolua_cocos2d_utils_captureNode(lua_State* tolua_S)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_istable(tolua_S,1,0, &tolua_err) ||
+        !tolua_isusertype(tolua_S,2,"cc.Node",0,&tolua_err) ||
+        !toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err)
+        )
+        goto tolua_lerror;
+    else
+#endif
+    {
+        cocos2d::Node *node = (cocos2d::Node *)tolua_tousertype(tolua_S,2,0);
+        LUA_FUNCTION handler = toluafix_ref_function(tolua_S,3,0);
+        float scale = 1.0;
+        if (tolua_isnumber(tolua_S,4,0,&tolua_err)) {
+            scale = tolua_tonumber(tolua_S,4,1);
+        }
+        cocos2d::utils::captureNode(node, [=](cocos2d::Image *image) {
+            if (image) {
+                // NOTE: need call image:release() in Lua code.
+                object_to_luaval<cocos2d::Image>(tolua_S,"cc.Image",(cocos2d::Image *)image);
+            } else {
+                lua_pushnil(tolua_S);
+            }
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+            LuaEngine::getInstance()->removeScriptHandler(handler);
+        }, scale);
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'tolua_cocos2d_utils_captureNode'.",&tolua_err);
     return 0;
 #endif
 }
@@ -6020,6 +6091,7 @@ int register_all_cocos2dx_module_manual(lua_State* tolua_S)
         tolua_module(tolua_S, "utils", 0);
         tolua_beginmodule(tolua_S,"utils");
             tolua_function(tolua_S, "captureScreen", tolua_cocos2d_utils_captureScreen);
+            tolua_function(tolua_S, "captureNode", tolua_cocos2d_utils_captureNode);
             tolua_function(tolua_S, "findChildren", tolua_cocos2d_utils_findChildren);
 	    tolua_function(tolua_S, "findChild", tolua_cocos2d_utils_findChild);
         tolua_endmodule(tolua_S);

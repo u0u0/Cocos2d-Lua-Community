@@ -65,76 +65,21 @@ namespace utils
 /**
 * Capture screen implementation, don't use it directly.
 */
-void onCaptureScreen(const std::function<void(bool, const std::string&)>& afterCaptured, const std::string& filename, const unsigned char* imageData, int width, int height)
+static void onCaptureScreen(std::function<void(Image *image)>& imageCallback, const unsigned char* imageData, int width, int height)
 {
-    if(!imageData)
-    {
-        afterCaptured(false, "");
+    if (!imageData) {
+        imageCallback(nullptr);
         return;
     }
-    
-    static bool startedCapture = false;
 
-    if (startedCapture)
-    {
-        CCLOG("Screen capture is already working");
-        if (afterCaptured)
-        {
-            afterCaptured(false, filename);
-        }
-        return;
+    Image* image = new (std::nothrow) Image;
+    if (image) {
+        image->initWithRawData(imageData, width * height * 4, width, height, 8);
+        imageCallback(image);
+    } else {
+        CCLOG("Malloc Image memory failed!");
+        imageCallback(nullptr);
     }
-    else
-    {
-        startedCapture = true;
-    }
-
-    bool succeed = false;
-    std::string outputFile = "";
-
-    do
-    {
-        Image* image = new (std::nothrow) Image;
-        if (image)
-        {
-            image->initWithRawData(imageData, width * height * 4, width, height, 8);
-            if (FileUtils::getInstance()->isAbsolutePath(filename))
-            {
-                outputFile = filename;
-            }
-            else
-            {
-                CCASSERT(filename.find('/') == std::string::npos, "The existence of a relative path is not guaranteed!");
-                outputFile = FileUtils::getInstance()->getWritablePath() + filename;
-            }
-
-            // Save image in AsyncTaskPool::TaskType::TASK_IO thread, and call afterCaptured in mainThread
-            static bool succeedSaveToFile = false;
-            std::function<void(void*)> mainThread = [afterCaptured, outputFile](void* /*param*/)
-            {
-                if (afterCaptured)
-                {
-                    afterCaptured(succeedSaveToFile, outputFile);
-                }
-                startedCapture = false;
-            };
-
-            AsyncTaskPool::getInstance()->enqueue(AsyncTaskPool::TaskType::TASK_IO, std::move(mainThread), nullptr, [image, outputFile]()
-            {
-                succeedSaveToFile = image->saveToFile(outputFile);
-                delete image;
-            });
-        }
-        else
-        {
-            CCLOG("Malloc Image memory failed!");
-            if (afterCaptured)
-            {
-                afterCaptured(succeed, outputFile);
-            }
-            startedCapture = false;
-        }
-    } while (0);
 }
 
 /*
@@ -142,15 +87,14 @@ void onCaptureScreen(const std::function<void(bool, const std::string&)>& afterC
  */
 static EventListenerCustom* s_captureScreenListener;
 static CaptureScreenCallbackCommand s_captureScreenCommand;
-void captureScreen(const std::function<void(bool, const std::string&)>& afterCaptured, const std::string& filename)
+void captureScreen(std::function<void(Image*)> imageCallback)
 {
-    if (s_captureScreenListener)
-    {
+    if (s_captureScreenListener) {
         CCLOG("Warning: CaptureScreen has been called already, don't call more than once in one frame.");
         return;
     }
     s_captureScreenCommand.init(std::numeric_limits<float>::max());
-    s_captureScreenCommand.func = std::bind(onCaptureScreen, afterCaptured, filename, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    s_captureScreenCommand.func = std::bind(onCaptureScreen, imageCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     
     s_captureScreenListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener(Director::EVENT_AFTER_DRAW, [](EventCustom* /*event*/) {
         auto director = Director::getInstance();
@@ -164,8 +108,7 @@ void captureScreen(const std::function<void(bool, const std::string&)>& afterCap
 static std::unordered_map<Node*, EventListenerCustom*> s_captureNodeListener;
 void captureNode(Node* startNode, std::function<void(Image*)> imageCallback, float scale)
 {
-    if (s_captureNodeListener.find(startNode) != s_captureNodeListener.end())
-    {
+    if (s_captureNodeListener.find(startNode) != s_captureNodeListener.end()) {
         CCLOG("Warning: current node has been captured already");
         return;
     }
