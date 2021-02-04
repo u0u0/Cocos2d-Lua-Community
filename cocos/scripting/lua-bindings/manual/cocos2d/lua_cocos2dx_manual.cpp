@@ -5927,7 +5927,7 @@ static int tolua_cocos2d_utils_captureScreen(lua_State* tolua_S)
     {
         LUA_FUNCTION handler = toluafix_ref_function(tolua_S,2,0);
         std::string fileName = "";
-        if (tolua_isstring(tolua_S, 3, 0, &tolua_err)) {
+        if (lua_isstring(tolua_S, 3)) {
             fileName = tolua_tocppstring(tolua_S, 3, "");
         }
         
@@ -5994,7 +5994,7 @@ static int tolua_cocos2d_utils_captureNode(lua_State* tolua_S)
         cocos2d::Node *node = (cocos2d::Node *)tolua_tousertype(tolua_S,2,0);
         LUA_FUNCTION handler = toluafix_ref_function(tolua_S,3,0);
         float scale = 1.0;
-        if (tolua_isnumber(tolua_S,4,0,&tolua_err)) {
+        if (lua_isnumber(tolua_S, 4)) {
             scale = tolua_tonumber(tolua_S,4,1);
         }
         cocos2d::utils::captureNode(node, [=](cocos2d::Image *image) {
