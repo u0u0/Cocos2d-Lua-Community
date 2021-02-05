@@ -20,7 +20,7 @@ local table = table
 local rawset = rawset
 local error = error
 
-module "containers"
+module "framework.protobuf.containers"
 
 local _RCFC_meta = {
     add = function(self)

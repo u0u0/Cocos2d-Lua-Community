@@ -21,8 +21,9 @@ local ipairs = ipairs
 local assert =assert
 
 local pb = require "pb"
-local wire_format = require "wire_format"
-module "encoder"
+local wire_format = require "framework.protobuf.wire_format"
+
+module "framework.protobuf.encoder"
 
 function _VarintSize(value)
     if value <= 0x7f then return 1 end

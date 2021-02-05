@@ -687,15 +687,10 @@ int LuaStack::luaLoadChunksFromZIP(lua_State *L)
                 unsigned char *zbuffer = zip->getFileData(filename.c_str(), &bufferSize);
                 if (bufferSize) {
                     if (luaLoadBuffer(L, (char*)zbuffer, (int)bufferSize, filename.c_str()) == 0) {
-                        // special fix for protobuf find path in zip.
-                        int offset = 0;
-                        if (filename.find("framework.protobuf.") != std::string::npos) {
-                            offset = 19;
-                        }
-                        lua_setfield(L, -3, filename.c_str() + offset);
+                        lua_setfield(L, -3, filename.c_str());
                         // clear loaded, make the next require run the new module.
                         lua_pushnil(L);
-                        lua_setfield(L, -2, filename.c_str() + offset);
+                        lua_setfield(L, -2, filename.c_str());
                         ++count;
                     }
                     free(zbuffer);

@@ -23,9 +23,9 @@ local error = error
 local print = print
 
 local pb = require "pb"
-local encoder = require "encoder"
-local wire_format = require "wire_format"
-module "decoder"
+local encoder = require "framework.protobuf.encoder"
+local wire_format = require "framework.protobuf.wire_format"
+module "framework.protobuf.decoder"
 
 local _DecodeVarint = pb.varint_decoder
 local _DecodeSignedVarint = pb.signed_varint_decoder

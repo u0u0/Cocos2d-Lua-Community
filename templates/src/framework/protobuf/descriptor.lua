@@ -16,7 +16,7 @@
 --------------------------------------------------------------------------------
 --
 
-module "descriptor"
+module "framework.protobuf.descriptor"
 
 FieldDescriptor = {
     TYPE_DOUBLE         = 1,
