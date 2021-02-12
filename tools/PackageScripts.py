@@ -42,8 +42,9 @@ def initJitPath(mode):
         else:
             jitPath = joinDir(scriptRoot, "win32", "64", "luajit.exe")
     elif(sysstr == "Linux"):
-        print("Liunux Support is coming sooooon")
-        sys.exit(-1)
+        jitPath = joinDir(scriptRoot, "linux", "luajit")
+        if "64" == mode:
+            jitPath = jitPath + "64"
     elif(sysstr == "Darwin"):
         jitPath = joinDir(scriptRoot, "mac", "luajit")
         if "64" == mode:
