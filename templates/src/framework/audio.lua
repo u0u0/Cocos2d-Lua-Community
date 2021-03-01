@@ -130,7 +130,7 @@ function audio.playBGM(path, isLoop)
 		return
 	end
 
-	isLoop = isLoop ~= false and true or false
+	isLoop = isLoop ~= false
 	audio._sources[1]:stop()
 	audio._sources[1]:play2d(buffer, isLoop)
 	audio._sources[1]:setVolume(audio._BGMVolume)
@@ -171,7 +171,7 @@ function audio.playEffect(path, isLoop)
 	
 	local source = Rapid2D_CAudio.newSource()
 	if source then
-		isLoop = isLoop == true and true or false
+		isLoop = isLoop == true
 		table.insert(audio._sources, source)
 		source:setVolume(audio._effectVolume)
 		source:play2d(buffer, isLoop)

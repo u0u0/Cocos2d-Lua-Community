@@ -4,22 +4,23 @@ end)
 
 function MainScene:ctor()
 	local tests = {
-		"Test_NodeFrameEvent",
-		"Test_NodeEvent",
-		"Test_KeypadEvent",
-		"Test_NodeTouchEvent",
-		"Test_AccelerometerEvent",
-		"Test_CocosStudio",
-		"Test_Audio",
-		"Test_FairyGUI",
-		"Test_Network",
-		"Test_WebSocket",
-		"Test_LuaProtobuf",
-		"Test_Spine",
-		"Test_RichText",
-		"Test_TMXTiledMap",
-		"Test_AsyncTCP",
 		"Test_3D",
+		"Test_AccelerometerEvent",
+		"Test_AsyncTCP",
+		"Test_Audio",
+		"Test_ClippingRectangleNode",
+		"Test_CocosStudio",
+		"Test_FairyGUI",
+		"Test_KeypadEvent",
+		"Test_LuaProtobuf",
+		"Test_Network",
+		"Test_NodeEvent",
+		"Test_NodeFrameEvent",
+		"Test_NodeTouchEvent",
+		"Test_RichText",
+		"Test_Spine",
+		"Test_TMXTiledMap",
+		"Test_WebSocket",
 	}
 
 	local scrollView = ccui.ScrollView:create()
