@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -147,7 +148,6 @@ _enabled(true),
 _bright(true),
 _touchEnabled(false),
 _highlight(false),
-_affectByClipping(false),
 _ignoreSize(false),
 _propagateTouchEvents(true),
 _brightStyle(BrightStyle::NONE),
@@ -777,12 +777,18 @@ bool Widget::onTouchBegan(Touch *touch, Event* /*unusedEvent*/)
 
 void Widget::propagateTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, cocos2d::Touch *touch)
 {
-    Widget* widgetParent = getWidgetParent();
-    if (widgetParent)
-    {
-        widgetParent->_hittedByCamera = _hittedByCamera;
-        widgetParent->interceptTouchEvent(event, sender, touch);
-        widgetParent->_hittedByCamera = nullptr;
+    // interceptTouchEvent was override by PageView,ListView,ScrollView
+    // must find a parent to call, otherwise it will be dealed twice.
+    Node *parent = this;
+    while (parent) {
+        parent = parent->getParent();
+        Widget *widget = dynamic_cast<Widget *>(parent);
+        if (widget) {
+            widget->_hittedByCamera = _hittedByCamera;
+            widget->interceptTouchEvent(event, sender, touch);
+            widget->_hittedByCamera = nullptr;
+            break;
+        }
     }
 }
 
@@ -919,58 +925,36 @@ bool Widget::hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const
 
 bool Widget::isClippingParentContainsPoint(const Vec2 &pt)
 {
-    _affectByClipping = false;
-    Node* parent = getParent();
-    Widget* clippingParent = nullptr;
-    while (parent)
-    {
-        Layout* layoutParent = dynamic_cast<Layout*>(parent);
-        if (layoutParent)
-        {
-            if (layoutParent->isClippingEnabled())
-            {
-                _affectByClipping = true;
-                clippingParent = layoutParent;
-                break;
+    // make sure check not break by non-Layout node.
+    Node *parent = this;
+    while (parent) {
+        parent = parent->getParent();
+        Layout *layout = dynamic_cast<Layout*>(parent);
+        if (layout && layout->isClippingEnabled()) {
+            auto camera = Camera::getVisitingCamera();
+            // Camera isn't null means in touch begin process, otherwise use _hittedByCamera instead.
+            if (!layout->hitTest(pt, (camera ? camera : _hittedByCamera), nullptr)) {
+                return false;
             }
         }
-        parent = parent->getParent();
-    }
-
-    if (!_affectByClipping)
-    {
-        return true;
-    }
-
-
-    if (clippingParent)
-    {
-        bool bRet = false;
-        auto camera = Camera::getVisitingCamera();
-        // Camera isn't null means in touch begin process, otherwise use _hittedByCamera instead.
-        if (clippingParent->hitTest(pt, (camera ? camera : _hittedByCamera), nullptr))
-        {
-            bRet = true;
-        }
-        if (bRet)
-        {
-            return clippingParent->isClippingParentContainsPoint(pt);
-        }
-        return false;
     }
     return true;
 }
 
 void Widget::interceptTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, Touch *touch)
 {
-    Widget* widgetParent = getWidgetParent();
-    if (widgetParent)
-    {
-        widgetParent->_hittedByCamera = _hittedByCamera;
-        widgetParent->interceptTouchEvent(event,sender,touch);
-        widgetParent->_hittedByCamera = nullptr;
+    // make sure check not break by non-Widget node.
+    Node *parent = this;
+    while (parent) {
+        parent = parent->getParent();
+        Widget *widget = dynamic_cast<Widget *>(parent);
+        if (widget) {
+            widget->_hittedByCamera = _hittedByCamera;
+            widget->interceptTouchEvent(event, sender, touch);
+            widget->_hittedByCamera = nullptr;
+            break;
+        }
     }
-
 }
 
 void Widget::setPosition(const Vec2 &pos)
@@ -1062,9 +1046,25 @@ bool Widget::isBright() const
     return _bright;
 }
 
-bool Widget::isEnabled() const
+bool Widget::isEnabled(bool checkParent) const
 {
-    return _enabled;
+    if (!checkParent) {
+        return _enabled;
+    }
+    
+    // need check Parent
+    if (!_enabled) {
+        return false;
+    }
+    Node *p = _parent;
+    while (p) {
+        Widget* widget = dynamic_cast<Widget *>(p);
+        if (widget && !widget->isEnabled(false)) {
+            return false;
+        }
+        p = p->getParent();
+    }
+    return true;
 }
 
 float Widget::getLeftBoundary() const

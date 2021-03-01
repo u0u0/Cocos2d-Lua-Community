@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -163,7 +164,7 @@ public:
      *
      * @return true if the widget is enabled, false if the widget is disabled.
      */
-    bool isEnabled() const;
+    bool isEnabled(bool checkParent = false) const;
 
     /**
      * Sets whether the widget is bright
@@ -797,7 +798,6 @@ protected:
     bool _bright;
     bool _touchEnabled;
     bool _highlight;
-    bool _affectByClipping;
     bool _ignoreSize;
     bool _propagateTouchEvents;
 

@@ -2,6 +2,7 @@
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -288,6 +289,9 @@ public:
      */
     virtual bool isScissorEnabled();
 
+    void setRenderTextureMode(bool mode) {_isRenderTextureMode = mode;};
+    bool getRenderTextureMode(void) {return _isRenderTextureMode;};
+    
     /**
      * Get the current scissor rectangle.
      *
@@ -439,6 +443,7 @@ protected:
     float _scaleX;
     float _scaleY;
     ResolutionPolicy _resolutionPolicy;
+    bool _isRenderTextureMode;
 };
 
 // end of platform group

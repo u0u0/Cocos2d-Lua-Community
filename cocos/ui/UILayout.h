@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -626,7 +627,6 @@ protected:
     bool _scissorOldState;
     Rect _clippingOldRect;
     Rect _clippingRect;
-    Layout* _clippingParent;
     bool _clippingRectDirty;
     
     //clipping

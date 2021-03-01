@@ -2,6 +2,7 @@
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -108,6 +109,7 @@ GLView::GLView()
 , _scaleX(1.0f)
 , _scaleY(1.0f)
 , _resolutionPolicy(ResolutionPolicy::UNKNOWN)
+, _isRenderTextureMode(false)
 {
 }
 
@@ -256,6 +258,11 @@ void GLView::setViewPortInPoints(float x , float y , float w , float h)
 void GLView::setScissorInPoints(float x , float y , float w , float h)
 {
     auto renderer = Director::getInstance()->getRenderer();
+    if (_isRenderTextureMode) {
+        renderer->setScissorRect(x, y, w, h);
+        return;
+    }
+    
     renderer->setScissorRect((int)(x * _scaleX + _viewPortRect.origin.x),
                              (int)(y * _scaleY + _viewPortRect.origin.y),
                              (unsigned int)(w * _scaleX),
@@ -272,6 +279,9 @@ Rect GLView::getScissorRect() const
 {
     auto renderer = Director::getInstance()->getRenderer();
     auto& rect = renderer->getScissorRect();
+    if (_isRenderTextureMode) {
+        return Rect(rect.x, rect.y, rect.width, rect.height);
+    }
 
     float x = (rect.x - _viewPortRect.origin.x) / _scaleX;
     float y = (rect.y- _viewPortRect.origin.y) / _scaleY;
