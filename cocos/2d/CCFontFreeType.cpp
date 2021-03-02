@@ -2,6 +2,7 @@
 Copyright (c) 2013      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2020-2021 cocos2d-lua.org
  
 http://www.cocos2d-x.org
 
@@ -107,6 +108,7 @@ FontFreeType::FontFreeType(bool distanceFieldEnabled /* = false */, float outlin
 , _lineHeight(0)
 , _fontAtlas(nullptr)
 , _usedGlyphs(GlyphCollection::ASCII)
+, _renderMono(false)
 {
     if (outline > 0.0f)
     {
@@ -178,7 +180,7 @@ bool FontFreeType::createFontObject(const std::string &fontName, float fontSize)
     // store the face globally
     _fontRef = face;
     _lineHeight = static_cast<int>((_fontRef->size->metrics.ascender - _fontRef->size->metrics.descender) >> 6);
-    
+    _renderMono = fontSize <= 16.0f; // font size <= 16.0, use mono render the font
     // done and good
     return true;
 }
@@ -210,14 +212,12 @@ FontFreeType::~FontFreeType()
 
 FontAtlas * FontFreeType::createFontAtlas()
 {
-    if (_fontAtlas == nullptr)
-    {
+    if (_fontAtlas == nullptr) {
         _fontAtlas = new (std::nothrow) FontAtlas(*this);
-        if (_fontAtlas && _usedGlyphs != GlyphCollection::DYNAMIC)
-        {
+//        _fontAtlas->setAliasTexParameters(); // uncomment this line to close AntiAlias
+        if (_fontAtlas && _usedGlyphs != GlyphCollection::DYNAMIC) {
             std::u32string utf32;
-            if (StringUtils::UTF8ToUTF32(getGlyphCollection(), utf32))
-            {
+            if (StringUtils::UTF8ToUTF32(getGlyphCollection(), utf32)) {
                 _fontAtlas->prepareLetterDefinitions(utf32);
             }
         }
@@ -299,15 +299,18 @@ unsigned char* FontFreeType::getGlyphBitmap(uint64_t theChar, long &outWidth, lo
         if (_fontRef == nullptr)
             break;
 
-        if (_distanceFieldEnabled)
-        {
-            if (FT_Load_Char(_fontRef, static_cast<FT_ULong>(theChar), FT_LOAD_RENDER | FT_LOAD_NO_HINTING | FT_LOAD_NO_AUTOHINT))
-                break;
+        // chinese char show messy in simsun.ttc with size 12, need FT_LOAD_NO_BITMAP to fix it.
+        FT_Int32 flag = FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_BITMAP;
+        if (_renderMono) {
+            flag |= FT_LOAD_MONOCHROME; // small font size, load 1bit bitmap
+            _distanceFieldEnabled = false; // auto disable glow
+            _outlineSize = 0.0f; // audo disabled outline
         }
-        else
-        {
-            if (FT_Load_Char(_fontRef, static_cast<FT_ULong>(theChar), FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT))
-                break;
+        if (_distanceFieldEnabled) {
+            flag |= FT_LOAD_NO_HINTING;
+        }
+        if (FT_Load_Char(_fontRef, static_cast<FT_ULong>(theChar), flag)) {
+            break;
         }
 
         auto& metrics = _fontRef->glyph->metrics;
@@ -547,19 +550,13 @@ void FontFreeType::renderCharAt(unsigned char *dest,int posX, int posY, unsigned
     int iX = posX;
     int iY = posY;
 
-    if (_distanceFieldEnabled)
-    {
+    if (_distanceFieldEnabled) {
         auto distanceMap = makeDistanceMap(bitmap,bitmapWidth,bitmapHeight);
-
         bitmapWidth += 2 * DistanceMapSpread;
         bitmapHeight += 2 * DistanceMapSpread;
-
-        for (long y = 0; y < bitmapHeight; ++y)
-        {
+        for (long y = 0; y < bitmapHeight; ++y) {
             long bitmap_y = y * bitmapWidth;
-
-            for (long x = 0; x < bitmapWidth; ++x)
-            {    
+            for (long x = 0; x < bitmapWidth; ++x) {
                 /* Dual channel 16-bit output (more complicated, but good precision and range) */
                 /*int index = (iX + ( iY * destSize )) * 3;                
                 int index2 = (bitmap_y + x)*3;
@@ -569,55 +566,52 @@ void FontFreeType::renderCharAt(unsigned char *dest,int posX, int posY, unsigned
 
                 //Single channel 8-bit output 
                 dest[iX + ( iY * FontAtlas::CacheTextureWidth )] = distanceMap[bitmap_y + x];
-
                 iX += 1;
             }
-
             iX  = posX;
             iY += 1;
         }
         free(distanceMap);
-    }
-    else if(_outlineSize > 0)
-    {
+    } else if(_outlineSize > 0) {
         unsigned char tempChar;
-        for (long y = 0; y < bitmapHeight; ++y)
-        {
+        for (long y = 0; y < bitmapHeight; ++y) {
             long bitmap_y = y * bitmapWidth;
-
-            for (int x = 0; x < bitmapWidth; ++x)
-            {
+            for (int x = 0; x < bitmapWidth; ++x) {
                 tempChar = bitmap[(bitmap_y + x) * 2];
-                dest[(iX + ( iY * FontAtlas::CacheTextureWidth ) ) * 2] = tempChar;
+                dest[(iX + (iY * FontAtlas::CacheTextureWidth)) * 2] = tempChar;
                 tempChar = bitmap[(bitmap_y + x) * 2 + 1];
-                dest[(iX + ( iY * FontAtlas::CacheTextureWidth ) ) * 2 + 1] = tempChar;
-
+                dest[(iX + (iY * FontAtlas::CacheTextureWidth)) * 2 + 1] = tempChar;
                 iX += 1;
             }
-
             iX  = posX;
             iY += 1;
         }
         delete [] bitmap;
-    }
-    else
-    {
-        for (long y = 0; y < bitmapHeight; ++y)
-        {
-            long bitmap_y = y * bitmapWidth;
-
-            for (int x = 0; x < bitmapWidth; ++x)
-            {
-                unsigned char cTemp = bitmap[bitmap_y + x];
-
-                // the final pixel
-                dest[(iX + ( iY * FontAtlas::CacheTextureWidth ) )] = cTemp;
-
-                iX += 1;
+    } else {
+        if (_renderMono) {
+            int pitch = _fontRef->glyph->bitmap.pitch;
+            for (long y = 0; y < bitmapHeight; ++y) {
+                for (int x = 0; x < bitmapWidth; ++x) {
+                    unsigned char cTemp = ((bitmap[y * pitch + x / 8] << (x % 8)) & 0x80);
+                    // the final pixel
+                    dest[(iX + (iY * FontAtlas::CacheTextureWidth))] = cTemp > 0 ? 0xFF : 0;
+                    iX += 1;
+                }
+                iX  = posX;
+                iY += 1;
             }
-
-            iX  = posX;
-            iY += 1;
+        } else {
+            for (long y = 0; y < bitmapHeight; ++y) {
+                long bitmap_y = y * bitmapWidth;
+                for (int x = 0; x < bitmapWidth; ++x) {
+                    unsigned char cTemp = bitmap[bitmap_y + x];
+                    // the final pixel
+                    dest[(iX + (iY * FontAtlas::CacheTextureWidth))] = cTemp;
+                    iX += 1;
+                }
+                iX  = posX;
+                iY += 1;
+            }
         }
     } 
 }
