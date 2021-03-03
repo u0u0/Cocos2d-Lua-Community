@@ -111,6 +111,8 @@ public:
     *@endcode
     */
     virtual void setBlendFunc(const BlendFunc& blendFunc) override;
+    // support custom shader
+    virtual void setProgramState(backend::ProgramState* programState) override;
     
 CC_CONSTRUCTOR_ACCESS:
     LayerColor();
@@ -134,7 +136,6 @@ protected:
     backend::UniformLocation _mvpMatrixLocation;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(LayerColor);
-
 };
 
 //

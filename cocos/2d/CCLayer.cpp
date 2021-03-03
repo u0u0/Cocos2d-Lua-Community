@@ -58,26 +58,9 @@ LayerColor::LayerColor()
     // default blend function
     _blendFunc = BlendFunc::ALPHA_PREMULTIPLIED;
     
-    auto& pipelineDescriptor = _customCommand.getPipelineDescriptor();
     auto* program = backend::Program::getBuiltinProgram(backend::ProgramType::POSITION_COLOR);
-    _programState = new (std::nothrow) backend::ProgramState(program);
-    pipelineDescriptor.programState = _programState;
-    
-    auto vertexLayout = _programState->getVertexLayout();
-    const auto& attributeInfo = _programState->getProgram()->getActiveAttributes();
-    auto iter = attributeInfo.find("a_position");
-    if(iter != attributeInfo.end())
-    {
-        vertexLayout->setAttribute("a_position", iter->second.location, backend::VertexFormat::FLOAT3, 0, false);
-    }
-    iter = attributeInfo.find("a_color");
-    if(iter != attributeInfo.end())
-    {
-        vertexLayout->setAttribute("a_color", iter->second.location, backend::VertexFormat::FLOAT4, sizeof(_vertexData[0].vertices), false);
-    }
-    vertexLayout->setLayout(sizeof(_vertexData[0]));
-    
-    _mvpMatrixLocation = pipelineDescriptor.programState->getUniformLocation("u_MVPMatrix");
+    backend::ProgramState* programState = new (std::nothrow) backend::ProgramState(program);
+    setProgramState(programState);
     
     _customCommand.createIndexBuffer(CustomCommand::IndexFormat::U_SHORT, 6, CustomCommand::BufferUsage::STATIC);
     unsigned short indices[] = {0, 1, 2, 2, 1, 3};
@@ -102,6 +85,27 @@ const BlendFunc &LayerColor::getBlendFunc() const
 void LayerColor::setBlendFunc(const BlendFunc &var)
 {
     _blendFunc = var;
+}
+
+void LayerColor::setProgramState(backend::ProgramState* programState)
+{
+    Node::setProgramState(programState);
+    auto& pipelineDescriptor = _customCommand.getPipelineDescriptor();
+    pipelineDescriptor.programState = programState;
+
+    auto vertexLayout = _programState->getVertexLayout();
+    const auto& attributeInfo = _programState->getProgram()->getActiveAttributes();
+    auto iter = attributeInfo.find("a_position");
+    if(iter != attributeInfo.end()) {
+        vertexLayout->setAttribute("a_position", iter->second.location, backend::VertexFormat::FLOAT3, 0, false);
+    }
+    iter = attributeInfo.find("a_color");
+    if(iter != attributeInfo.end()) {
+        vertexLayout->setAttribute("a_color", iter->second.location, backend::VertexFormat::FLOAT4, sizeof(_vertexData[0].vertices), false);
+    }
+    vertexLayout->setLayout(sizeof(_vertexData[0]));
+    
+    _mvpMatrixLocation = _programState->getUniformLocation("u_MVPMatrix");
 }
 
 LayerColor* LayerColor::create()
