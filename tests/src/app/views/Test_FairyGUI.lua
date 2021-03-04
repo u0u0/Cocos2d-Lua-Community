@@ -16,18 +16,11 @@ function TestCase:ctor()
 
 	-- btn event, fairy has it's own EventDispatcher, cover the cocos's node
 	local btn = view:getChild("n9")
-	btn:addEventListener(fairygui.UIEventType.TouchEnd, function(context)
-		local input = context:getInput()
-		local touchPos = input:getTouch():getLocation()
-		if btn:displayObject():hitTest(touchPos) then
-			print("touch ended")
-			self.fairyRoot:release()
-			-- XXX:场景切换的时候需要释放fairygui的静态数据，避免不必要的异常
-			fairygui.HtmlObject:clearStaticPools()
-			fairygui.DragDropManager:destroyInstance()
-		else
-			print("touch canceled")
-		end
+	btn:addEventListener(fairygui.UIEventType.Click, function(context)
+		self.fairyRoot:release()
+		-- XXX:场景切换的时候需要释放fairygui的静态数据，避免不必要的异常
+		fairygui.HtmlObject:clearStaticPools()
+		fairygui.DragDropManager:destroyInstance()
 	end)
 
 	local btnOpenWin = view:getChild("btnOpenWin")
