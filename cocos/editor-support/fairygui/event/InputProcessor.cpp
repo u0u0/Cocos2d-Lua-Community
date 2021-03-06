@@ -287,10 +287,12 @@ GObject* InputProcessor::clickTest(TouchInfo* touch, GObject* target)
 
     GObject* obj = touch->downTargets[0].ptr();
     if (obj && obj->onStage()) {
-        auto camera = Camera::getVisitingCamera();
-        Vec2 pt = touch->touch->getLocation();
-        if (obj != obj->hitTest(pt, camera)) {
-            return nullptr; // upTarget is not same with downTarget
+        if (touch->touch) {
+            auto camera = Camera::getVisitingCamera();
+            Vec2 pt = touch->touch->getLocation();
+            if (obj != obj->hitTest(pt, camera)) {
+                return nullptr; // upTarget is not same with downTarget
+            }
         }
         return obj;
     }
