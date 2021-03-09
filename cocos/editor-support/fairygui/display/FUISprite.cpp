@@ -103,9 +103,9 @@ void FUISprite::setGrayed(bool value)
 #if COCOS2D_VERSION >= 0x00040000
     auto isETC1 = getTexture() && getTexture()->getAlphaTextureName();
     if (value) {
-        Sprite::updateShaders(positionTextureColor_vert, (isETC1)?etc1Gray_frag:grayScale_frag);
+        Sprite::setProgramState(isETC1 ? backend::ProgramType::ETC1_GRAY : backend::ProgramType::GRAY_SCALE);
     } else {
-        Sprite::updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+        Sprite::setProgramState(isETC1 ? backend::ProgramType::ETC1 : backend::ProgramType::POSITION_TEXTURE_COLOR);
     }
 #else
     GLProgramState* glState = nullptr;
