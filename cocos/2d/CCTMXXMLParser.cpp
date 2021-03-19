@@ -482,7 +482,7 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
         // The parent element is now "layer"
         _parentElement = TMXPropertyGroup;
     } else if (elementName == "objectgroup") {
-        if (_parentElement == TMXPropertyMap) {
+        if (_parentElement == TMXPropertyMap || _parentElement == TMXPropertyGroup) {
             // ObjectGroup Layer
             TMXObjectGroup *objectGroup = new (std::nothrow) TMXObjectGroup();
             objectGroup->setGroupName(attributeDict["name"].asString());
