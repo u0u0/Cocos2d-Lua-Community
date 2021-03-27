@@ -1,5 +1,6 @@
 /****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2020-2021 cocos2d-lua.org
  
  http://www.cocos2d-x.org
  
@@ -30,6 +31,8 @@
 #include "scripting/lua-bindings/manual/platform/android/CCLuaJavaBridge.h"
 
 #include "base/ccUTF8.h"
+#include "base/CCDirector.h"
+#include "base/CCScheduler.h"
 
 #define  LOG_TAG    "Cocos2dxLuaJavaBridge_java"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
@@ -40,8 +43,11 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
   (JNIEnv *env, jclass cls, jint functionId, jstring value)
 {
     std::string strValue = cocos2d::StringUtils::getStringUTFCharsJNI(env, value);
-    int ret = LuaJavaBridge::callLuaFunctionById(functionId, strValue.c_str());
-    return ret;
+    cocos2d::Scheduler *sched = cocos2d::Director::getInstance()->getScheduler();
+    sched->performFunctionInCocosThread([=](){
+        LuaJavaBridge::callLuaFunctionById(functionId, strValue.c_str());
+    });
+    return 0;
 }
 
 JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaGlobalFunctionWithString
@@ -49,9 +55,11 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaGlobal
 {
     std::string functionNameStr = cocos2d::StringUtils::getStringUTFCharsJNI(env, luaFunctionName);
     std::string valueStr = cocos2d::StringUtils::getStringUTFCharsJNI(env, value);
-    
-    int ret = LuaJavaBridge::callLuaGlobalFunction(functionNameStr.c_str(), valueStr.c_str());
-    return ret;
+    cocos2d::Scheduler *sched = cocos2d::Director::getInstance()->getScheduler();
+    sched->performFunctionInCocosThread([=](){
+        LuaJavaBridge::callLuaGlobalFunction(functionNameStr.c_str(), valueStr.c_str());
+    });
+    return 0;
 }
 
 JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_retainLuaFunction
