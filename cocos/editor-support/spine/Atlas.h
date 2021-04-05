@@ -116,7 +116,7 @@ public:
 	Vector<AtlasPage*> &getPages();
 
     Vector<AtlasRegion*> &getRegions();
-    
+
 private:
 	Vector<AtlasPage *> _pages;
 	Vector<AtlasRegion *> _regions;
