@@ -1,3 +1,39 @@
+Cocos2d-Lua-Community v4.0.2 Release
+
+[新增] FairyGUI UIConfig、UIObjectFactory、GSlider、GProgressBar等lua接口绑定。
+[新增] TMXTiledMap绑定getTilesets。
+[新增] spine event luabinding 同时导出当前值和默认值。
+[新增] Image同步3.7的getColorAt函数绑定。
+[新增] 音频输出添加aac支持。
+[新增] TTF加入分辨率自适应开关，自动用合适的字体大小进行渲染，保持高清显示。
+[新增] LayerColor添加自定义shader支持。
+[新增] EventTouch新增setTouches绑定。
+
+[改进] FairyGUI runtime 同步。
+[改进] Spine 3.8 runtime 同步。
+[改进] 同步3.7 iOS音频被电话打断的恢复处理。
+[改进] OpenAL库去dlopen。
+[改进] cmake寻找iconv用ICONV_LIBRARY。
+[改进] iOS & Mac remove respondsToSelector & performSelector。
+[改进] update luajit to 2021.1.12。
+[改进] utils绑定captureNode，captureScreen，并支持返回image对象。
+[改进] 去framework.protobuf路径修正，注意导出工具也需要对应修改。
+[改进] 同步3.7的ClippingRectangleNode嵌套，RenderTexture混用渲染异常修正。
+
+[修正] FairyGUI runtime 各种填坑。
+[修正] CocosStudio 骨骼skin 渲染crash fix。
+[修正] Android pb 解析crash fix。
+[修正] Metal截图回掉crash fix。
+[修正] TMX 的tsx嵌套解析修正。
+[修正] TMX 帧动画解析以及渲染修正。
+[修正] TMX 修改黑线处理方式，防止纹理抖动。
+[修正] TMX objectgroup解析修正。
+[修正] 修正创建工程时，iOS 横竖屏参数设置无效。
+[修正] apple的getPathForDirectory实现修正。
+[修正] audio stop潜在内存泄漏修正。
+[修正] 修正freetype渲染simsun.ttc的小字体时花屏的bug。
+[修正] Luaj 回调lua自动在cocos thread中运行，解决回调crash。
+
 Cocos2d-Lua-Community v4.0.1 Release
 
 [新增] LuaGameRunner添加Log to File功能。
