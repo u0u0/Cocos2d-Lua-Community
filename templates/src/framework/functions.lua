@@ -300,19 +300,7 @@ end
   @function math.newrandomseed
 ]]--
 function math.newrandomseed()
-    local ok, socket = pcall(function()
-        return require("socket")
-    end)
-
-    if ok then -- Luasocket's gettime return microsecond
-        math.randomseed(socket.gettime())
-    else
-        math.randomseed(os.time())
-    end
-    math.random()
-    math.random()
-    math.random()
-    math.random()
+    math.randomseed(tostring(os.time()):reverse():sub(1, 6))
 end
 
 --[[

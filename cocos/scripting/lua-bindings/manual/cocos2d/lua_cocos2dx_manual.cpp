@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2020-2021 cocos2d-lua.org
 
  http://www.cocos2d-x.org
 
@@ -6058,15 +6059,16 @@ static int tolua_cocos2d_utils_findChild(lua_State* tolua_S)
 {
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertype(tolua_S, 1, "cc.Node", 0, &tolua_err) ||
-        !tolua_isstring(tolua_S, 2, 0, &tolua_err)
+    if (!tolua_istable(tolua_S, 1, 0, &tolua_err) ||
+        !tolua_isusertype(tolua_S, 2, "cc.Node", 0, &tolua_err) ||
+        !tolua_isstring(tolua_S, 3, 0, &tolua_err)
         )
         goto tolua_lerror;
     else
 #endif
     {
-        cocos2d::Node* node = static_cast<Node*>(tolua_tousertype(tolua_S, 1, nullptr));
-        std::string  name = tolua_tocppstring(tolua_S, 2, "");
+        cocos2d::Node* node = static_cast<Node*>(tolua_tousertype(tolua_S, 2, nullptr));
+        std::string name = tolua_tocppstring(tolua_S, 3, "");
         auto obj = cocos2d::utils::findChild(node, name);
         int ID = (obj) ? (int)obj->_ID : -1;
         int* luaID = (obj) ? &obj->_luaID : NULL;
@@ -6074,9 +6076,30 @@ static int tolua_cocos2d_utils_findChild(lua_State* tolua_S)
         return 1;
     }
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-                tolua_error(tolua_S, "#ferror in function 'tolua_cocos2d_utils_findChild'.", &tolua_err);
-                return 0;
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'tolua_cocos2d_utils_findChild'.", &tolua_err);
+    return 0;
+#endif
+}
+
+static int tolua_cocos2d_utils_gettime(lua_State* tolua_S)
+{
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_istable(tolua_S, 1, 0, &tolua_err) ||
+        !tolua_isnoobj(tolua_S, 2, &tolua_err))
+        goto tolua_lerror;
+    else
+#endif
+    {
+        double time = cocos2d::utils::gettime();
+        lua_pushnumber(tolua_S, time);
+        return 1;
+    }
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'tolua_cocos2d_utils_gettime'.", &tolua_err);
+    return 0;
 #endif
 }
 
@@ -6093,7 +6116,8 @@ int register_all_cocos2dx_module_manual(lua_State* tolua_S)
             tolua_function(tolua_S, "captureScreen", tolua_cocos2d_utils_captureScreen);
             tolua_function(tolua_S, "captureNode", tolua_cocos2d_utils_captureNode);
             tolua_function(tolua_S, "findChildren", tolua_cocos2d_utils_findChildren);
-	    tolua_function(tolua_S, "findChild", tolua_cocos2d_utils_findChild);
+            tolua_function(tolua_S, "findChild", tolua_cocos2d_utils_findChild);
+            tolua_function(tolua_S, "gettime", tolua_cocos2d_utils_gettime);
         tolua_endmodule(tolua_S);
     tolua_endmodule(tolua_S);
 
