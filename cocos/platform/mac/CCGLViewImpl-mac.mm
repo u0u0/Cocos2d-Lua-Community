@@ -305,7 +305,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     int neededWidth = rect.size.width * _frameZoomFactor;
     int neededHeight = rect.size.height * _frameZoomFactor;
 
-    _mainWindow = glfwCreateWindow(neededWidth, neededHeight, _viewName.c_str(), nullptr, nullptr);
+    _mainWindow = glfwCreateWindow(neededWidth, neededHeight, _viewName.c_str(), _monitor, nullptr);
     if (!_mainWindow) {
         std::string message = "Can't create window";
         if (!_glfwError.empty())
@@ -377,7 +377,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
     setFrameSize(rect.size.width, rect.size.height);
     // center the window
-    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    const GLFWvidmode *mode = glfwGetVideoMode(_monitor ? _monitor : glfwGetPrimaryMonitor());
     glfwSetWindowPos(_mainWindow, (mode->width - realW) / 2, (mode->height - realH) / 2);
     return true;
 }
