@@ -203,7 +203,7 @@ void GLoader3D::loadFromPackage()
                 skeletonAni = spine::SkeletonAnimation::createWithBinaryFile(_contentItem->file, atlasFile);
             else
                 skeletonAni = spine::SkeletonAnimation::createWithJsonFile(_contentItem->file, atlasFile);
-            skeletonAni->setPosition(_contentItem->skeletonAnchor->x, _contentItem->skeletonAnchor->y);
+            skeletonAni->setPosition(_contentItem->skeletonAnchor->x, _contentItem->height-_contentItem->skeletonAnchor->y);
             skeletonAni->retain();
 
             _content = skeletonAni;
