@@ -814,34 +814,28 @@ int lua_cocos2dx_backend_Program_getBuiltinProgram(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
-    if (argc == 1)
-    {
-        cocos2d::backend::ProgramType arg0;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getBuiltinProgram");
-        if(!ok)
-        {
+    if (argc == 1) {
+        unsigned int arg0;
+        ok &= luaval_to_uint32(tolua_S, 2,(unsigned int *)&arg0, "ccb.Program:getBuiltinProgram");
+        if (!ok) {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getBuiltinProgram'", nullptr);
             return 0;
         }
-        cocos2d::backend::Program* ret = cocos2d::backend::Program::getBuiltinProgram(arg0);
+        cocos2d::backend::Program* ret = cocos2d::backend::Program::getBuiltinProgram((cocos2d::backend::ProgramType)arg0);
         object_to_luaval<cocos2d::backend::Program>(tolua_S, "ccb.Program",(cocos2d::backend::Program*)ret);
         return 1;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "ccb.Program:getBuiltinProgram",argc, 1);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getBuiltinProgram'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
 static int lua_cocos2dx_backend_Program_finalize(lua_State* tolua_S)
 {
