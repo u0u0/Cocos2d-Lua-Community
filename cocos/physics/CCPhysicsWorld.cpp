@@ -195,7 +195,7 @@ static void DrawCircle(cpVect p, cpFloat /*a*/, cpFloat r, cpSpaceDebugColor out
     const Color4F outlineColor(outline.r, outline.g, outline.b, outline.a);
     DrawNode* drawNode = static_cast<DrawNode*>(data);
     float radius = PhysicsHelper::cpfloat2float(r);
-    Vec2 centre = PhysicsHelper::cpv2point(p);
+    Vec2 center = PhysicsHelper::cpv2point(p);
     
     static const int CIRCLE_SEG_NUM = 12;
     Vec2 seg[CIRCLE_SEG_NUM] = {};
@@ -204,7 +204,7 @@ static void DrawCircle(cpVect p, cpFloat /*a*/, cpFloat r, cpSpaceDebugColor out
     {
         float angle = (float)i * M_PI / (float)CIRCLE_SEG_NUM * 2.0f;
         Vec2 d(radius * cosf(angle), radius * sinf(angle));
-        seg[i] = centre + d;
+        seg[i] = center + d;
     }
     drawNode->drawPolygon(seg, CIRCLE_SEG_NUM, fillColor, 1, outlineColor);
 }
