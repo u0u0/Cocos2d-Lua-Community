@@ -103,7 +103,6 @@ private:
 
     GlyphCollection _usedGlyphs;
     std::string _customGlyphs;
-    bool _renderMono;
 };
 
 /// @endcond

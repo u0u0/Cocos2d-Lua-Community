@@ -108,7 +108,6 @@ FontFreeType::FontFreeType(bool distanceFieldEnabled /* = false */, float outlin
 , _lineHeight(0)
 , _fontAtlas(nullptr)
 , _usedGlyphs(GlyphCollection::ASCII)
-, _renderMono(false)
 {
     if (outline > 0.0f)
     {
@@ -180,7 +179,6 @@ bool FontFreeType::createFontObject(const std::string &fontName, float fontSize)
     // store the face globally
     _fontRef = face;
     _lineHeight = static_cast<int>((_fontRef->size->metrics.ascender - _fontRef->size->metrics.descender) >> 6);
-    _renderMono = fontSize <= 16.0f; // font size <= 16.0, use mono render the font
     // done and good
     return true;
 }
@@ -301,11 +299,6 @@ unsigned char* FontFreeType::getGlyphBitmap(uint64_t theChar, long &outWidth, lo
 
         // chinese char show messy in simsun.ttc with size 12, need FT_LOAD_NO_BITMAP to fix it.
         FT_Int32 flag = FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_BITMAP;
-        if (_renderMono) {
-            flag |= FT_LOAD_MONOCHROME; // small font size, load 1bit bitmap
-            _distanceFieldEnabled = false; // auto disable glow
-            _outlineSize = 0.0f; // audo disabled outline
-        }
         if (_distanceFieldEnabled) {
             flag |= FT_LOAD_NO_HINTING;
         }
@@ -588,7 +581,7 @@ void FontFreeType::renderCharAt(unsigned char *dest,int posX, int posY, unsigned
         }
         delete [] bitmap;
     } else {
-        if (_renderMono) {
+        if (_fontRef->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
             int pitch = _fontRef->glyph->bitmap.pitch;
             for (long y = 0; y < bitmapHeight; ++y) {
                 for (int x = 0; x < bitmapWidth; ++x) {
