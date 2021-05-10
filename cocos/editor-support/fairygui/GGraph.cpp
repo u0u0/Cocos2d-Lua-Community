@@ -103,6 +103,7 @@ void GGraph::drawRegularPolygon(int lineSize, const cocos2d::Color4F& lineColor,
     }
     else if (_distances != nullptr)
         _distances->clear();
+    updateShape();
 }
 
 void GGraph::updateShape()
