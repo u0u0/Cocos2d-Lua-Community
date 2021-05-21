@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2002-2019 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -573,11 +573,9 @@ int EC_POINT_oct2point(const EC_GROUP *group, EC_POINT *p,
  *  \param  point  EC_POINT object
  *  \param  form   point conversion form
  *  \param  pbuf   returns pointer to allocated buffer
- *  \param  len    length of the memory buffer
  *  \param  ctx    BN_CTX object (optional)
  *  \return the length of the encoded octet string or 0 if an error occurred
  */
-
 size_t EC_POINT_point2buf(const EC_GROUP *group, const EC_POINT *point,
                           point_conversion_form_t form,
                           unsigned char **pbuf, BN_CTX *ctx);
@@ -863,7 +861,7 @@ int EC_KEY_generate_key(EC_KEY *key);
 int EC_KEY_check_key(const EC_KEY *key);
 
 /** Indicates if an EC_KEY can be used for signing.
- *  \param  key  the EC_KEY object
+ *  \param  eckey  the EC_KEY object
  *  \return 1 if can can sign and 0 otherwise.
  */
 int EC_KEY_can_sign(const EC_KEY *eckey);
@@ -882,11 +880,9 @@ int EC_KEY_set_public_key_affine_coordinates(EC_KEY *key, BIGNUM *x,
  *  \param  key    key to encode
  *  \param  form   point conversion form
  *  \param  pbuf   returns pointer to allocated buffer
- *  \param  len    length of the memory buffer
  *  \param  ctx    BN_CTX object (optional)
  *  \return the length of the encoded octet string or 0 if an error occurred
  */
-
 size_t EC_KEY_key2buf(const EC_KEY *key, point_conversion_form_t form,
                       unsigned char **pbuf, BN_CTX *ctx);
 
@@ -921,11 +917,10 @@ int EC_KEY_oct2priv(EC_KEY *key, const unsigned char *buf, size_t len);
 size_t EC_KEY_priv2oct(const EC_KEY *key, unsigned char *buf, size_t len);
 
 /** Encodes an EC_KEY private key to an allocated octet string
- *  \param  key    key to encode
+ *  \param  eckey  key to encode
  *  \param  pbuf   returns pointer to allocated buffer
  *  \return the length of the encoded octet string or 0 if an error occurred
  */
-
 size_t EC_KEY_priv2buf(const EC_KEY *eckey, unsigned char **pbuf);
 
 /********************************************************************/
@@ -1228,7 +1223,7 @@ void EC_KEY_METHOD_set_verify(EC_KEY_METHOD *meth,
                                                 const ECDSA_SIG *sig,
                                                 EC_KEY *eckey));
 
-void EC_KEY_METHOD_get_init(EC_KEY_METHOD *meth,
+void EC_KEY_METHOD_get_init(const EC_KEY_METHOD *meth,
                             int (**pinit)(EC_KEY *key),
                             void (**pfinish)(EC_KEY *key),
                             int (**pcopy)(EC_KEY *dest, const EC_KEY *src),
@@ -1239,16 +1234,16 @@ void EC_KEY_METHOD_get_init(EC_KEY_METHOD *meth,
                             int (**pset_public)(EC_KEY *key,
                                                 const EC_POINT *pub_key));
 
-void EC_KEY_METHOD_get_keygen(EC_KEY_METHOD *meth,
+void EC_KEY_METHOD_get_keygen(const EC_KEY_METHOD *meth,
                               int (**pkeygen)(EC_KEY *key));
 
-void EC_KEY_METHOD_get_compute_key(EC_KEY_METHOD *meth,
+void EC_KEY_METHOD_get_compute_key(const EC_KEY_METHOD *meth,
                                    int (**pck)(unsigned char **psec,
                                                size_t *pseclen,
                                                const EC_POINT *pub_key,
                                                const EC_KEY *ecdh));
 
-void EC_KEY_METHOD_get_sign(EC_KEY_METHOD *meth,
+void EC_KEY_METHOD_get_sign(const EC_KEY_METHOD *meth,
                             int (**psign)(int type, const unsigned char *dgst,
                                           int dlen, unsigned char *sig,
                                           unsigned int *siglen,
@@ -1262,7 +1257,7 @@ void EC_KEY_METHOD_get_sign(EC_KEY_METHOD *meth,
                                                      const BIGNUM *in_r,
                                                      EC_KEY *eckey));
 
-void EC_KEY_METHOD_get_verify(EC_KEY_METHOD *meth,
+void EC_KEY_METHOD_get_verify(const EC_KEY_METHOD *meth,
                               int (**pverify)(int type, const unsigned
                                               char *dgst, int dgst_len,
                                               const unsigned char *sigbuf,
@@ -1404,6 +1399,7 @@ int ERR_load_EC_strings(void);
 # define EC_F_EC_ASN1_GROUP2CURVE                         153
 # define EC_F_EC_ASN1_GROUP2FIELDID                       154
 # define EC_F_EC_GF2M_MONTGOMERY_POINT_MULTIPLY           208
+# define EC_F_EC_GF2M_SIMPLE_FIELD_INV                    296
 # define EC_F_EC_GF2M_SIMPLE_GROUP_CHECK_DISCRIMINANT     159
 # define EC_F_EC_GF2M_SIMPLE_GROUP_SET_CURVE              195
 # define EC_F_EC_GF2M_SIMPLE_OCT2POINT                    160
@@ -1413,6 +1409,7 @@ int ERR_load_EC_strings(void);
 # define EC_F_EC_GF2M_SIMPLE_SET_COMPRESSED_COORDINATES   164
 # define EC_F_EC_GFP_MONT_FIELD_DECODE                    133
 # define EC_F_EC_GFP_MONT_FIELD_ENCODE                    134
+# define EC_F_EC_GFP_MONT_FIELD_INV                       297
 # define EC_F_EC_GFP_MONT_FIELD_MUL                       131
 # define EC_F_EC_GFP_MONT_FIELD_SET_TO_ONE                209
 # define EC_F_EC_GFP_MONT_FIELD_SQR                       132
@@ -1429,6 +1426,8 @@ int ERR_load_EC_strings(void);
 # define EC_F_EC_GFP_NIST_FIELD_MUL                       200
 # define EC_F_EC_GFP_NIST_FIELD_SQR                       201
 # define EC_F_EC_GFP_NIST_GROUP_SET_CURVE                 202
+# define EC_F_EC_GFP_SIMPLE_BLIND_COORDINATES             287
+# define EC_F_EC_GFP_SIMPLE_FIELD_INV                     298
 # define EC_F_EC_GFP_SIMPLE_GROUP_CHECK_DISCRIMINANT      165
 # define EC_F_EC_GFP_SIMPLE_GROUP_SET_CURVE               166
 # define EC_F_EC_GFP_SIMPLE_MAKE_AFFINE                   102
@@ -1518,6 +1517,7 @@ int ERR_load_EC_strings(void);
 # define EC_R_BAD_SIGNATURE                               156
 # define EC_R_BIGNUM_OUT_OF_RANGE                         144
 # define EC_R_BUFFER_TOO_SMALL                            100
+# define EC_R_CANNOT_INVERT                               165
 # define EC_R_COORDINATES_OUT_OF_RANGE                    146
 # define EC_R_CURVE_DOES_NOT_SUPPORT_ECDH                 160
 # define EC_R_CURVE_DOES_NOT_SUPPORT_SIGNING              159
@@ -1568,6 +1568,7 @@ int ERR_load_EC_strings(void);
 # define EC_R_SLOT_FULL                                   108
 # define EC_R_UNDEFINED_GENERATOR                         113
 # define EC_R_UNDEFINED_ORDER                             128
+# define EC_R_UNKNOWN_COFACTOR                            164
 # define EC_R_UNKNOWN_GROUP                               129
 # define EC_R_UNKNOWN_ORDER                               114
 # define EC_R_UNSUPPORTED_FIELD                           131

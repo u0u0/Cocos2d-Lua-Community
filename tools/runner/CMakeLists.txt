@@ -66,6 +66,7 @@ setup_cocos_app_config(${APP_NAME})
 # always open COCOS2D_DEBUG in cocos2d
 target_compile_definitions(cocos2d PUBLIC $<$<CONFIG:Release>:COCOS2D_DEBUG=1>)
 if(MACOSX)
+	set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
 	set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
 	set_xcode_property(${APP_NAME} INSTALL_PATH "\${LOCAL_APPS_DIR}") # fix archive no file
 	set_target_properties(${APP_NAME} PROPERTIES
