@@ -93772,76 +93772,57 @@ int lua_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::SpriteFrameCache* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"cc.SpriteFrameCache",0,&tolua_err)) goto tolua_lerror;
 #endif
     cobj = (cocos2d::SpriteFrameCache*)tolua_tousertype(tolua_S,1,0);
 #if COCOS2D_DEBUG >= 1
-    if (!cobj)
-    {
+    if (!cobj) {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile'", nullptr);
         return 0;
     }
 #endif
-    argc = lua_gettop(tolua_S)-1;
-    do{
-        if (argc == 2) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.SpriteFrameCache:addSpriteFramesWithFile");
-
-            if (!ok) { break; }
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 1) {
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.SpriteFrameCache:addSpriteFramesWithFile");
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile'", nullptr);
+            return 0;
+        }
+        cobj->addSpriteFramesWithFile(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    if (argc == 2) {
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.SpriteFrameCache:addSpriteFramesWithFile");
+        if (lua_isstring(tolua_S, 3)) {
             std::string arg1;
             ok &= luaval_to_std_string(tolua_S, 3,&arg1, "cc.SpriteFrameCache:addSpriteFramesWithFile");
-
-            if (!ok) { break; }
-            cobj->addSpriteFramesWithFile(arg0, arg1);
-            lua_settop(tolua_S, 1);
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 1) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.SpriteFrameCache:addSpriteFramesWithFile");
-
-            if (!ok) { break; }
-            cobj->addSpriteFramesWithFile(arg0);
-            lua_settop(tolua_S, 1);
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 2) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.SpriteFrameCache:addSpriteFramesWithFile");
-
-            if (!ok) { break; }
+            if (ok) cobj->addSpriteFramesWithFile(arg0, arg1);
+        } else {
             cocos2d::Texture2D* arg1;
             ok &= luaval_to_object<cocos2d::Texture2D>(tolua_S, 3, "cc.Texture2D",&arg1, "cc.SpriteFrameCache:addSpriteFramesWithFile");
-
-            if (!ok) { break; }
-            cobj->addSpriteFramesWithFile(arg0, arg1);
-            lua_settop(tolua_S, 1);
-            return 1;
+            if (ok) cobj->addSpriteFramesWithFile(arg0, arg1);
         }
-    }while(0);
-    ok  = true;
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "cc.SpriteFrameCache:addSpriteFramesWithFile",argc, 2);
+        if (!ok) {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile'", nullptr);
+            return 0;
+        }
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting 1~2 \n",  "cc.SpriteFrameCache:addSpriteFramesWithFile", argc);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
 int lua_cocos2dx_SpriteFrameCache_getSpriteFrameByName(lua_State* tolua_S)
 {
