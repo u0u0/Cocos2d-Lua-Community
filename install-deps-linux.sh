@@ -19,6 +19,7 @@ DEPENDS+=' libxi-dev'
 DEPENDS+=' libfontconfig1-dev'
 DEPENDS+=' libglew-dev'
 DEPENDS+=' libgtk-3-dev'
+DEPENDS+=' libxxf86vm-dev'
 DEPENDS+=' binutils'
 
 sudo apt-get install --yes $DEPENDS

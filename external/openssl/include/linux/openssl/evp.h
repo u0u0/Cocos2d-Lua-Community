@@ -1,5 +1,5 @@
 /*
- * Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2018 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -900,6 +900,9 @@ int EVP_PKEY_security_bits(const EVP_PKEY *pkey);
 int EVP_PKEY_size(EVP_PKEY *pkey);
 int EVP_PKEY_set_type(EVP_PKEY *pkey, int type);
 int EVP_PKEY_set_type_str(EVP_PKEY *pkey, const char *str, int len);
+# ifndef OPENSSL_NO_ENGINE
+int EVP_PKEY_set1_engine(EVP_PKEY *pkey, ENGINE *e);
+# endif
 int EVP_PKEY_assign(EVP_PKEY *pkey, int type, void *key);
 void *EVP_PKEY_get0(const EVP_PKEY *pkey);
 const unsigned char *EVP_PKEY_get0_hmac(const EVP_PKEY *pkey, size_t *len);
@@ -1348,34 +1351,34 @@ void EVP_PKEY_meth_set_ctrl(EVP_PKEY_METHOD *pmeth,
                                              const char *type,
                                              const char *value));
 
-void EVP_PKEY_meth_get_init(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_init(const EVP_PKEY_METHOD *pmeth,
                             int (**pinit) (EVP_PKEY_CTX *ctx));
 
-void EVP_PKEY_meth_get_copy(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_copy(const EVP_PKEY_METHOD *pmeth,
                             int (**pcopy) (EVP_PKEY_CTX *dst,
                                            EVP_PKEY_CTX *src));
 
-void EVP_PKEY_meth_get_cleanup(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_cleanup(const EVP_PKEY_METHOD *pmeth,
                                void (**pcleanup) (EVP_PKEY_CTX *ctx));
 
-void EVP_PKEY_meth_get_paramgen(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_paramgen(const EVP_PKEY_METHOD *pmeth,
                                 int (**pparamgen_init) (EVP_PKEY_CTX *ctx),
                                 int (**pparamgen) (EVP_PKEY_CTX *ctx,
                                                    EVP_PKEY *pkey));
 
-void EVP_PKEY_meth_get_keygen(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_keygen(const EVP_PKEY_METHOD *pmeth,
                               int (**pkeygen_init) (EVP_PKEY_CTX *ctx),
                               int (**pkeygen) (EVP_PKEY_CTX *ctx,
                                                EVP_PKEY *pkey));
 
-void EVP_PKEY_meth_get_sign(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_sign(const EVP_PKEY_METHOD *pmeth,
                             int (**psign_init) (EVP_PKEY_CTX *ctx),
                             int (**psign) (EVP_PKEY_CTX *ctx,
                                            unsigned char *sig, size_t *siglen,
                                            const unsigned char *tbs,
                                            size_t tbslen));
 
-void EVP_PKEY_meth_get_verify(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_verify(const EVP_PKEY_METHOD *pmeth,
                               int (**pverify_init) (EVP_PKEY_CTX *ctx),
                               int (**pverify) (EVP_PKEY_CTX *ctx,
                                                const unsigned char *sig,
@@ -1383,7 +1386,7 @@ void EVP_PKEY_meth_get_verify(EVP_PKEY_METHOD *pmeth,
                                                const unsigned char *tbs,
                                                size_t tbslen));
 
-void EVP_PKEY_meth_get_verify_recover(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_verify_recover(const EVP_PKEY_METHOD *pmeth,
                                       int (**pverify_recover_init) (EVP_PKEY_CTX
                                                                     *ctx),
                                       int (**pverify_recover) (EVP_PKEY_CTX
@@ -1395,7 +1398,7 @@ void EVP_PKEY_meth_get_verify_recover(EVP_PKEY_METHOD *pmeth,
                                                                char *tbs,
                                                                size_t tbslen));
 
-void EVP_PKEY_meth_get_signctx(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_signctx(const EVP_PKEY_METHOD *pmeth,
                                int (**psignctx_init) (EVP_PKEY_CTX *ctx,
                                                       EVP_MD_CTX *mctx),
                                int (**psignctx) (EVP_PKEY_CTX *ctx,
@@ -1403,7 +1406,7 @@ void EVP_PKEY_meth_get_signctx(EVP_PKEY_METHOD *pmeth,
                                                  size_t *siglen,
                                                  EVP_MD_CTX *mctx));
 
-void EVP_PKEY_meth_get_verifyctx(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_verifyctx(const EVP_PKEY_METHOD *pmeth,
                                  int (**pverifyctx_init) (EVP_PKEY_CTX *ctx,
                                                           EVP_MD_CTX *mctx),
                                  int (**pverifyctx) (EVP_PKEY_CTX *ctx,
@@ -1411,7 +1414,7 @@ void EVP_PKEY_meth_get_verifyctx(EVP_PKEY_METHOD *pmeth,
                                                      int siglen,
                                                      EVP_MD_CTX *mctx));
 
-void EVP_PKEY_meth_get_encrypt(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_encrypt(const EVP_PKEY_METHOD *pmeth,
                                int (**pencrypt_init) (EVP_PKEY_CTX *ctx),
                                int (**pencryptfn) (EVP_PKEY_CTX *ctx,
                                                    unsigned char *out,
@@ -1419,7 +1422,7 @@ void EVP_PKEY_meth_get_encrypt(EVP_PKEY_METHOD *pmeth,
                                                    const unsigned char *in,
                                                    size_t inlen));
 
-void EVP_PKEY_meth_get_decrypt(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_decrypt(const EVP_PKEY_METHOD *pmeth,
                                int (**pdecrypt_init) (EVP_PKEY_CTX *ctx),
                                int (**pdecrypt) (EVP_PKEY_CTX *ctx,
                                                  unsigned char *out,
@@ -1427,13 +1430,13 @@ void EVP_PKEY_meth_get_decrypt(EVP_PKEY_METHOD *pmeth,
                                                  const unsigned char *in,
                                                  size_t inlen));
 
-void EVP_PKEY_meth_get_derive(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_derive(const EVP_PKEY_METHOD *pmeth,
                               int (**pderive_init) (EVP_PKEY_CTX *ctx),
                               int (**pderive) (EVP_PKEY_CTX *ctx,
                                                unsigned char *key,
                                                size_t *keylen));
 
-void EVP_PKEY_meth_get_ctrl(EVP_PKEY_METHOD *pmeth,
+void EVP_PKEY_meth_get_ctrl(const EVP_PKEY_METHOD *pmeth,
                             int (**pctrl) (EVP_PKEY_CTX *ctx, int type, int p1,
                                            void *p2),
                             int (**pctrl_str) (EVP_PKEY_CTX *ctx,
@@ -1455,11 +1458,14 @@ int ERR_load_EVP_strings(void);
 /* Function codes. */
 # define EVP_F_AESNI_INIT_KEY                             165
 # define EVP_F_AES_INIT_KEY                               133
+# define EVP_F_AES_OCB_CIPHER                             169
 # define EVP_F_AES_T4_INIT_KEY                            178
+# define EVP_F_AES_WRAP_CIPHER                            170
 # define EVP_F_ALG_MODULE_INIT                            177
 # define EVP_F_CAMELLIA_INIT_KEY                          159
 # define EVP_F_CHACHA20_POLY1305_CTRL                     182
 # define EVP_F_CMLL_T4_INIT_KEY                           179
+# define EVP_F_DES_EDE3_WRAP_CIPHER                       171
 # define EVP_F_DO_SIGVER_INIT                             161
 # define EVP_F_EVP_CIPHERINIT_EX                          123
 # define EVP_F_EVP_CIPHER_CTX_COPY                        163
@@ -1479,6 +1485,7 @@ int ERR_load_EVP_strings(void);
 # define EVP_F_EVP_PBE_SCRYPT                             181
 # define EVP_F_EVP_PKCS82PKEY                             111
 # define EVP_F_EVP_PKEY2PKCS8                             113
+# define EVP_F_EVP_PKEY_ASN1_ADD0                         168
 # define EVP_F_EVP_PKEY_COPY_PARAMETERS                   103
 # define EVP_F_EVP_PKEY_CTX_CTRL                          137
 # define EVP_F_EVP_PKEY_CTX_CTRL_STR                      150
@@ -1499,9 +1506,12 @@ int ERR_load_EVP_strings(void);
 # define EVP_F_EVP_PKEY_GET0_RSA                          121
 # define EVP_F_EVP_PKEY_KEYGEN                            146
 # define EVP_F_EVP_PKEY_KEYGEN_INIT                       147
+# define EVP_F_EVP_PKEY_METH_ADD0                         172
+# define EVP_F_EVP_PKEY_METH_NEW                          173
 # define EVP_F_EVP_PKEY_NEW                               106
 # define EVP_F_EVP_PKEY_PARAMGEN                          148
 # define EVP_F_EVP_PKEY_PARAMGEN_INIT                     149
+# define EVP_F_EVP_PKEY_SET1_ENGINE                       187
 # define EVP_F_EVP_PKEY_SIGN                              140
 # define EVP_F_EVP_PKEY_SIGN_INIT                         141
 # define EVP_F_EVP_PKEY_VERIFY                            142
@@ -1546,6 +1556,7 @@ int ERR_load_EVP_strings(void);
 # define EVP_R_INPUT_NOT_INITIALIZED                      111
 # define EVP_R_INVALID_DIGEST                             152
 # define EVP_R_INVALID_FIPS_MODE                          168
+# define EVP_R_INVALID_KEY                                163
 # define EVP_R_INVALID_KEY_LENGTH                         130
 # define EVP_R_INVALID_OPERATION                          148
 # define EVP_R_KEYGEN_FAILURE                             120
@@ -1561,6 +1572,9 @@ int ERR_load_EVP_strings(void);
 # define EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE   150
 # define EVP_R_OPERATON_NOT_INITIALIZED                   151
 # define EVP_R_PARTIALLY_OVERLAPPING                      162
+# define EVP_R_PBKDF2_ERROR                               176
+# define EVP_R_PKEY_APPLICATION_ASN1_METHOD_ALREADY_REGISTERED 175
+# define EVP_R_PKEY_ASN1_METHOD_ALREADY_REGISTERED        164
 # define EVP_R_PRIVATE_KEY_DECODE_ERROR                   145
 # define EVP_R_PRIVATE_KEY_ENCODE_ERROR                   146
 # define EVP_R_PUBLIC_KEY_NOT_RSA                         106
@@ -1568,12 +1582,12 @@ int ERR_load_EVP_strings(void);
 # define EVP_R_UNKNOWN_DIGEST                             161
 # define EVP_R_UNKNOWN_OPTION                             169
 # define EVP_R_UNKNOWN_PBE_ALGORITHM                      121
-# define EVP_R_UNSUPPORTED_NUMBER_OF_ROUNDS               135
 # define EVP_R_UNSUPPORTED_ALGORITHM                      156
 # define EVP_R_UNSUPPORTED_CIPHER                         107
 # define EVP_R_UNSUPPORTED_KEYLENGTH                      123
 # define EVP_R_UNSUPPORTED_KEY_DERIVATION_FUNCTION        124
 # define EVP_R_UNSUPPORTED_KEY_SIZE                       108
+# define EVP_R_UNSUPPORTED_NUMBER_OF_ROUNDS               135
 # define EVP_R_UNSUPPORTED_PRF                            125
 # define EVP_R_UNSUPPORTED_PRIVATE_KEY_ALGORITHM          118
 # define EVP_R_UNSUPPORTED_SALT_TYPE                      126

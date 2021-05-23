@@ -1,5 +1,5 @@
 /*
- * Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2019 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -37,6 +37,7 @@ extern "C" {
 # define ERR_TXT_STRING          0x02
 
 # define ERR_FLAG_MARK           0x01
+# define ERR_FLAG_CLEAR          0x02
 
 # define ERR_NUM_ERRORS  16
 typedef struct err_state_st {
@@ -89,7 +90,7 @@ typedef struct err_state_st {
 # define ERR_LIB_CMS             46
 # define ERR_LIB_TS              47
 # define ERR_LIB_HMAC            48
-# define ERR_LIB_JPAKE           49
+/* # define ERR_LIB_JPAKE       49 */
 # define ERR_LIB_CT              50
 # define ERR_LIB_ASYNC           51
 # define ERR_LIB_KDF             52
@@ -128,7 +129,6 @@ typedef struct err_state_st {
 # define CMSerr(f,r) ERR_PUT_error(ERR_LIB_CMS,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
 # define TSerr(f,r) ERR_PUT_error(ERR_LIB_TS,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
 # define HMACerr(f,r) ERR_PUT_error(ERR_LIB_HMAC,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
-# define JPAKEerr(f,r) ERR_PUT_error(ERR_LIB_JPAKE,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
 # define CTerr(f,r) ERR_PUT_error(ERR_LIB_CT,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
 # define ASYNCerr(f,r) ERR_PUT_error(ERR_LIB_ASYNC,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
 # define KDFerr(f,r) ERR_PUT_error(ERR_LIB_KDF,(f),(r),OPENSSL_FILE,OPENSSL_LINE)
@@ -140,6 +140,7 @@ typedef struct err_state_st {
 # define ERR_GET_LIB(l)          (int)(((l) >> 24L) & 0x0FFL)
 # define ERR_GET_FUNC(l)         (int)(((l) >> 12L) & 0xFFFL)
 # define ERR_GET_REASON(l)       (int)( (l)         & 0xFFFL)
+# define ERR_FATAL_ERROR(l)      (int)( (l)         & ERR_R_FATAL)
 
 /* OS functions */
 # define SYS_F_FOPEN             1
@@ -159,6 +160,7 @@ typedef struct err_state_st {
 # define SYS_F_GETSOCKOPT        15
 # define SYS_F_GETSOCKNAME       16
 # define SYS_F_GETHOSTBYNAME     17
+# define SYS_F_FFLUSH            18
 
 /* reasons */
 # define ERR_R_SYS_LIB   ERR_LIB_SYS/* 2 */
