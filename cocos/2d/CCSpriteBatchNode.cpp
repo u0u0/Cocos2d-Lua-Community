@@ -107,9 +107,11 @@ bool SpriteBatchNode::initWithTexture(Texture2D *tex, ssize_t capacity/* = DEFAU
     _children.reserve(capacity);
 
     _descendants.reserve(capacity);
-    
-    updateShaders(positionTextureColor_vert, positionTextureColor_frag);
-    
+    // Builtin Program is shared and faster then create a new program
+    auto* program = backend::Program::getBuiltinProgram(backend::ProgramType::POSITION_TEXTURE_COLOR);
+    auto programState = new (std::nothrow) backend::ProgramState(program);
+    setProgramState(programState);
+    CC_SAFE_RELEASE_NULL(programState);
     return true;
 }
 

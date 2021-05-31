@@ -308,10 +308,10 @@ void Scale9Sprite::setState(Scale9Sprite::State state)
         switch (state)
         {
             case State::NORMAL:
-                Sprite::updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+                Sprite::setProgramState((isETC1) ? backend::ProgramType::ETC1 : backend::ProgramType::POSITION_TEXTURE_COLOR);
                 break;
             case State::GRAY:
-                Sprite::updateShaders(positionTextureColor_vert, (isETC1)?etc1Gray_frag:grayScale_frag);
+                Sprite::setProgramState((isETC1) ? backend::ProgramType::ETC1_GRAY : backend::ProgramType::GRAY_SCALE);
             default:
                 break;
         }

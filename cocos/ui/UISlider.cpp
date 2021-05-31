@@ -681,14 +681,14 @@ void Slider::onPressStateChangedToNormal()
     _slidBallDisabledRenderer->setVisible(false);
     
     auto isETC1 = _slidBallNormalRenderer->getTexture() && _slidBallNormalRenderer->getTexture()->getAlphaTextureName();
-    _slidBallNormalRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+    _slidBallNormalRenderer->setProgramState((isETC1) ? backend::ProgramType::ETC1 : backend::ProgramType::POSITION_TEXTURE_COLOR);
     _slidBallNormalRenderer->setScale(_sliderBallNormalTextureScaleX, _sliderBallNormalTextureScaleY);
 }
 
 void Slider::onPressStateChangedToPressed()
 {
     auto isETC1 = _slidBallNormalRenderer->getTexture() && _slidBallNormalRenderer->getTexture()->getAlphaTextureName();
-    _slidBallNormalRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+    _slidBallNormalRenderer->setProgramState((isETC1) ? backend::ProgramType::ETC1 : backend::ProgramType::POSITION_TEXTURE_COLOR);
     
     if (!_isSliderBallPressedTextureLoaded)
     {
@@ -708,7 +708,7 @@ void Slider::onPressStateChangedToDisabled()
     if (!_isSliderBallDisabledTexturedLoaded)
     {
         auto isETC1 = _slidBallNormalRenderer->getTexture() && _slidBallNormalRenderer->getTexture()->getAlphaTextureName();
-        _slidBallNormalRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1Gray_frag:grayScale_frag);
+        _slidBallNormalRenderer->setProgramState((isETC1) ? backend::ProgramType::ETC1_GRAY : backend::ProgramType::GRAY_SCALE);
         _slidBallNormalRenderer->setVisible(true);
     }
     else
