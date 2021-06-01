@@ -204,6 +204,9 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     {
         return;
     }
+
+    if (FLAGS_TRANSFORM_DIRTY & parentFlags || _transformUpdated || _contentSizeDirty)
+        _clippingRectDirty = true;
     
     adaptRenderers();
     doLayout();
@@ -224,7 +227,8 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     }
     else
     {
-        Widget::visit(renderer, parentTransform, parentFlags);
+        //no need to adapt render again
+        ProtectedNode::visit(renderer, parentTransform, parentFlags);
     }
 }
     
