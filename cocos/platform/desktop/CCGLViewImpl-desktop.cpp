@@ -1012,6 +1012,21 @@ static bool glew_dynamic_binding()
     }
     return true;
 }
+
+#include "GL/wglew.h"
+static void setGlewSwapInterval(int value)
+{
+    PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
+    if (strstr(wglGetExtensionsStringEXT(), "WGL_EXT_swap_control") == NULL) {
+        log("OpenGL: not support SwapInterval.");
+        return; // not support swap control
+    }
+
+    PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");;
+    PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
+    wglSwapIntervalEXT(value);
+    log("OpenGL: SwapInterval %s.", wglGetSwapIntervalEXT() == 1 ? "enabled" : "disabled");
+}
 #endif
 
 // helper
@@ -1051,6 +1066,7 @@ bool GLViewImpl::initGlew()
         ccMessageBox("No OpenGL framebuffer support. Please upgrade the driver of your video card.", "OpenGL error");
         return false;
     }
+    setGlewSwapInterval(1);
 #endif //#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
 #endif //#if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)

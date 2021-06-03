@@ -102,7 +102,6 @@ public:
 protected:
     HINSTANCE           _instance;
     HACCEL              _accelTable;
-    LARGE_INTEGER       _animationInterval;
     std::string         _resourceRootPath;
     std::string         _startupScriptFilename;
 
