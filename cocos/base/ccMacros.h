@@ -287,7 +287,7 @@ CC_ASSERT(__gl_error_code == GL_NO_ERROR, "Error"); \
  /** https://github.com/google/protobuf/blob/master/src/google/protobuf/io/coded_stream.h **/
  /******************************************************************************************/
 #ifdef _MSC_VER
-  #if defined(_M_IX86)
+  #if defined(_M_IX86) || defined(_M_X64)
     #define CC_LITTLE_ENDIAN 1
   #else
     #define CC_LITTLE_ENDIAN 0

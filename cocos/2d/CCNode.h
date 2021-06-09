@@ -929,11 +929,11 @@ public:
     {
         static_assert(std::is_base_of<Node, _T>::value, "Node::sortNodes: Only accept derived of Node!");
 #if CC_64BITS
-        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
+        std::stable_sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
             return (n1->_localZOrder$Arrival < n2->_localZOrder$Arrival);
         });
 #else
-        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
+        std::stable_sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
             return (n1->_localZOrder == n2->_localZOrder && n1->_orderOfArrival < n2->_orderOfArrival) || n1->_localZOrder < n2->_localZOrder;
         });
 #endif

@@ -224,12 +224,9 @@ EventDispatcher::~EventDispatcher()
 
 void EventDispatcher::visitTarget(Node* node, bool isRootNode)
 {
-    node->sortAllChildren();
-    
     int i = 0;
     node->sortAllChildren();
-    auto& children = node->getChildren();
-    
+    auto& children = node->getChildren();   
     auto childrenCount = children.size();
     
     if(childrenCount > 0)
