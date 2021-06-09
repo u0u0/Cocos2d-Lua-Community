@@ -155,7 +155,7 @@ bool FileUtilsWin32::isFileExistInternal(const std::string& strFilePath) const
         return false;   //  not a file
     } else {
         WIN32_FIND_DATAA ffd;
-        HANDLE hFind = FindFirstFileA(strPath.c_str(), &ffd);
+        HANDLE hFind = FindFirstFileA(getSuitableFOpen(strPath).c_str(), &ffd);
 		if (hFind != INVALID_HANDLE_VALUE) {
 			FindClose(hFind);
 		}

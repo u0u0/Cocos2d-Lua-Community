@@ -67,12 +67,19 @@ static void relaunchSelf(std::string& cmdLine)
     if (!GetModuleFileName(NULL, szAppDir, MAX_PATH))
         return;
 
-    int len = wcslen(szAppDir) + 1;
-    char* chAppDir = (char*)malloc(len);
-    wcstombs(chAppDir, szAppDir, len);
-    chAppDir[len - 1] = '\0';
+    char* old_locale = _strdup(setlocale(LC_CTYPE, NULL)); //store the old locale
+    setlocale(LC_CTYPE, setlocale(LC_ALL, "")); //use LC_ALL to make wcstombs work with chinese.
 
-    std::string exePath(chAppDir);
+    int len = wcslen(szAppDir) * sizeof(wchar_t) + 1;
+    char* chAppDir = (char*)malloc(len);
+    memset(chAppDir, 0, len);
+    wcstombs(chAppDir, szAppDir, len);
+
+    //restore the old locale.
+    setlocale(LC_CTYPE, old_locale);
+    free(old_locale); // free memory
+
+	std::string exePath(chAppDir);
     free(chAppDir); // free memory
 
     std::string winCmd = exePath + " " + cmdLine;
