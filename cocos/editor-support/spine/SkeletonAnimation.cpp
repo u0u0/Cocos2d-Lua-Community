@@ -166,6 +166,10 @@ void SkeletonAnimation::setMix (const std::string& fromAnimation, const std::str
 	_state->getData()->setMix(fromAnimation.c_str(), toAnimation.c_str(), duration);
 }
 
+void SkeletonAnimation::setDefaultMix (float duration) {
+	_state->getData()->setDefaultMix(duration);
+}
+
 TrackEntry* SkeletonAnimation::setAnimation (int trackIndex, const std::string& name, bool loop) {
 	Animation* animation = _skeleton->getData()->findAnimation(name.c_str());
 	if (!animation) {

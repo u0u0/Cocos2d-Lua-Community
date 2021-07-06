@@ -73,6 +73,7 @@ public:
 
 	void setAnimationStateData (AnimationStateData* stateData);
 	void setMix (const std::string& fromAnimation, const std::string& toAnimation, float duration);
+	void setDefaultMix (float duration);
 
 	TrackEntry* setAnimation (int trackIndex, const std::string& name, bool loop);
 	TrackEntry* addAnimation (int trackIndex, const std::string& name, bool loop, float delay = 0);
