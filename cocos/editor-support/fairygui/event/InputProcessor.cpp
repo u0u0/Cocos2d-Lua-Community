@@ -413,7 +413,7 @@ void InputProcessor::onTouchMoved(Touch *touch, Event* /*unusedEvent*/)
             }
         }
         if (!done)
-            _owner->dispatchEvent(UIEventType::TouchMove);
+            target->dispatchEvent(UIEventType::TouchMove);
     }
 
     _activeProcessor = nullptr;
@@ -668,7 +668,7 @@ void InputProcessor::onMouseMove(cocos2d::EventMouse * event)
             }
         }
         if (!done)
-            _owner->dispatchEvent(UIEventType::TouchMove);
+            target->dispatchEvent(UIEventType::TouchMove);
     }
 
     _activeProcessor = nullptr;
