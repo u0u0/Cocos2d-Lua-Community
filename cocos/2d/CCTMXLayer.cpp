@@ -251,7 +251,7 @@ bool TMXLayer::initWithLayerInfo(TMXObjectGroup *layerInfo, TMXTiledMap *tileMap
             label->setVisible(dict["visible"].asBool());
             label->setTag(dict["id"].asUnsignedInt());
             label->setUserData((void *)&dict); // for sort
-        } else if ("rectangle" == objectType) {
+        } else if ("rectangle" == objectType || "ellipse" == objectType) {
             if (TMXOrientationIso == _layerOrientation) {
                 // It's a prism in cocos2d-x, need convert to polygon.
                 Vec2 zero = getPositionForObject(Vec2(0, 0));

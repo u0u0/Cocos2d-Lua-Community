@@ -228,7 +228,7 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
                 }
                 
                 std::string objectType = dict["objectType"].asString();
-                if ("rectangle" == objectType) {
+                if ("rectangle" == objectType || "ellipse" == objectType) {
                     if (gridOrientation == "isometric") {
                         // It's a prism in cocos2d-x, need convert to polygon.
                         Vec2 zero = getPositionForTileObject(gridOrientation, gridSize, Vec2(0, 0));
