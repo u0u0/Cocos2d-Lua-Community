@@ -126,7 +126,7 @@ static int lSourcePlay2d(lua_State *L)
     int isLoop = lua_toboolean(L, 3);
     
     if (sourceItem->deleted || bufferItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.play2d() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.play2d() fail for deleted!");
         return 0;
     }
     
@@ -144,7 +144,7 @@ static int lSourcePause(lua_State *L)
 {
     RDAudioItem *sourceItem = (RDAudioItem *)luaL_checkudata(L, 1, RD_AUDIO_SOURCE);
     if (sourceItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.pause() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.pause() fail for deleted!");
         return 0;
     }
     alSourcePause(sourceItem->id);
@@ -155,7 +155,7 @@ static int lSourceResume(lua_State *L)
 {
     RDAudioItem *sourceItem = (RDAudioItem *)luaL_checkudata(L, 1, RD_AUDIO_SOURCE);
     if (sourceItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.resume() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.resume() fail for deleted!");
         return 0;
     }
     ALint stat;
@@ -170,7 +170,7 @@ static int lSourceStop(lua_State *L)
 {
     RDAudioItem *sourceItem = (RDAudioItem *)luaL_checkudata(L, 1, RD_AUDIO_SOURCE);
     if (sourceItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.stop() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.stop() fail for deleted!");
         return 0;
     }
     alSourceStop(sourceItem->id);
@@ -183,7 +183,7 @@ static int lSourceSetVolume(lua_State *L)
 {
     RDAudioItem *sourceItem = (RDAudioItem *)luaL_checkudata(L, 1, RD_AUDIO_SOURCE);
     if (sourceItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.setVolume() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.setVolume() fail for deleted!");
         return 0;
     }
     
@@ -202,7 +202,7 @@ static int lSourceGetStat(lua_State *L)
 {
     RDAudioItem *sourceItem = (RDAudioItem *)luaL_checkudata(L, 1, RD_AUDIO_SOURCE);
     if (sourceItem->deleted) {
-        cocos2d::log("Rapid2D_CAudioBuffer.getStat() fail for deleted!");
+        cocos2d::log("Rapid2D_CAudioPlayer.getStat() fail for deleted!");
         return 0;
     }
     
@@ -222,7 +222,7 @@ static int lSourceGetStat(lua_State *L)
             lua_pushinteger(L, 4);
             break;
         default:
-            cocos2d::log("Rapid2D_CAudioBuffer.getStat() failed!");
+            cocos2d::log("Rapid2D_CAudioPlayer.getStat() failed!");
             return 0;
     }
     return 1;
