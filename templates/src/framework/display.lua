@@ -456,10 +456,9 @@ function display.newSprite(filename, x, y, params)
         if string.byte(filename) == 35 then -- first char is #
             local frame = display.newSpriteFrame(string.sub(filename, 2))
             if frame then
+                sprite = spriteClass:createWithSpriteFrame(frame)
                 if params and params.capInsets then
-                    sprite = spriteClass:createWithSpriteFrame(frame, params.capInsets)
-                else
-                    sprite = spriteClass:createWithSpriteFrame(frame)
+                    sprite:setCapInsets(params.capInsets)
                 end
             end
         else
@@ -468,10 +467,9 @@ function display.newSprite(filename, x, y, params)
                 sprite = spriteClass:create(filename)
                 cc.Texture2D:setDefaultAlphaPixelFormat(cc.TEXTURE2D_PIXEL_FORMAT_RGBA8888)
             else
+                sprite = spriteClass:create(filename)
                 if params and params.capInsets then
-                    sprite = spriteClass:create(filename, params.capInsets)
-                else
-                    sprite = spriteClass:create(filename)
+                    sprite:setCapInsets(params.capInsets)
                 end
             end
         end
