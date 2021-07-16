@@ -25895,7 +25895,7 @@ static int lua_fairygui_GTreeNode_create(lua_State* tolua_S)
             bool isFolder = (bool)lua_toboolean(tolua_S, 2);
             if (argc > 1) {
                 std::string resURL;
-                luaval_to_std_string(tolua_S, 2, &resURL, "fairygui.GTreeNode:create");
+                luaval_to_std_string(tolua_S, 3, &resURL, "fairygui.GTreeNode:create");
                 ret = fairygui::GTreeNode::create(isFolder, resURL);
             } else {
                 ret = fairygui::GTreeNode::create(isFolder);
