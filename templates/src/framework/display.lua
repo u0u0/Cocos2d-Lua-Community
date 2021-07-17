@@ -676,6 +676,32 @@ function display.newCircle(radius, params)
 end
 
 --[[
+local sector = display.newSector(50, 45, {
+	segments = 10,
+	scale = 1,
+	borderWidth = 1,
+	fillColor = cc.c4f(0.0, 1.0, 0.0, 1.0),
+	borderColor = cc.c4f(1.0, 0.0, 0.0, 1.0),
+})
+]]--
+function display.newSector(radius, angle, params)
+	local segments = params.segments or 10
+	local points = {}
+	local alpha = angle / (segments - 1)
+	local start = - angle / 2
+
+	table.insert(points, {0, 0}) -- center
+	for i = 0, segments - 1 do
+		local rad = math.rad(start + alpha * i)
+		local x = radius * math.cos(rad)
+		local y = radius * math.sin(rad)
+		table.insert(points, {x, y})
+	end
+
+	return display.newPolygon(points, params)
+end
+
+--[[
   Create a rect DrawNode
   @function newRect
   @param table rect
