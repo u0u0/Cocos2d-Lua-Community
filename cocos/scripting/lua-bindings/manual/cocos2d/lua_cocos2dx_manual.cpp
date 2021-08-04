@@ -6573,7 +6573,7 @@ int tolua_cocos2d_Mat4_translate(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
-    if (argc == 1)
+    if (argc == 2)
     {
 #if COCOS2D_DEBUG >= 1
 

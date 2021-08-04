@@ -199,7 +199,6 @@ void Scene::render(Renderer* renderer, const Mat4& eyeTransform, const Mat4* eye
         if (eyeProjection)
             camera->setAdditionalProjection(*eyeProjection * camera->getProjectionMatrix().getInversed());
 
-        camera->setAdditionalTransform(eyeTransform.getInversed());
         director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
         director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, Camera::_visitingCamera->getViewProjectionMatrix());
 
