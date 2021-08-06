@@ -30,8 +30,7 @@ GRoot* GRoot::create(Scene* scene, int zOrder)
     }
 }
 
-GRoot::GRoot() : _windowSizeListener(nullptr),
-                 _inputProcessor(nullptr),
+GRoot::GRoot() : _inputProcessor(nullptr),
                  _modalLayer(nullptr),
                  _modalWaitPane(nullptr),
                  _tooltipWin(nullptr),
@@ -46,9 +45,6 @@ GRoot::~GRoot()
     CC_SAFE_RELEASE(_defaultTooltipWin);
     CC_SAFE_RELEASE(_modalLayer);
     CALL_LATER_CANCEL(GRoot, doShowTooltipsWin);
-
-    if (_windowSizeListener)
-        Director::getInstance()->getEventDispatcher()->removeEventListener(_windowSizeListener);
 }
 
 void GRoot::showWindow(Window* win)
@@ -535,9 +531,6 @@ bool GRoot::initWithScene(cocos2d::Scene* scene, int zOrder)
     _inputProcessor = new InputProcessor(this);
     _inputProcessor->setCaptureCallback(CC_CALLBACK_1(GRoot::onTouchEvent, this));
 
-#ifdef CC_PLATFORM_PC
-    _windowSizeListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener(GLViewImpl::EVENT_WINDOW_RESIZED, CC_CALLBACK_0(GRoot::onWindowSizeChanged, this));
-#endif
     onWindowSizeChanged();
 
     scene->addChild(_displayObject, zOrder);

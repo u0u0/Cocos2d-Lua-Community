@@ -81,7 +81,6 @@ private:
 
     CALL_LATER_FUNC(GRoot, doShowTooltipsWin);
 
-    cocos2d::EventListener* _windowSizeListener;
     InputProcessor* _inputProcessor;
 
     GGraph* _modalLayer;
