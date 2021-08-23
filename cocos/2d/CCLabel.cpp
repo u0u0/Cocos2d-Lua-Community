@@ -839,7 +839,11 @@ void Label::setMaxLineWidth(float maxLineWidth)
 {
     if (_labelWidth == 0 && _maxLineWidth != maxLineWidth)
     {
-        _maxLineWidth = maxLineWidth;
+        if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
+            _maxLineWidth = maxLineWidth * s_TTFScaleFactor;
+        } else {
+            _maxLineWidth = maxLineWidth;
+        }
         _contentDirty = true;
     }
 }
@@ -861,7 +865,7 @@ void Label::setDimensions(float width, float height)
         _labelDimensions.width = width;
         _labelDimensions.height = height;
 
-        _maxLineWidth = width;
+        _maxLineWidth = _labelWidth;
         _contentDirty = true;
 
         if(_overflow == Overflow::SHRINK){
