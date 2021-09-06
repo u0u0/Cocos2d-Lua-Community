@@ -111,7 +111,7 @@ GObject* UIObjectFactory::newObject(ObjectType type)
 
     case ObjectType::TREE:
         return GTree::create();
-            
+  
     case ObjectType::LOADER3D:
         return GLoader3D::create();
 

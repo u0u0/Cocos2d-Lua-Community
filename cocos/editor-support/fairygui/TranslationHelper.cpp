@@ -57,7 +57,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
     int childCount = buffer->readShort();
     for (int i = 0; i < childCount; i++)
     {
-        int dataLen = buffer->readShort();
+        int dataLen = buffer->readUshort();
         int curPos = buffer->getPos();
 
         buffer->seek(curPos, 0);
@@ -85,7 +85,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
         int gearCnt = buffer->readShort();
         for (int j = 0; j < gearCnt; j++)
         {
-            int nextPos = buffer->readShort();
+            int nextPos = buffer->readUshort();
             nextPos += buffer->getPos();
 
             if (buffer->readByte() == 6) //gearText
@@ -238,7 +238,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
                 int itemCount = buffer->readShort();
                 for (int j = 0; j < itemCount; j++)
                 {
-                    int nextPos = buffer->readShort();
+                    int nextPos = buffer->readUshort();
                     nextPos += buffer->getPos();
 
                     if ((it = strings.find(elementId + "-" + Value(j).asString())) != strings.end())

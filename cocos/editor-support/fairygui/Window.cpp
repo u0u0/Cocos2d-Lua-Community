@@ -242,6 +242,9 @@ void Window::doHideAnimation()
 
 void Window::closeEventHandler(EventContext * context)
 {
+    if (UIConfig::onMusicCallback) {
+        UIConfig::onMusicCallback("closeButton"); // Use for play close btn sound.
+    }
     hide();
 }
 

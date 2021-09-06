@@ -60,7 +60,8 @@ _yPos(0),
 _floating(false),
 _dontClipMargin(false),
 _mouseWheelEnabled(true),
-_hover(false)
+_hover(false),
+_dragged(false)
 {
     _owner = owner;
 
