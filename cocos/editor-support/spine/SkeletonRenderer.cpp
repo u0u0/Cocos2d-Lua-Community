@@ -1035,7 +1035,7 @@ namespace {
 		auto director = Director::getInstance();
 		auto scene = director->getRunningScene();
 
-		if (!scene || (scene && Camera::getDefaultCamera() != Camera::getVisitingCamera()))
+		if (!scene)
 			return false;
 
 		Rect visibleRect(director->getVisibleOrigin(), director->getVisibleSize());
