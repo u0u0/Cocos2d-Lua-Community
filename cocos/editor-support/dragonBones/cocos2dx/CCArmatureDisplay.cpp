@@ -125,59 +125,15 @@ DBCCSprite* DBCCSprite::create()
     return sprite;
 }
 
-bool DBCCSprite::_checkVisibility(const cocos2d::Mat4& transform, const cocos2d::Size& size, const cocos2d::Rect& rect)
-{
-    auto scene = cocos2d::Director::getInstance()->getRunningScene();
-
-    //If draw to Rendertexture, return true directly.
-    // only cull the default camera. The culling algorithm is valid for default camera.
-    if (!scene || (scene && scene->getDefaultCamera() != cocos2d::Camera::getVisitingCamera()))
-        return true;
-
-    auto director = cocos2d::Director::getInstance();
-    cocos2d::Rect visiableRect(director->getVisibleOrigin(), director->getVisibleSize());
-
-    // transform center point to screen space
-    float hSizeX = size.width / 2;
-    float hSizeY = size.height / 2;
-
-    cocos2d::Vec3 v3p(hSizeX, hSizeY, 0);
-
-    transform.transformPoint(&v3p);
-    cocos2d::Vec2 v2p = cocos2d::Camera::getVisitingCamera()->projectGL(v3p);
-
-    // convert content size to world coordinates
-    float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
-    float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
-
-    // enlarge visible rect half size in screen coord
-    visiableRect.origin.x -= wshw;
-    visiableRect.origin.y -= wshh;
-    visiableRect.size.width += wshw * 2;
-    visiableRect.size.height += wshh * 2;
-    bool ret = visiableRect.containsPoint(v2p);
-    return ret;
-}
-
 void DBCCSprite::draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags)
 {
-#if CC_USE_CULLING
-#if COCOS2D_VERSION >= 0x00031400
-    const auto& rect = _polyInfo.getRect();
-#else
-    const auto& rect = _polyInfo.rect;
-#endif
-    
-    // Don't do calculate the culling if the transform was not updated
+#if CC_USE_CULLING    
+    // Don't calculate the culling if the transform was not updated
     auto visitingCamera = cocos2d::Camera::getVisitingCamera();
-    auto defaultCamera = cocos2d::Camera::getDefaultCamera();
-    if (visitingCamera == defaultCamera) {
-        _insideBounds = ((flags & FLAGS_TRANSFORM_DIRTY) || visitingCamera->isViewProjectionUpdated()) ? _checkVisibility(transform, _contentSize, rect) : _insideBounds;
-    }
+    if (visitingCamera == nullptr)
+        _insideBounds = true;
     else
-    {
-        _insideBounds = _checkVisibility(transform, _contentSize, rect);
-    }
+        _insideBounds = ((flags & FLAGS_TRANSFORM_DIRTY) || visitingCamera->isViewProjectionUpdated()) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
 
     if (_insideBounds)
 #endif

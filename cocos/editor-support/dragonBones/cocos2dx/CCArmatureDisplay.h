@@ -124,11 +124,6 @@ protected:
     DBCCSprite() {}
     virtual ~DBCCSprite() {}
 
-    /**
-     * Modify for polyInfo rect
-     */
-    bool _checkVisibility(const cocos2d::Mat4& transform, const cocos2d::Size& size, const cocos2d::Rect& rect);
-
 public:
     /**
      * Modify for polyInfo rect

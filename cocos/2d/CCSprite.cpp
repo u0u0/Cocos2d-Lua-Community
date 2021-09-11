@@ -1126,14 +1126,10 @@ void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 #if CC_USE_CULLING
     // Don't calculate the culling if the transform was not updated
     auto visitingCamera = Camera::getVisitingCamera();
-    auto defaultCamera = Camera::getDefaultCamera();
     if (visitingCamera == nullptr)
         _insideBounds = true;
-    else if (visitingCamera == defaultCamera)
-        _insideBounds = ((flags & FLAGS_TRANSFORM_DIRTY) || visitingCamera->isViewProjectionUpdated()) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
     else
-        // XXX: this always return true since
-        _insideBounds = renderer->checkVisibility(transform, _contentSize);
+        _insideBounds = ((flags & FLAGS_TRANSFORM_DIRTY) || visitingCamera->isViewProjectionUpdated()) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
 
     if(_insideBounds)
 #endif
