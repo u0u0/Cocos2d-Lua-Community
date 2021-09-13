@@ -248,11 +248,6 @@ backend::UniformLocation ProgramState::getUniformLocation(const std::string& uni
     return _program->getUniformLocation(uniform);
 }
 
-void ProgramState::setCallbackUniform(const backend::UniformLocation& uniformLocation,const UniformCallback& callback)
-{
-    _callbackUniforms[uniformLocation] = callback;
-}
-
 void ProgramState::setUniform(const backend::UniformLocation& uniformLocation, const void* data, std::size_t size)
 {
     switch (uniformLocation.shaderStage)

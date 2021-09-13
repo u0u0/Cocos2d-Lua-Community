@@ -75,8 +75,6 @@ struct TextureInfo
 class ProgramState : public Ref
 {
 public:
-    using UniformCallback = std::function<void(ProgramState*, const UniformLocation &)>;
-
     /**
      * @param program Specifies the program.
      */
@@ -136,13 +134,6 @@ public:
     inline int getAttributeLocation(Attribute name) const { return _program->getAttributeLocation(name); }
 
     /**
-     * A callback to update unifrom.
-     * @param uniformLocation Specifies the uniform location.
-     * @param unifromCallback Specifies a callback function to update the uniform.
-     */
-    void setCallbackUniform(const backend::UniformLocation&, const UniformCallback &);
-
-    /**
      * Set texture.
      * @param uniformLocation Specifies texture location.
      * @param slot Specifies texture slot selector.
@@ -169,12 +160,6 @@ public:
      * @return Fragment texture informations. Key is the texture location, Value store the texture informations
      */
     inline const std::unordered_map<int, TextureInfo>& getFragmentTextureInfos() const { return _fragmentTextureInfos; }
-
-    /**
-     * Get the uniform callback function.
-     * @return Uniform callback funciton.
-     */
-    inline const std::unordered_map<UniformLocation, UniformCallback, UniformLocation>& getCallbackUniforms() const { return _callbackUniforms; }
 
     /**
      * Get vertex uniform buffer. The buffer store all the vertex uniform's data.
@@ -318,7 +303,6 @@ protected:
     void applyAutoBinding(const std::string &, const std::string &);
 
     backend::Program*                                       _program = nullptr;
-    std::unordered_map<UniformLocation, UniformCallback, UniformLocation>   _callbackUniforms;
     char* _vertexUniformBuffer = nullptr;
     char* _fragmentUniformBuffer = nullptr;
     std::size_t _vertexUniformBufferSize = 0;
