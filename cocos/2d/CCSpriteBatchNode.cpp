@@ -115,20 +115,6 @@ bool SpriteBatchNode::initWithTexture(Texture2D *tex, ssize_t capacity/* = DEFAU
     return true;
 }
 
-void SpriteBatchNode::updateShaders(const std::string &vertexShader, const std::string &fragmentShader)
-{
-    auto& pipelineDescriptor = _quadCommand.getPipelineDescriptor();
-    auto* program = backend::Device::getInstance()->newProgram(vertexShader, fragmentShader);
-    CC_SAFE_RELEASE(_programState);
-    _programState = new (std::nothrow) backend::ProgramState(program);
-    pipelineDescriptor.programState = _programState;
-    
-    CC_SAFE_RELEASE(program);
-    
-    setVertexLayout();
-    setUniformLocation();
-}
-
 void SpriteBatchNode::setUniformLocation()
 {
     CCASSERT(_programState, "programState should not be nullptr");

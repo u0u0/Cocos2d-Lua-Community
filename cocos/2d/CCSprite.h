@@ -624,7 +624,6 @@ CC_CONSTRUCTOR_ACCESS :
     virtual bool initWithFile(const std::string& filename, const Rect& rect);
 
     virtual void setVertexLayout();
-    virtual void updateShaders(const char* vert, const char* frag);
     
 protected:
     virtual void updateColor() override;

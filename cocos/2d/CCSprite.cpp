@@ -375,15 +375,6 @@ void Sprite::setVertexLayout()
     vertexLayout->setLayout(sizeof(V3F_C4B_T2F));
 }
 
-void Sprite::updateShaders(const char* vert, const char* frag)
-{
-    auto* program = backend::Device::getInstance()->newProgram(vert, frag);
-    auto programState = new (std::nothrow) backend::ProgramState(program);
-    setProgramState(programState);
-    CC_SAFE_RELEASE(programState);
-    CC_SAFE_RELEASE(program);
-}
-
 void Sprite::setProgramState(backend::ProgramType type)
 {
     if(_programState != nullptr &&
