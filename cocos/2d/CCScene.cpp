@@ -4,6 +4,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -184,9 +185,9 @@ void Scene::render(Renderer* renderer, const Mat4& eyeTransform, const Mat4* eye
             continue;
 
         Camera::_visitingCamera = camera;
-        if (Camera::_visitingCamera->getCameraFlag() == CameraFlag::DEFAULT)
+        if (camera->getCameraFlag() == CameraFlag::DEFAULT)
         {
-            defaultCamera = Camera::_visitingCamera;
+            defaultCamera = camera;
         }
 
         // There are two ways to modify the "default camera" with the eye Transform:
@@ -200,7 +201,7 @@ void Scene::render(Renderer* renderer, const Mat4& eyeTransform, const Mat4* eye
             camera->setAdditionalProjection(*eyeProjection * camera->getProjectionMatrix().getInversed());
 
         director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
-        director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, Camera::_visitingCamera->getViewProjectionMatrix());
+        director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, camera->getViewProjectionMatrix());
 
         camera->apply();
         //clear background with max depth

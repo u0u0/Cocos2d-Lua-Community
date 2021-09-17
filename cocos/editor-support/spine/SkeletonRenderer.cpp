@@ -1029,7 +1029,8 @@ namespace {
 
 
 	bool cullRectangle(Renderer* renderer, const Mat4& transform, const cocos2d::Rect& rect) {
-		if (Camera::getVisitingCamera() == nullptr)
+		auto camera = Camera::getVisitingCamera();
+		if (camera == nullptr)
 			return false;
 
 		auto director = Director::getInstance();
@@ -1045,11 +1046,13 @@ namespace {
 		float hSizeY = rect.size.height/2;
 		Vec3 v3p(rect.origin.x + hSizeX, rect.origin.y + hSizeY, 0);
 		transform.transformPoint(&v3p);
-		Vec2 v2p = Camera::getVisitingCamera()->projectGL(v3p);
+		Vec2 v2p = camera->projectGL(v3p);
 
 		// convert content size to world coordinates
 		float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
 		float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
+		wshw /= camera->getScaleX();
+		wshh /= camera->getScaleY();
 
 		// enlarge visible rect half size in screen coord
 		visibleRect.origin.x -= wshw;
