@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2013 cocos2d-x.org
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -194,39 +195,36 @@ ActionTimeline* ActionTimeline::clone() const
 
 void ActionTimeline::step(float delta)
 {
-    if (!_playing || _timelineMap.size() == 0 || _duration == 0)
-    {
+    if (!_playing || _timelineMap.size() == 0 || _duration == 0) {
         return;
     }
-    _time += delta * _timeSpeed;
-    float deltaCurrFrameTime = std::abs(_time - _currentFrame * _frameInternal);
-    if (deltaCurrFrameTime < _frameInternal)
-        return;
+    
+    int preFrame = _currentFrame;
+    bool isEnd = false;
+    if (_startFrame > _endFrame) { // play reversed
+        _time -= delta * _timeSpeed;
+        isEnd = _time <= _endFrame* _frameInternal;
+    } else {
+        _time += delta * _timeSpeed;
+        isEnd = _time >= _endFrame * _frameInternal;
+    }
+    _currentFrame = (int)(_time / _frameInternal);
+    if (isEnd) {
+        _currentFrame = _endFrame; // stop at the last frame
+    }
 
-    const float endtoffset = _time - _endFrame * _frameInternal;
-    if (endtoffset < _frameInternal)
-    {
-        _currentFrame = (int)(_time / _frameInternal);
-        stepToFrame(_currentFrame);
-        emitFrameEndCallFuncs(_currentFrame);
-        if (endtoffset >= 0 && _lastFrameListener != nullptr) // last frame 
-            _lastFrameListener();
+    stepToFrame(_currentFrame);
+    for (int i = preFrame + 1; i <= _currentFrame; i++) {
+        emitFrameEndCallFuncs(i);
     }
-    else
-    {
+
+    if (isEnd) {
+        if (_lastFrameListener != nullptr)
+            _lastFrameListener();
+
         _playing = _loop;
         if (!_playing)
-        {
             _time = _endFrame * _frameInternal;
-            if (_currentFrame != _endFrame)
-            {
-                _currentFrame = _endFrame;
-                stepToFrame(_currentFrame);
-                emitFrameEndCallFuncs(_currentFrame);
-                if (_lastFrameListener != nullptr)  // last frame 
-                    _lastFrameListener();
-            }
-        }
         else
             gotoFrameAndPlay(_startFrame, _endFrame, _loop);
     }
