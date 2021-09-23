@@ -67,7 +67,7 @@ static void printErrno(const char *prefix)
 #endif
 }
 
-static int checkIPv6(const char *hostname, bool &isIpv6)
+static int getHostInfo(const char *hostname, std::string &ipAddr, bool &isIpv6)
 {
     struct addrinfo *iterator = NULL, *resolved = NULL;
     struct addrinfo hints;
@@ -85,7 +85,7 @@ static int checkIPv6(const char *hostname, bool &isIpv6)
 
     isIpv6 = false;
     for (iterator = resolved; iterator; iterator = iterator->ai_next) {
-        char hbuf[NI_MAXHOST];
+        char hbuf[NI_MAXHOST] = {0};
         ret = getnameinfo(iterator->ai_addr, (socklen_t) iterator->ai_addrlen,
                 hbuf, (socklen_t) sizeof(hbuf), NULL, 0, NI_NUMERICHOST);
         if (ret) {
@@ -93,6 +93,7 @@ static int checkIPv6(const char *hostname, bool &isIpv6)
             printf("== AsyncTCP getnameinfo error:%d\n", ret);
             return ret;
         }
+        ipAddr = hbuf;
         if (iterator->ai_family == AF_INET6) {
             isIpv6 = true;
             break;
@@ -242,13 +243,14 @@ void AsyncTCP::socketThread()
     // 1. check dns isIpv6
     notify(EVENT_CONNECTING, nullptr, 0);
     bool isIpv6;
-    if (checkIPv6(_host.c_str(), isIpv6)) {
+    std::string ipAddr;
+    if (getHostInfo(_host.c_str(), ipAddr, isIpv6)) {
         notify(EVENT_FAILED, nullptr, 0);
         return; // get error in checkIPv6
     }
     
     // 2. open socket
-    if (openTCP(isIpv6) < 0) {
+    if (openTCP(ipAddr, isIpv6) < 0) {
         closeTCP();
         notify(EVENT_FAILED, nullptr, 0);
         return; // open error
@@ -329,7 +331,7 @@ int AsyncTCP::sendTCP(unsigned char *buff, size_t size)
     return 0;
 }
 
-int AsyncTCP::openTCP(bool isIpv6)
+int AsyncTCP::openTCP(std::string &ipAddr, bool isIpv6)
 {
     int ret;
     
@@ -365,7 +367,7 @@ int AsyncTCP::openTCP(bool isIpv6)
         memset(&servaddr6, 0, sizeof(servaddr6));
         servaddr6.sin6_family = AF_INET6;
         servaddr6.sin6_port = htons(_port);
-        ret = inet_pton(AF_INET6, _host.c_str(), &servaddr6.sin6_addr);
+        ret = inet_pton(AF_INET6, ipAddr.c_str(), &servaddr6.sin6_addr);
         if (ret <= 0) {
             printErrno("inet_pton AF_INET6");
             return -1;
@@ -376,7 +378,7 @@ int AsyncTCP::openTCP(bool isIpv6)
         memset(&servaddr, 0, sizeof(servaddr));
         servaddr.sin_family = AF_INET;
         servaddr.sin_port = htons(_port);
-        ret = inet_pton(AF_INET, _host.c_str(), &servaddr.sin_addr);
+        ret = inet_pton(AF_INET, ipAddr.c_str(), &servaddr.sin_addr);
         if (ret <= 0) {
             printErrno("inet_pton AF_INET");
             return -1;

@@ -71,7 +71,7 @@ private:
     
     void socketThread();
     void notify(int state, unsigned char *msg, size_t size); // call on socketThread
-    int openTCP(bool isIpv6); // call on socketThread
+    int openTCP(std::string &ipAddr, bool isIpv6); // call on socketThread
     void closeTCP(); // call on socketThread
     int recvTCP(); // call on socketThread
     int sendTCP(unsigned char *buff, size_t size); // call on socketThread
