@@ -708,7 +708,7 @@ Vec2 TMXLayer::calculateLayerOffset(const Vec2& pos)
 
 Vec2 TMXLayer::getPositionAt(const Vec2& pos, uint32_t gid)
 {
-    int newX = pos.x;
+    float newX = pos.x;
     // fix correct render ordering in Hexagonal maps when stagger axis == x
     if (_staggerAxis == TMXStaggerAxis_X && _layerOrientation == TMXOrientationHex) {
         if (_staggerIndex == TMXStaggerIndex_Odd) {
