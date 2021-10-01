@@ -22,6 +22,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildToolsVersion PROP_BUILD_TOOLS_VERSION
+    ndkVersion PROP_NDK_VERSION
 }
 
 dependencies {

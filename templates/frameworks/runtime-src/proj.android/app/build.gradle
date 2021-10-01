@@ -67,6 +67,8 @@ android {
             renderscriptDebuggable true
         }
     }
+    buildToolsVersion PROP_BUILD_TOOLS_VERSION
+    ndkVersion PROP_NDK_VERSION
 }
 
 android.applicationVariants.all { variant ->
