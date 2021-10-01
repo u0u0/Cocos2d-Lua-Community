@@ -60,6 +60,7 @@ function TestCase:ctor()
 			audio.loadFile("audio/bgm.ogg", loadedCB)
 			audio.loadFile("audio/effect.ogg", loadedCB)
 			audio.loadFile("audio/bgm.aac", loadedCB)
+			audio.loadFile("audio/effect.mp3", loadedCB)
 			btn:setVisible(false)
 		end
 	end)

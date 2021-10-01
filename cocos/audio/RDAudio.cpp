@@ -18,6 +18,7 @@
 #include "cocos/audio/RDAudio.h"
 #include "cocos/audio/RDAudioOgg.h"
 #include "cocos/audio/RDAudioAAC.h"
+#include "cocos/audio/RDAudioMP3.h"
 #include "cocos2d.h"
 
 // singleton stuff
@@ -156,6 +157,13 @@ void RDAudio::threadLoop()
                                     &asyncStruct->size);
             } else if (ext == ".aac") {
                 rtn = decodeAAC(data.getBytes(),
+                                    data.getSize(),
+                                    &asyncStruct->pcmData,
+                                    &asyncStruct->channels,
+                                    &asyncStruct->rate,
+                                    &asyncStruct->size);
+            } else if (ext == ".mp3") {
+                rtn = decodeMP3(data.getBytes(),
                                     data.getSize(),
                                     &asyncStruct->pcmData,
                                     &asyncStruct->channels,

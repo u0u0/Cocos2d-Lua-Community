@@ -137,6 +137,7 @@ target_include_directories(cocos2d
     PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/editor-support/fairygui
     PRIVATE ${COCOS2DX_ROOT_PATH}/external/libogg
     PRIVATE ${COCOS2DX_ROOT_PATH}/external/libvorbis
+    PRIVATE ${COCOS2DX_ROOT_PATH}/external/minimp3
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/platform/${PLATFORM_FOLDER}
