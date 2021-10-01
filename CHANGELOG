@@ -1,3 +1,49 @@
+Cocos2d-Lua-Community v4.0.3 Release
+
+[新增] add support for mac m1.
+[新增] audio support mp3 audio file.
+[新增] add cc.backendProgramType define to RendererConstants.lua.
+[新增] FairyGUI binding completion.
+
+[改进] addSpriteFramesWithFile binding worning fix.
+[改进] openssl update to 1.1.0l.
+[改进] glfw update to 3.3.4.
+[改进] remove updateShaders, builtinProgram is faster then new a program.
+[改进] Win32 use VSync, old sleep may make frame skipping.
+[改进] cc.FileUtils:isFileExistInternal() work with chinese directory.
+[改进] Win32 LuaGameRunner work with chinese directory.
+[改进] Spine Allow ownership of AttachmentLoader to be passed to SkeletonBinary and SkeletonJson.
+[改进] RenderTexture render sync, async may crash in may case with render cmd was freed.
+[改进] Spine add binding api: setDefaultMix.
+[改进] TMX add convert for ellipse object.
+[改进] add display.newSector.
+[改进] optimized plist loading.
+[改进] Mat4_translate binding fix, camera's AdditionalTransform fix.
+[改进] FairyGUI remove windowSizeListener, it may do evil on PC game.
+[改进] TMX object layer's tile animation key use id, and fix schedule start or stop check.
+[改进] FairyGUI 优化fgui纹理加载.
+[改进] Culling work with user camera and fix camera scaled culling error.
+[改进] add binding for FairyGUI FUISprite.
+[改进] AsyncTCP support host use domain name.
+[改进] Android project add PROP_NDK_VERSION and PROP_BUILD_TOOLS_VERSION.
+
+[修正] cc.utils:findChild() & add cc.utils:gettime() binding fix.
+[修正] revert GLView-desktop fullscreen, center use current monitor.
+[修正] FairyGUI GLoader3D fix Spine node pos.
+[修正] FairyGUI official bugfix sync.
+[修正] binding fix for getBuiltinProgram.
+[修正] cc.Sprite:setTexture never change custom shader setting.
+[修正] FontFreeType remove force mono render, it not ok for all ttf font.
+[修正] fix jpeg header file missmatch.
+[修正] some bugfix sync from 3.7.x
+[修正] some bugfix snc from Cocos2d-x.
+[修正] FairyGUI send move event correctly.
+[修正] 修复调用display.newScale9Sprite时的参数和新版引擎不兼容的bug.
+[修正] fix FairyGUI GTreeNode create 接口读取lua参数取值错误.
+[修正] CCLabel correctly set _maxLineWidth when use TTFScaleFactor.
+[修正] CCActionTimeline sync 3.7.x bugfix.
+[修正] TMX getPositionAt use float.
+
 Cocos2d-Lua-Community v4.0.2 Release
 
 [新增] FairyGUI UIConfig、UIObjectFactory、GSlider、GProgressBar等lua接口绑定。
