@@ -1,5 +1,6 @@
 /****************************************************************************
  Copyright (c) 2018-2019 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2021 cocos2d-lua.org
 
  http://www.cocos2d-x.org
 
@@ -37,22 +38,16 @@ ShaderModuleMTL::ShaderModuleMTL(id<MTLDevice> mtlDevice, ShaderStage stage, con
     glslopt_ctx* ctx = glslopt_initialize(kGlslTargetMetal);
     glslopt_shader_type shaderType = stage == ShaderStage::VERTEX ? kGlslOptShaderVertex : kGlslOptShaderFragment;
     glslopt_shader* glslShader = glslopt_optimize(ctx, shaderType, source.c_str(), 0);
-    if (!glslShader)
-    {
-        NSLog(@"Can not translate GLSL shader to metal shader:");
-        NSLog(@"%s", source.c_str());
-        return;
-    }
-    
-    const char* metalShader = glslopt_get_output(glslShader);
-    if (!metalShader)
-    {
+    if (!glslopt_get_status(glslShader)) {
         NSLog(@"Can not get metal shader:");
         NSLog(@"%s", source.c_str());
+        NSLog(@"%s", glslopt_get_log(glslShader));
+        glslopt_shader_delete(glslShader);
         glslopt_cleanup(ctx);
         return;
     }
     
+    const char* metalShader = glslopt_get_output(glslShader);
 //    NSLog(@"%s", metalShader);
     
     parseAttibute(mtlDevice, glslShader);
@@ -66,8 +61,7 @@ ShaderModuleMTL::ShaderModuleMTL(id<MTLDevice> mtlDevice, ShaderStage stage, con
     id<MTLLibrary> library = [mtlDevice newLibraryWithSource:shader
                                                      options:nil
                                                        error:&error];
-    if (!library)
-    {
+    if (!library) {
         NSLog(@"Can not compile metal shader: %@", error);
         NSLog(@"%s", metalShader);
         glslopt_shader_delete(glslShader);
@@ -79,8 +73,7 @@ ShaderModuleMTL::ShaderModuleMTL(id<MTLDevice> mtlDevice, ShaderStage stage, con
         _mtlFunction = [library newFunctionWithName:@"xlatMtlMain1"];
     else
         _mtlFunction = [library newFunctionWithName:@"xlatMtlMain2"];
-    if (!_mtlFunction)
-    {
+    if (!_mtlFunction) {
         NSLog(@"metal shader is ---------------");
         NSLog(@"%s", metalShader);
         assert(false);

@@ -4,6 +4,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -472,9 +473,14 @@ void Sprite::updateProgramStateTexture()
     auto programState = _trianglesCommand.getPipelineDescriptor().programState;
     programState->setTexture(_textureLocation, 0, _texture->getBackendTexture());
     auto alphaTexture = _texture->getAlphaTexture();
-    if(alphaTexture && alphaTexture->getBackendTexture())
-    {
-        programState->setTexture(_alphaTextureLocation, 1, alphaTexture->getBackendTexture());
+    // may ETC1 or user defined shader used u_texture1.
+    if (_alphaTextureLocation.location[0] != -1 || _alphaTextureLocation.location[1] != -1) {
+        if(alphaTexture && alphaTexture->getBackendTexture()) {
+            programState->setTexture(_alphaTextureLocation, 1, alphaTexture->getBackendTexture());
+        } else {
+            // set a default texture into location to make metal render happy.
+            programState->setTexture(_alphaTextureLocation, 1, _texture->getBackendTexture());
+        }
     }
 }
 
