@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2021 cocos2d-lua.org
 
  http://www.cocos2d-x.org
 
@@ -35,10 +36,11 @@
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 #include "base/CCEventListenerController.h"
 #endif
-#include "2d/CCScene.h"
 #include "base/CCDirector.h"
 #include "base/CCEventType.h"
 #include "2d/CCCamera.h"
+#include "2d/CCScene.h"
+#include "2d/CCProtectedNode.h"
 
 #define DUMP_LISTENER_ITEM_PRIORITY_INFO 0
 
@@ -224,63 +226,78 @@ EventDispatcher::~EventDispatcher()
 
 void EventDispatcher::visitTarget(Node* node, bool isRootNode)
 {
+    Node* child = nullptr;
+    node->sortAllChildren(); // call before get getChildren, to get right order
+    Vector<Node*>& children = node->getChildren();
+
+    ProtectedNode *pNode = dynamic_cast<ProtectedNode *>(node);
+    Vector<Node*>& pchildren = children; // avoid null ref
+    if (pNode) {
+        pNode->sortAllProtectedChildren(); // call before get getChildren, to get right order
+        pchildren = pNode->getProtectedChildren();
+    }
+    
+    // visit children zOrder < 0
     int i = 0;
-    node->sortAllChildren();
-    auto& children = node->getChildren();   
-    auto childrenCount = children.size();
+    for (; i < children.size(); i++ ) {
+        child = children.at(i);
+        if (child && child->getLocalZOrder() < 0) {
+            visitTarget(child, false);
+        } else {
+            break;
+        }
+    }
     
-    if(childrenCount > 0)
-    {
-        Node* child = nullptr;
-        // visit children zOrder < 0
-        for( ; i < childrenCount; i++ )
-        {
-            child = children.at(i);
-            
-            if ( child && child->getLocalZOrder() < 0 )
+	// visit Protected children zOrder < 0
+    int j = 0;
+    if (pNode) {
+        for (; j < pchildren.size(); j++ ) {
+            child = pchildren.at(j);
+            if (child && child->getLocalZOrder() < 0) {
                 visitTarget(child, false);
-            else
+            } else {
                 break;
-        }
-        
-        if (_nodeListenersMap.find(node) != _nodeListenersMap.end())
-        {
-            _globalZOrderNodeMap[node->getGlobalZOrder()].push_back(node);
-        }
-        
-        for( ; i < childrenCount; i++ )
-        {
-            child = children.at(i);
-            if (child)
-                visitTarget(child, false);
+            }
         }
     }
-    else
-    {
-        if (_nodeListenersMap.find(node) != _nodeListenersMap.end())
-        {
-            _globalZOrderNodeMap[node->getGlobalZOrder()].push_back(node);
+
+    // visit self
+    if (_nodeListenersMap.find(node) != _nodeListenersMap.end()) {
+        _globalZOrderNodeMap[node->getGlobalZOrder()].push_back(node);
+    }
+    
+    // visit Protected children zOrder >= 0
+    if (pNode) {
+        for (; j < pchildren.size(); j++) {
+            child = pchildren.at(j);
+            if (child) {
+                visitTarget(child, false);
+            }
         }
     }
     
-    if (isRootNode)
-    {
+    // visit children zOrder >= 0
+    for (; i < children.size(); i++) {
+        child = children.at(i);
+        if (child) {
+            visitTarget(child, false);
+        }
+    }
+
+    if (isRootNode) {
         std::vector<float> globalZOrders;
         globalZOrders.reserve(_globalZOrderNodeMap.size());
         
-        for (const auto& e : _globalZOrderNodeMap)
-        {
+        for (const auto& e : _globalZOrderNodeMap) {
             globalZOrders.push_back(e.first);
         }
         
-        std::stable_sort(globalZOrders.begin(), globalZOrders.end(), [](const float a, const float b){
+        std::stable_sort(globalZOrders.begin(), globalZOrders.end(), [](const float a, const float b) {
             return a < b;
         });
         
-        for (const auto& globalZ : globalZOrders)
-        {
-            for (const auto& n : _globalZOrderNodeMap[globalZ])
-            {
+        for (const auto& globalZ : globalZOrders) {
+            for (const auto& n : _globalZOrderNodeMap[globalZ]) {
                 _nodePriorityMap[n] = ++_nodePriorityIndex;
             }
         }
