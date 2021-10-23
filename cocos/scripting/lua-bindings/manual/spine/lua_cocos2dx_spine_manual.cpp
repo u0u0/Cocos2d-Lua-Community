@@ -1012,9 +1012,8 @@ static int lua_cocos2dx_spine_SkeletonAnimation_updateBone(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_spine_SkeletonAnimation_updateBone'.",&tolua_err);
-#endif
-    
     return 0;
+#endif
 }
 
 static int lua_cocos2dx_spine_SkeletonAnimation_getBoundingBox(lua_State* tolua_S)
@@ -1047,6 +1046,46 @@ static int lua_cocos2dx_spine_SkeletonAnimation_getBoundingBox(lua_State* tolua_
     return 1;
 }
 
+static int lua_cocos2dx_spine_SkeletonAnimation_setTimeScale(lua_State* tolua_S)
+{
+    int argc = 0;
+    spine::SkeletonAnimation* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S, 1, "sp.SkeletonAnimation", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (spine::SkeletonAnimation*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_spine_SkeletonAnimation_setTimeScale'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 1) {
+        double arg0;
+        if (!luaval_to_number(tolua_S, 2, &arg0, "setTimeScale")) {
+            tolua_error(tolua_S, "invalid arguments in function 'setTimeScale'", nullptr);
+            return 0;
+        }
+        cobj->setTimeScale(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "'setTimeScale' function of spine.SkeletonAnimation has wrong number of arguments: %d, was expecting 1\n", argc);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'setTimeScale'.", &tolua_err);
+    return 0;
+#endif
+}
+
 static void register_spine_manual(lua_State* L)
 {
     lua_pushstring(L, "sp.SkeletonAnimation");
@@ -1067,6 +1106,7 @@ static void register_spine_manual(lua_State* L)
         tolua_function(L, "findBone", lua_cocos2dx_spine_SkeletonAnimation_findBone);
         tolua_function(L, "updateBone", lua_cocos2dx_spine_SkeletonAnimation_updateBone);
         tolua_function(L, "getBoundingBox", lua_cocos2dx_spine_SkeletonAnimation_getBoundingBox);
+        tolua_function(L, "setTimeScale", lua_cocos2dx_spine_SkeletonAnimation_setTimeScale);
     }
     lua_pop(L, 1);
     
