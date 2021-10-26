@@ -231,7 +231,8 @@ void EventDispatcher::visitTarget(Node* node, bool isRootNode)
     Vector<Node*>& children = node->getChildren();
 
     ProtectedNode *pNode = dynamic_cast<ProtectedNode *>(node);
-    Vector<Node*>& pchildren = Vector<Node*>(); // avoid null ref
+    Vector<Node*> empty; // android need a var to be ref.
+    Vector<Node*>& pchildren = empty; // avoid null ref
     if (pNode) {
         pNode->sortAllProtectedChildren(); // call before get getChildren, to get right order
         pchildren = pNode->getProtectedChildren();
