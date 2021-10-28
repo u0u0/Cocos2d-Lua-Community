@@ -112,19 +112,19 @@ void GSlider::updateWithPercent(float percent, bool manual)
         switch (_titleType)
         {
         case ProgressTitleType::PERCENT:
-            oss << floor(percent * 100) << "%";
+            oss << int(percent * 100) << "%";
             break;
 
         case ProgressTitleType::VALUE_MAX:
-            oss << floor(_value) << "/" << floor(_max);
+            oss << int(_value) << "/" << int(_max);
             break;
 
         case ProgressTitleType::VALUE:
-            oss << _value;
+            oss << int(_value);
             break;
 
         case ProgressTitleType::MAX:
-            oss << _max;
+            oss << int(_max);
             break;
         }
         _titleObject->setText(oss.str());

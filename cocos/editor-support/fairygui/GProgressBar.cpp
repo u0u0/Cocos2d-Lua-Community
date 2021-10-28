@@ -88,11 +88,16 @@ void GProgressBar::tweenValue(double value, float duration)
 
 void GProgressBar::update(double newValue)
 {
-    float percent;
-    if (_max == _min)
-        percent = 0;
-    else
-        percent = clampf((newValue - _min) / (_max - _min), 0, 1);
+    float percent = 0.0f;
+    if (_max > _min) {
+        if (newValue <= _min) {
+            percent = 0.0f;
+        } else if (newValue >= _max) {
+            percent = 1.0f;
+        } else {
+            percent = (newValue - _min) / (_max - _min);
+        }
+    }
 
     if (_titleObject != nullptr)
     {
@@ -100,19 +105,19 @@ void GProgressBar::update(double newValue)
         switch (_titleType)
         {
         case ProgressTitleType::PERCENT:
-            oss << floor(percent * 100) << "%";
+            oss << int(percent * 100) << "%";
             break;
 
         case ProgressTitleType::VALUE_MAX:
-            oss << floor(newValue) << "/" << floor(_max);
+            oss << int(newValue) << "/" << int(_max);
             break;
 
         case ProgressTitleType::VALUE:
-            oss << floor(newValue);
+            oss << int(newValue);
             break;
 
         case ProgressTitleType::MAX:
-            oss << floor(_max);
+            oss << int(_max);
             break;
         }
         _titleObject->setText(oss.str());
