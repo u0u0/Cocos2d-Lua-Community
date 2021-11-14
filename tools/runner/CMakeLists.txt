@@ -69,11 +69,9 @@ if(MACOSX)
 	set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
 	set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
 	set_xcode_property(${APP_NAME} INSTALL_PATH "\${LOCAL_APPS_DIR}") # fix archive no file
+	set_xcode_property(${APP_NAME} OTHER_LDFLAGS[arch=x86_64] "-pagezero_size 10000 -image_base 100000000 $(inherited)")
 	set_target_properties(${APP_NAME} PROPERTIES
 		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/proj.mac/Info.plist"
-		)
-	set_target_properties(${APP_NAME} PROPERTIES
-		LINK_FLAGS "-pagezero_size 10000 -image_base 100000000"
 		)
 elseif(WINDOWS)
 	cocos_copy_target_dll(${APP_NAME})
