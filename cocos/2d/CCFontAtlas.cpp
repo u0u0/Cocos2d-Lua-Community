@@ -415,15 +415,6 @@ bool FontAtlas::prepareLetterDefinitions(const std::u32string& utf32Text)
                     auto tex = new (std::nothrow) Texture2D;
                     
                     initTextureWithZeros(tex);
-
-                    if (_antialiasEnabled)
-                    {
-                        tex->setAntiAliasTexParameters();
-                    }
-                    else
-                    {
-                        tex->setAliasTexParameters();
-                    }
                     addTexture(tex, _currentPage);
                     
                     tex->release();
@@ -496,6 +487,14 @@ void FontAtlas::updateTextureContent(backend::PixelFormat format, int startY)
 
 void FontAtlas::addTexture(Texture2D *texture, int slot)
 {
+    if (_antialiasEnabled)
+    {
+        texture->setAntiAliasTexParameters();
+    }
+    else
+    {
+        texture->setAliasTexParameters();
+    }
     texture->retain();
     _atlasTextures[slot] = texture;
 }
