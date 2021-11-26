@@ -215,8 +215,10 @@ void LabelAtlas::setString(const std::string &label)
     _string = label;
     this->updateAtlasValues();
 
+    // fix size to even numbers, label center not in float pos.
     Size s = Size(len * _itemWidth, _itemHeight);
-
+    s.width = ((int)s.width % 2 == 0) ? (int)s.width : ((int)s.width + 1);
+    s.height = ((int)s.height % 2 == 0) ? (int)s.height : ((int)s.height + 1);
     this->setContentSize(s);
 
     _quadsToDraw = len;

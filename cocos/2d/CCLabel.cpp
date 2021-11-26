@@ -1411,14 +1411,18 @@ void Label::createSpriteForSystemFont(const FontDefinition& fontDef)
 
     auto texture = new (std::nothrow) Texture2D;
     texture->initWithString(_utf8Text.c_str(), fontDef);
-
     _textSprite = Sprite::createWithTexture(texture);
+    texture->release();
     //set camera mask using label's camera mask, because _textSprite may be null when setting camera mask to label
     _textSprite->setCameraMask(getCameraMask());
     _textSprite->setGlobalZOrder(getGlobalZOrder());
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    this->setContentSize(_textSprite->getContentSize());
-    texture->release();
+    // fix size to even numbers, label center not in float pos.
+    auto size = _textSprite->getContentSize();
+    size.width = ((int)size.width % 2 == 0) ? (int)size.width : ((int)size.width + 1);
+    size.height = ((int)size.height % 2 == 0) ? (int)size.height : ((int)size.height + 1);
+    this->setContentSize(size);
+
     if (_blendFuncDirty)
     {
         _textSprite->setBlendFunc(_blendFunc);
@@ -1525,7 +1529,7 @@ void Label::updateContent()
         }
     }
 
-    if (_underlineNode)
+    if (_underlineNode && _utf8Text.size() > 0)
     {
         _underlineNode->clear();
 
@@ -1556,7 +1560,6 @@ void Label::updateContent()
             float y = 0;
             const auto spriteSize = _textSprite->getContentSize();
             _underlineNode->setLineWidth(spriteSize.height/6);
-
             if (_strikethroughEnabled)
                 // FIXME: system fonts don't report the height of the font correctly. only the size of the texture, which is POT
                 y += spriteSize.height / 2;
@@ -2223,8 +2226,12 @@ const Size& Label::getContentSize() const
     }
     // system font and TTF
     if (_currentLabelType == LabelType::STRING_TEXTURE || _currentLabelType == LabelType::TTF) {
-        const_cast<Size*>(&_ttfContentSize)->setSize(ceil(_contentSize.width / s_TTFScaleFactor),
-                                                     ceil(_contentSize.height / s_TTFScaleFactor));
+        // fix size to even numbers, label center not in float pos.
+        int w = ceil(_contentSize.width / s_TTFScaleFactor);
+        int h = ceil(_contentSize.height / s_TTFScaleFactor);
+        w = (w % 2 == 0) ? w : (w + 1);
+        h = (h % 2 == 0) ? h : (h + 1);
+        const_cast<Size*>(&_ttfContentSize)->setSize(w, h); // const_cast make const function happy
         return _ttfContentSize;
     }
     return _contentSize;

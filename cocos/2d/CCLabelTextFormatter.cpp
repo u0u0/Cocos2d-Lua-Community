@@ -300,6 +300,9 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
         contentSize.width = longestLine;
     if (_labelHeight <= 0.f)
         contentSize.height = _textDesiredHeight;
+    // fix size to even numbers, label center not in float pos.
+    contentSize.width = ((int)contentSize.width % 2 == 0) ? (int)contentSize.width : ((int)contentSize.width + 1);
+    contentSize.height = ((int)contentSize.height % 2 == 0) ? (int)contentSize.height : ((int)contentSize.height + 1);
     setContentSize(contentSize);
 
     _tailoredTopY = contentSize.height;
