@@ -212,13 +212,13 @@ FontAtlas * FontFreeType::createFontAtlas()
 {
     if (_fontAtlas == nullptr) {
         _fontAtlas = new (std::nothrow) FontAtlas(*this);
+        _fontAtlas->setAliasTexParameters(); // ONLY close AntiAlias for TTF
         if (_fontAtlas && _usedGlyphs != GlyphCollection::DYNAMIC) {
             std::u32string utf32;
             if (StringUtils::UTF8ToUTF32(getGlyphCollection(), utf32)) {
                 _fontAtlas->prepareLetterDefinitions(utf32);
             }
         }
-//        this->autorelease();
     }
     
     return _fontAtlas;

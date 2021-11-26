@@ -153,7 +153,7 @@ protected:
 
     int _fontAscender = 0;
     EventListenerCustom* _rendererRecreatedListener = nullptr;
-    bool _antialiasEnabled = false;
+    bool _antialiasEnabled = true;
     int _currLineHeight = 0;
 
     friend class Label;
