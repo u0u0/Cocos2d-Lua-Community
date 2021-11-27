@@ -2,6 +2,7 @@
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -93,7 +94,6 @@ public:
             pwszBuffer[nLen] = '\0';
         } while (0);
         return pwszBuffer;
-
     }
 
     bool setFont(const char * pFontName = nullptr, int nSize = 0, bool enableBold = false)
@@ -521,22 +521,100 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
         GetDIBits(dc.getDC(), dc.getBitmap(), 0, height, dataBuf,
             (LPBITMAPINFO)&bi, DIB_RGB_COLORS);
 
-        COLORREF textColor = (textDefinition._fontFillColor.b << 16 | textDefinition._fontFillColor.g << 8 | textDefinition._fontFillColor.r) & 0x00ffffff;
-        float alpha = textDefinition._fontAlpha / 255.0f;
-        COLORREF * pPixel = nullptr;
-        for (int y = 0; y < height; ++y)
-        {
-            pPixel = (COLORREF *)dataBuf + y * width;
-            for (int x = 0; x < width; ++x)
-            {
-                COLORREF& clr = *pPixel;
-                clr = ((BYTE)(GetRValue(clr) * alpha) << 24) | textColor;
-                ++pPixel;
+        BYTE srcRed = textDefinition._fontFillColor.r;
+        BYTE srcGreen = textDefinition._fontFillColor.g;
+        BYTE srcBlue = textDefinition._fontFillColor.b;
+        float srcAlphaScale = textDefinition._fontAlpha / 255.0f;
+
+        COLORREF* pPixel = nullptr;
+        bool isDone = false;
+        if (textDefinition._stroke._strokeSize > 0.0f) {
+            BYTE dstRed = textDefinition._stroke._strokeColor.r;
+            BYTE dstGreen = textDefinition._stroke._strokeColor.g;
+            BYTE dstBlue = textDefinition._stroke._strokeColor.b;
+            float dstAlphaScale = textDefinition._stroke._strokeAlpha / 255.0f;
+
+            int newWidth = width + 2;
+            int newHeight = height + 2;
+            int newLen = newWidth * newHeight * 4;
+            unsigned char* newBuf = (unsigned char*)malloc(sizeof(unsigned char) * newLen);
+
+            if (newBuf) {
+                // walk newBuf pixel
+                for (int j = 0; j < newHeight; ++j) {
+                    for (int i = 0; i < newWidth; ++i) {
+                        // convert to dataBuf pixel
+                        int x = i - 1;
+                        int y = j - 1;
+                        // get the max alpha value of four corners pixel
+                        BYTE dstAlpha = 0; // outline alpha
+                        if (y - 1 >= 0) {
+                            pPixel = (COLORREF*)dataBuf + (y - 1) * width;
+                            if (x - 1 >= 0) {
+                                dstAlpha = MAX(dstAlpha, (BYTE)(GetRValue(*(pPixel + x - 1))));
+                            }
+                            if (x + 1 < width) {
+                                dstAlpha = MAX(dstAlpha, (BYTE)(GetRValue(*(pPixel + x + 1))));
+                            }
+                        }
+                        if (y + 1 < height) {
+                            pPixel = (COLORREF*)dataBuf + (y + 1) * width;
+                            if (x - 1 >= 0) {
+                                dstAlpha = MAX(dstAlpha, (BYTE)(GetRValue(*(pPixel + x - 1))));
+                            }
+                            if (x + 1 < width) {
+                                dstAlpha = MAX(dstAlpha, (BYTE)(GetRValue(*(pPixel + x + 1))));
+                            }
+                        }
+                        // get center alpha, use for src alpha
+                        BYTE srcAlpha = 0;
+                        if (x >= 0 && x < width && y >= 0 && y < height) {
+                            pPixel = (COLORREF*)dataBuf + y * width + x;
+                            srcAlpha = (BYTE)(GetRValue(*pPixel));
+                        }
+                        // multi with scale factor for alpha
+                        srcAlpha *= srcAlphaScale;
+                        dstAlpha *= dstAlphaScale;
+                        // srcColor blending to dstColor
+                        float srcFactor = srcAlpha / 255.0f; // GL_SRC_ALPHA
+                        float dstFactor = 1.0f - srcFactor; // GL_ONE_MINUS_SRC_ALPHA
+                        pPixel = (COLORREF*)newBuf + j * newWidth + i;
+                        BYTE pixelAlpha = (BYTE)(srcAlpha * srcFactor + dstAlpha * dstFactor);
+                        if (pixelAlpha > 0) {
+                            *pPixel = pixelAlpha << 24
+                                | (BYTE)(srcBlue * srcFactor + dstBlue * dstFactor) << 16
+                                | (BYTE)(srcGreen * srcFactor + dstGreen * dstFactor) << 8
+                                | (BYTE)(srcRed * srcFactor + dstRed * dstFactor);
+                        } else {
+                            *pPixel = 0; // Premultiplied need zero to transparent
+                        }
+                    }
+                }
+
+                // return the outlined buffer
+                isDone = true; // mark filled
+                free(dataBuf);
+                dataBuf = newBuf;
+                dataLen = newLen;
+                width = newWidth;
+                height = newHeight;
+                hasPremultipliedAlpha = true;
             }
         }
 
+        if (!isDone) {
+            COLORREF rgb = (srcBlue << 16 | srcGreen << 8 | srcRed) & 0x00ffffff;
+            for (int y = 0; y < height; ++y) {
+                pPixel = (COLORREF*)dataBuf + y * width;
+                for (int x = 0; x < width; ++x) {
+                    COLORREF& clr = *(pPixel + x);
+                    clr = ((BYTE)(GetRValue(clr) * srcAlphaScale) << 24) | rgb;
+                }
+            }
+            hasPremultipliedAlpha = false;
+        }
+
         ret.fastSet(dataBuf, dataLen);
-        hasPremultipliedAlpha = false;
     } while (0);
 
     return ret;
