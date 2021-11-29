@@ -524,8 +524,12 @@ bool Texture2D::initWithString(const char *text, const FontDefinition& textDefin
         return false;
     }
     
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) && (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID) && (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
-    CCASSERT(textDefinition._stroke._strokeEnabled == false, "Currently stroke only supported on Mac, iOS and Android!");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    if (textDefinition._stroke._strokeEnabled)
+    {
+        CCLOGERROR("SystemFont Stroke Currently not support on Linux!");
+    }
+    textDefinition._stroke._strokeEnabled = false;
 #endif
 
     PixelFormat      pixelFormat = g_defaultAlphaPixelFormat;
