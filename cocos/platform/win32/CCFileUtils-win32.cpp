@@ -221,6 +221,28 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
     return FileUtils::Status::OK;
 }
 
+// override to set file create time, windows need do it manually.
+bool FileUtilsWin32::writeDataToFile(const Data& data, const std::string& fullPath) const {
+    // https://docs.microsoft.com/en-us/windows/win32/sysinfo/changing-a-file-time-to-the-current-time
+    HANDLE fileHandle = ::CreateFile(StringUtf8ToWideChar(fullPath).c_str(), GENERIC_WRITE | FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (fileHandle == INVALID_HANDLE_VALUE)
+        return false;
+    
+    DWORD dwWrited;
+    ::WriteFile(fileHandle, data.getBytes(), data.getSize(), &dwWrited, NULL);
+    
+    FILETIME ft;
+    SYSTEMTIME st;
+    BOOL f;
+
+    ::GetSystemTime(&st);              // Gets the current system time
+    ::SystemTimeToFileTime(&st, &ft);  // Converts the current system time to file time format
+    f = ::SetFileTime(fileHandle, &ft, &ft, &ft);
+
+    ::CloseHandle(fileHandle);
+    return f;
+}
+
 std::string FileUtilsWin32::getPathForFilename(const std::string& filename, const std::string& resolutionDirectory, const std::string& searchPath) const
 {
     std::string unixFileName = convertPathFormatToUnixStyle(filename);
@@ -543,5 +565,4 @@ bool FileUtilsWin32::removeDirectory(const std::string& dirPath) const
     }
     return false;
 }
-
 NS_CC_END
