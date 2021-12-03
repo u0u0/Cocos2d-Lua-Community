@@ -68,19 +68,7 @@ void GGraph::drawPolygon(int lineSize, const cocos2d::Color4F& lineColor, const 
     _lineSize = lineSize;
     _lineColor = lineColor;
     _fillColor = fillColor;
-    if (_polygonPoints == nullptr)
-        _polygonPoints = new std::vector<Vec2>();
-    else
-        _polygonPoints->clear();
-    float h = getHeight();
-    _polygonPointOffset = h;
-    for (int i = 0; i < count; i++)
-    {
-        Vec2 pt = *(points + i);
-        pt.y = h - pt.y;
-        _polygonPoints->push_back(*(points + i));
-    }
-    updateShape();
+    setPolygonPoints(points, count);
 }
 
 void GGraph::drawRegularPolygon(int lineSize, const cocos2d::Color4F& lineColor, const cocos2d::Color4F& fillColor,
@@ -149,7 +137,6 @@ void GGraph::updateShape()
         _shape->drawPolygon(_polygonPoints->data(), (int)_polygonPoints->size(), _fillColor, _lineSize * 0.5f, _lineColor);
         break;
     }
-
     case 4:
     {
         float h = getHeight();
@@ -194,6 +181,24 @@ void GGraph::setColor(const cocos2d::Color3B& value)
     _fillColor = Color4F(value, _fillColor.a);
     updateShape();
 }
+
+void GGraph::setPolygonPoints(const cocos2d::Vec2* points, int count)
+{
+    if (_polygonPoints == nullptr)
+        _polygonPoints = new std::vector<Vec2>();
+    else
+        _polygonPoints->clear();
+    float h = getHeight();
+    _polygonPointOffset = h;
+    for (int i = 0; i < count; i++)
+    {
+        Vec2 pt = *(points + i);
+        pt.y = h - pt.y;
+        _polygonPoints->push_back(pt);
+    }
+    updateShape();
+}
+
 
 cocos2d::Value GGraph::getProp(ObjectPropID propId)
 {

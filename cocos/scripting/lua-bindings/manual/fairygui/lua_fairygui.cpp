@@ -7700,7 +7700,46 @@ static int lua_register_fairygui_GTextInput(lua_State* tolua_S)
 	g_typeCast["GTextInput"] = "fairygui.GTextInput";
 	return 1;
 }
+static int  lua_fairygui_GGraph_setPolygonPoints(lua_State* tolua_S)
+{
+	int argc = 0;
+	fairygui::GGraph* cobj = nullptr;
 
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(tolua_S, 1, "fairygui.GGraph", 0, &tolua_err)) goto tolua_lerror;
+#endif
+	cobj = (fairygui::GGraph*)tolua_tousertype(tolua_S, 1, 0);
+#if COCOS2D_DEBUG >= 1
+	if (!cobj) {
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_fairygui_GGraph_setPolygonPoints'", nullptr);
+		return 0;
+	}
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+	if (argc == 1) {
+		cocos2d::Vec2* arg1 = nullptr;
+		int arg2;
+		bool ok = luaval_to_array_of_vec2(tolua_S, 2, &arg1, &arg2, "fairygui.GGraph:setPolygonPoints");
+		if (!ok) {
+			tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GGraph_setPolygonPoints'", nullptr);
+			CC_SAFE_DELETE_ARRAY(arg1);
+			return 0;
+		}
+		cobj->setPolygonPoints(arg1, arg2);
+		CC_SAFE_DELETE_ARRAY(arg1);
+		return 0;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GGraph:setPolygonPoints", argc, 1);
+	return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+	tolua_error(tolua_S, "#ferror in function 'lua_fairygui_GGraph_setPolygonPoints'.", &tolua_err);
+	return 0;
+#endif
+}
 static int lua_fairygui_GGraph_getColor(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -8034,6 +8073,7 @@ static int lua_register_fairygui_GGraph(lua_State* tolua_S)
 	tolua_cclass(tolua_S,"GGraph","fairygui.GGraph","fairygui.GObject",nullptr);
 
 	tolua_beginmodule(tolua_S,"GGraph");
+	tolua_function(tolua_S,"setPolygonPoints",lua_fairygui_GGraph_setPolygonPoints);
 	tolua_function(tolua_S,"getColor",lua_fairygui_GGraph_getColor);
 	tolua_function(tolua_S,"setColor",lua_fairygui_GGraph_setColor);
 	tolua_function(tolua_S,"drawPolygon",lua_fairygui_GGraph_drawPolygon);
