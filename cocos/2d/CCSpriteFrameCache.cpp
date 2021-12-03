@@ -329,6 +329,13 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, Texture2D *texture)
 {
+    CCASSERT(!plist.empty(), "plist filename should not be nullptr");
+    CCASSERT(texture, "texture should not be nil");
+    if (isSpriteFramesWithFileLoaded(plist))
+    {
+        return;
+    }
+
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(fullPath);
 
@@ -343,7 +350,13 @@ void SpriteFrameCache::addSpriteFramesWithFileContent(const std::string& plist_c
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const std::string& textureFileName)
 {
-    CCASSERT(textureFileName.size()>0, "texture name should not be null");
+    CCASSERT(!plist.empty(), "plist filename should not be nullptr");
+    CCASSERT(textureFileName.size() > 0, "texture name should not be null");
+    if (isSpriteFramesWithFileLoaded(plist))
+    {
+        return;
+    }
+
     const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(fullPath);
     addSpriteFramesWithDictionary(dict, textureFileName, plist);
@@ -352,6 +365,10 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const s
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
 {
     CCASSERT(!plist.empty(), "plist filename should not be nullptr");
+    if (isSpriteFramesWithFileLoaded(plist))
+    {
+        return;
+    }
     
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
     if (fullPath.empty())
@@ -359,11 +376,6 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
         // return if plist file doesn't exist
         CCLOG("cocos2d: SpriteFrameCache: can not find %s", plist.c_str());
         return;
-    }
-
-    if (isSpriteFramesWithFileLoaded(plist))
-    {
-            return;
     }
 
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(fullPath);
