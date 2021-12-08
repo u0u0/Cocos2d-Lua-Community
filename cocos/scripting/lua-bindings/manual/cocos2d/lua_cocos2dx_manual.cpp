@@ -4772,58 +4772,69 @@ static void extendApplication(lua_State* tolua_S)
 
 static int lua_cocos2dx_TextureCache_addImageAsync(lua_State* tolua_S)
 {
-    if (nullptr == tolua_S)
-        return 0 ;
-
     int argc = 0;
-    TextureCache* self = nullptr;
+    TextureCache* cobj = nullptr;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-	if (!tolua_isusertype(tolua_S,1,"cc.TextureCache",0,&tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertype(tolua_S, 1, "cc.TextureCache", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
-    self = static_cast<TextureCache*>(tolua_tousertype(tolua_S,1,0));
+    cobj = static_cast<TextureCache*>(tolua_tousertype(tolua_S, 1, 0));
 
 #if COCOS2D_DEBUG >= 1
-	if (nullptr == self) {
-		tolua_error(tolua_S,"invalid 'self' in function 'lua_cocos2dx_TextureCache_addImageAsync'\n", NULL);
+	if (!cobj) {
+		tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_TextureCache_addImageAsync'\n", nullptr);
 		return 0;
 	}
 #endif
-    argc = lua_gettop(tolua_S) - 1;
 
-    if (2 == argc)
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc >= 2)
     {
 #if COCOS2D_DEBUG >= 1
         if (!tolua_isstring(tolua_S, 2, 0, &tolua_err)  ||
-            !toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err))
+            !toluafix_isfunction(tolua_S, 3, "LUA_FUNCTION", 0, &tolua_err))
         {
             goto tolua_lerror;
         }
+        if (argc >= 3 && !tolua_isstring(tolua_S, 4, 0, &tolua_err)) {
+            goto tolua_lerror;
+        }
+        if (argc >= 4 && !tolua_isnumber(tolua_S, 5, 0, &tolua_err)) {
+            goto tolua_lerror;
+        }
 #endif
-        const char* configFilePath = tolua_tostring(tolua_S, 2, "");
-        LUA_FUNCTION handler = (  toluafix_ref_function(tolua_S, 3, 0));
+        const char* filePath = tolua_tostring(tolua_S, 2, "");
+        LUA_FUNCTION handler = toluafix_ref_function(tolua_S, 3, 0);
+        const char* callkey = filePath;
+        backend::PixelFormat pixelFormat = Texture2D::getDefaultAlphaPixelFormat();
 
+        if (argc >= 3) {
+            callkey = tolua_tostring(tolua_S, 4, "");
+        }
 
-        self->addImageAsync(configFilePath, [=](Texture2D* tex){
-            int ID = (tex) ? (int)tex->_ID : -1;
-            int* luaID = (tex) ? &tex->_luaID : nullptr;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)tex, "cc.Texture2D");
-            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler,1);
-            LuaEngine::getInstance()->removeScriptHandler(handler);
-        });
+        if (argc >= 4) {
+            pixelFormat = (backend::PixelFormat)lua_tointeger(tolua_S, 5);
+        }
+
+        cobj->addImageAsync(filePath, [=](cocos2d::Texture2D* tex) {
+            object_to_luaval<cocos2d::Texture2D>(tolua_S, "cc.Texture2D", tex);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+            toluafix_remove_function_by_refid(tolua_S, handler);
+        }, callkey, pixelFormat);
 
         return 0;
     }
 
-    luaL_error(tolua_S, "%s function of TextureCache has wrong number of arguments: %d, was expecting %d\n", "cc.TextureCache:addImageAsync", argc, 1);
+    luaL_error(tolua_S, "%s function of TextureCache has wrong number of arguments: %d, was expecting 2~5\n", "cc.TextureCache:addImageAsync", argc);
+    return 0;
 
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_TextureCache_addImageAsync'.",&tolua_err);
-#endif
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_TextureCache_addImageAsync'.", &tolua_err);
     return 0;
+#endif
 }
 
 static void extendTextureCache(lua_State* tolua_S)

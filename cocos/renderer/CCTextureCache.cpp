@@ -4,6 +4,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -42,7 +43,6 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "base/CCNinePatchImageParser.h"
 #include "renderer/backend/Device.h"
-//#include "renderer/backend/StringUtils.h"
 
 
 using namespace std;
@@ -88,12 +88,15 @@ std::string TextureCache::getDescription() const
 struct TextureCache::AsyncStruct
 {
 public:
-    AsyncStruct
-    ( const std::string& fn,const std::function<void(Texture2D*)>& f,
-      const std::string& key )
-      : filename(fn), callback(f),callbackKey( key ),
-        pixelFormat(Texture2D::getDefaultAlphaPixelFormat()),
-        loadSuccess(false)
+    AsyncStruct(const std::string& fn,
+        const std::function<void(Texture2D*)>& f,
+        const std::string& key,
+        backend::PixelFormat fmt)
+        : filename(fn)
+        , callback(f)
+        , callbackKey(key)
+        , pixelFormat(fmt)
+        , loadSuccess(false)
     {}
 
     std::string filename;
@@ -104,41 +107,6 @@ public:
     backend::PixelFormat pixelFormat;
     bool loadSuccess;
 };
-
-/**
- The addImageAsync logic follow the steps:
- - find the image has been add or not, if not add an AsyncStruct to _requestQueue  (GL thread)
- - get AsyncStruct from _requestQueue, load res and fill image data to AsyncStruct.image, then add AsyncStruct to _responseQueue (Load thread)
- - on schedule callback, get AsyncStruct from _responseQueue, convert image to texture, then delete AsyncStruct (GL thread)
-
- the Critical Area include these members:
- - _requestQueue: locked by _requestMutex
- - _responseQueue: locked by _responseMutex
-
- the object's life time:
- - AsyncStruct: construct and destruct in GL thread
- - image data: new in Load thread, delete in GL thread(by Image instance)
-
- Note:
- - all AsyncStruct referenced in _asyncStructQueue, for unbind function use.
-
- How to deal add image many times?
- - At first, this situation is abnormal, we only ensure the logic is correct.
- - If the image has been loaded, the after load image call will return immediately.
- - If the image request is in queue already, there will be more than one request in queue,
- - In addImageAsyncCallback, will deduplicate the request to ensure only create one texture.
-
- Does process all response in addImageAsyncCallback consume more time?
- - Convert image to texture faster than load image from disk, so this isn't a
- problem.
-
- Call unbindImageAsync(path) to prevent the call to the callback when the
- texture is loaded.
- */
-void TextureCache::addImageAsync(const std::string &path, const std::function<void(Texture2D*)>& callback)
-{
-    addImageAsync( path, callback, path );
-}
 
 /**
  The addImageAsync logic follow the steps:
@@ -172,7 +140,10 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
  unbind the callback independently as needed whilst a call to
  unbindImageAsync(path) would be ambiguous.
  */
-void TextureCache::addImageAsync(const std::string &path, const std::function<void(Texture2D*)>& callback, const std::string& callbackKey)
+void TextureCache::addImageAsync(const std::string& path,
+    const std::function<void(Texture2D*)>& callback,
+    const std::string& callbackKey,
+    backend::PixelFormat pixelFormat)
 {
     Texture2D *texture = nullptr;
 
@@ -210,13 +181,13 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
     ++_asyncRefCount;
 
     // generate async struct
-    AsyncStruct *data =
-      new (std::nothrow) AsyncStruct(fullpath, callback, callbackKey);
+    AsyncStruct *data = new (std::nothrow) AsyncStruct(fullpath, callback, callbackKey, pixelFormat);
     
     // add async struct into queue
     _asyncStructQueue.push_back(data);
     std::unique_lock<std::mutex> ul(_requestMutex);
     _requestQueue.push_back(data);
+    ul.unlock();
     _sleepCondition.notify_one();
 }
 
