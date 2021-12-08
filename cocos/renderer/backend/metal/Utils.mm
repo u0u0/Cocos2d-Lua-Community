@@ -25,6 +25,8 @@
 #include "Utils.h"
 #include "DeviceMTL.h"
 #include "base/CCConfiguration.h"
+#include "base/CCDirector.h"
+#include "base/CCScheduler.h"
 
 #define COLOR_ATTAHCMENT_PIXEL_FORMAT MTLPixelFormatBGRA8Unorm
 
