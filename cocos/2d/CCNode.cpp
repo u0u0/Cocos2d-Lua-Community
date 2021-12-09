@@ -5,6 +5,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2021 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -259,23 +260,16 @@ void Node::setSkewY(float skewY)
 
 void Node::setLocalZOrder(std::int32_t z)
 {
-    if (getLocalZOrder() == z)
+    if (_localZOrder == z)
         return;
     
-    _setLocalZOrder(z);
+    _localZOrder = z;
     if (_parent)
     {
         _parent->reorderChild(this, z);
     }
 
     _eventDispatcher->setDirtyForNode(this);
-}
-
-/// zOrder setter : private method
-/// used internally to alter the zOrder variable. DON'T call this method manually
-void Node::_setLocalZOrder(std::int32_t z)
-{
-    _localZOrder = z;
 }
 
 void Node::updateOrderOfArrival()
@@ -990,7 +984,7 @@ void Node::addChild(Node *child, int zOrder)
 void Node::addChild(Node *child)
 {
     CCASSERT( child != nullptr, "Argument must be non-nil");
-    this->addChild(child, child->getLocalZOrder(), child->_name);
+    this->addChild(child, child->_localZOrder, child->_name);
 }
 
 void Node::removeFromParent()
@@ -1137,7 +1131,7 @@ void Node::insertChild(Node* child, int z)
     _transformUpdated = true;
     _reorderChildDirty = true;
     _children.pushBack(child);
-    child->_setLocalZOrder(z);
+    child->_localZOrder = z;
 }
 
 void Node::reorderChild(Node *child, int zOrder)
@@ -1145,7 +1139,7 @@ void Node::reorderChild(Node *child, int zOrder)
     CCASSERT( child != nullptr, "Child must be non-nil");
     _reorderChildDirty = true;
     child->updateOrderOfArrival();
-    child->_setLocalZOrder(zOrder);
+    child->_localZOrder = zOrder;
 }
 
 void Node::sortAllChildren()

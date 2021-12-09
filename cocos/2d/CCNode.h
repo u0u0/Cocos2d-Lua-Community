@@ -5,6 +5,7 @@
  Copyright (c) 2011      Zynga Inc.
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2021 cocos2d-lua.org
 
  http://www.cocos2d-x.org
 
@@ -167,12 +168,6 @@ public:
      * @param localZOrder The local Z order value.
      */
     virtual void setLocalZOrder(std::int32_t localZOrder);
-    
-    /* 
-     Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
-     @js NA
-     */
-    virtual void _setLocalZOrder(std::int32_t z);
 
     /** !!! ONLY FOR INTERNAL USE
     * Sets the arrival order when this node has a same ZOrder with other children.
