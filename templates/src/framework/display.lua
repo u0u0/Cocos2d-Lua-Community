@@ -1011,10 +1011,12 @@ end
   @function addImageAsync
   @param string imagePath
   @param function callback
-  @param string callkey, default is imagePath
-  @param backendPixelFormat fmt, default is Texture2D::getDefaultAlphaPixelFormat()
+  @param string callkey
+  @param backendPixelFormat fmt
 ]]--
 function display.addImageAsync(imagePath, callback, callkey, fmt)
+	callkey = callkey or imagePath
+	fmt = fmt or cc.TEXTURE2D_PIXEL_FORMAT_RGBA8888
     sharedTextureCache:addImageAsync(imagePath, callback, callkey, fmt)
 end
 
