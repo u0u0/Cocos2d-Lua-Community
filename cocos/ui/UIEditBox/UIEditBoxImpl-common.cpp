@@ -160,7 +160,7 @@ void EditBoxImplCommon::setFont(const char* pFontName, int fontSize)
 {
     _fontName = pFontName;
     _fontSize = fontSize;
-    this->setNativeFont(pFontName, fontSize * _label->getNodeToWorldAffineTransform().a);
+    this->setNativeFont(pFontName, fontSize); // Assume EditBox and it's parent will not be scaled.
     if (!_fontName.empty())
     {
         _label->setSystemFontName(pFontName);
@@ -182,7 +182,7 @@ void EditBoxImplCommon::setPlaceholderFont(const char* pFontName, int fontSize)
 {
     _placeholderFontName = pFontName;
     _placeholderFontSize = fontSize;
-    this->setNativePlaceholderFont(pFontName, fontSize * _labelPlaceHolder->getNodeToWorldAffineTransform().a);
+    this->setNativePlaceholderFont(pFontName, fontSize); // Assume EditBox and it's parent will not be scaled.
     if (!_placeholderFontName.empty())
     {
         _labelPlaceHolder->setSystemFontName(pFontName);
