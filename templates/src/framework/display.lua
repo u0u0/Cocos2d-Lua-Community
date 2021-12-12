@@ -465,7 +465,7 @@ function display.newSprite(filename, x, y, params)
             if display.TEXTURES_PIXEL_FORMAT[filename] then
                 cc.Texture2D:setDefaultAlphaPixelFormat(display.TEXTURES_PIXEL_FORMAT[filename])
                 sprite = spriteClass:create(filename)
-                cc.Texture2D:setDefaultAlphaPixelFormat(cc.TEXTURE2D_PIXEL_FORMAT_RGBA8888)
+                cc.Texture2D:setDefaultAlphaPixelFormat(cc.backendPixelFormat.RGBA8888)
             else
                 sprite = spriteClass:create(filename)
                 if params and params.capInsets then
@@ -1016,7 +1016,7 @@ end
 ]]--
 function display.addImageAsync(imagePath, callback, callkey, fmt)
 	callkey = callkey or imagePath
-	fmt = fmt or cc.TEXTURE2D_PIXEL_FORMAT_RGBA8888
+	fmt = fmt or cc.backendPixelFormat.RGBA8888
     sharedTextureCache:addImageAsync(imagePath, callback, callkey, fmt)
 end
 
