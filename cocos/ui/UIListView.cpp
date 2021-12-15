@@ -617,21 +617,18 @@ void ListView::selectedItemEvent(TouchEventType event)
 void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* touch)
 {
     ScrollView::interceptTouchEvent(event, sender, touch);
-    if (!_touchEnabled)
-    {
+    if (!_touchEnabled) {
         return;
     }
-    if (event != TouchEventType::MOVED)
-    {
-        Widget* parent = sender;
-        while (parent)
-        {
-            if (parent && (parent->getParent() == _innerContainer))
-            {
-                _curSelectedIndex = getIndex(parent);
+    if (event != TouchEventType::MOVED) {
+        Node* parent = sender;
+        while (parent) {
+            Widget* widget = dynamic_cast<Widget*>(parent);
+            if (widget && (widget->getParent() == _innerContainer)) {
+                _curSelectedIndex = getIndex(widget);
                 break;
             }
-            parent = dynamic_cast<Widget*>(parent->getParent());
+            parent = parent->getParent();
         }
         if (sender->isHighlighted()) {
             selectedItemEvent(event);
