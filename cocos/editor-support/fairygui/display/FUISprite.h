@@ -34,6 +34,7 @@ public:
     void setScaleByTile(bool value);
 
     virtual void setContentSize(const cocos2d::Size& size) override;
+    virtual bool initWithSpriteFrame(cocos2d::SpriteFrame* spriteFrame) override;
 
 protected:
     virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags) override;

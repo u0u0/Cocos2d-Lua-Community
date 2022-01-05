@@ -175,6 +175,14 @@ void FUISprite::setContentSize(const Size& size)
         Sprite::setContentSize(size);
 }
 
+bool FUISprite::initWithSpriteFrame(SpriteFrame* spriteFrame)
+{
+    // calls super
+    bool ret = Sprite::initWithSpriteFrame(spriteFrame);
+    setupFill(); // need update fill display, fix by u0u0
+    return ret;
+}
+
 void FUISprite::setupFill()
 {
     if (_fillMethod == FillMethod::Horizontal || _fillMethod == FillMethod::Vertical)
