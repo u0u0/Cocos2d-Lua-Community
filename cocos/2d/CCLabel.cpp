@@ -1302,7 +1302,7 @@ void Label::enableBold()
     if (!_boldEnabled)
     {
         // bold is implemented with outline
-        enableShadow(Color4B::WHITE, Size(0.9f, 0), 0);
+        enableShadow(_textColor, Size(0.9f, 0), 0);
         // add one to kerning
         setAdditionalKerning(_additionalKerning+1);
         _boldEnabled = true;
@@ -2170,6 +2170,9 @@ void Label::setTextColor(const Color4B &color)
     _textColorF.g = _textColor.g / 255.0f;
     _textColorF.b = _textColor.b / 255.0f;
     _textColorF.a = _textColor.a / 255.0f;
+    if (_boldEnabled) {
+        enableShadow(color, Size(0.9f, 0), 0); // update bold color
+    }
 }
 
 void Label::updateColor()
