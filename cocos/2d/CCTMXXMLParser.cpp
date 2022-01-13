@@ -488,8 +488,8 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             objectGroup->setGroupName(attributeDict["name"].asString());
         
             Vec2 positionOffset;
-            positionOffset.x = attributeDict["offsetx"].asFloat() * _tileSize.width;
-            positionOffset.y = attributeDict["offsety"].asFloat() * _tileSize.height;
+            positionOffset.x = attributeDict["offsetx"].asFloat();
+            positionOffset.y = attributeDict["offsety"].asFloat();
             objectGroup->setPositionOffset(positionOffset);
         
             Value& visibleValue = attributeDict["visible"];
