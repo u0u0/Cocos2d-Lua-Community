@@ -1304,7 +1304,9 @@ void Label::enableBold()
         // bold is implemented with outline
         enableShadow(_textColor, Size(0.9f, 0), 0);
         // add one to kerning
-        setAdditionalKerning(_additionalKerning+1);
+        if (_currentLabelType != LabelType::STRING_TEXTURE) {
+            setAdditionalKerning(_additionalKerning + 1);
+        }
         _boldEnabled = true;
     }
 }
@@ -1374,7 +1376,9 @@ void Label::disableEffect(LabelEffect effect)
         case cocos2d::LabelEffect::BOLD:
             if (_boldEnabled) {
                 _boldEnabled = false;
-                _additionalKerning -= 1;
+                if (_currentLabelType != LabelType::STRING_TEXTURE) {
+                    _additionalKerning -= 1;
+                }
                 disableEffect(LabelEffect::SHADOW);
             }
             break;
@@ -2030,23 +2034,20 @@ float Label::getLineSpacing() const
 
 void Label::setAdditionalKerning(float space)
 {
-
-    if (_currentLabelType != LabelType::STRING_TEXTURE)
-    {
+    if (_currentLabelType != LabelType::STRING_TEXTURE) {
         if (_additionalKerning != space)
         {
             _additionalKerning = space;
             _contentDirty = true;
         }
-    }
-    else
+    } else {
         CCLOG("Label::setAdditionalKerning not supported on LabelType::STRING_TEXTURE");
+    }
 }
 
 float Label::getAdditionalKerning() const
 {
     CCASSERT(_currentLabelType != LabelType::STRING_TEXTURE, "Not supported system font!");
-
     return _additionalKerning;
 }
 

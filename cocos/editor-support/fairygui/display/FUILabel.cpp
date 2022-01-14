@@ -103,6 +103,10 @@ void FUILabel::applyTextFormat()
     else
         disableEffect(LabelEffect::BOLD);
 
+    if (_currentLabelType != LabelType::STRING_TEXTURE) {
+        setAdditionalKerning(_textFormat->letterSpacing);
+    }
+
     setLineSpacing(_textFormat->lineSpacing);
     setHorizontalAlignment(_textFormat->align);
     setVerticalAlignment(_textFormat->verticalAlign);
