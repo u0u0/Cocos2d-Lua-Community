@@ -62,6 +62,7 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
      */
     private int mCurrentState = STATE_IDLE;
     private int mTargetState  = STATE_IDLE;
+    private boolean isComplete  = false;
 
     // All the stuff we need for playing and showing a video
     private SurfaceHolder mSurfaceHolder = null;
@@ -570,7 +571,7 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         public void surfaceChanged(SurfaceHolder holder, int format,
                                     int w, int h)
         {
-            boolean isValidState =  (mTargetState == STATE_PLAYING);
+            boolean isValidState = (mTargetState == STATE_PLAYING) || !isComplete;
             boolean hasValidSize = (mVideoWidth == w && mVideoHeight == h);
             if (mMediaPlayer != null && isValidState && hasValidSize) {
                 if (mSeekWhenPrepared != 0) {
@@ -590,7 +591,8 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         {
             // after we return from this we can't use the surface any more
             mSurfaceHolder = null;
-            
+            isComplete = mMediaPlayer.getCurrentPosition() == mMediaPlayer.getDuration();
+            mSeekWhenPrepared = mMediaPlayer.getCurrentPosition();
             release(true);
         }
     };
