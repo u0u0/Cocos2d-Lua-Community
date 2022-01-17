@@ -591,8 +591,10 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         {
             // after we return from this we can't use the surface any more
             mSurfaceHolder = null;
-            isComplete = mMediaPlayer.getCurrentPosition() == mMediaPlayer.getDuration();
-            mSeekWhenPrepared = mMediaPlayer.getCurrentPosition();
+			if (mMediaPlayer != null) {
+				isComplete = mMediaPlayer.getCurrentPosition() == mMediaPlayer.getDuration();
+				mSeekWhenPrepared = mMediaPlayer.getCurrentPosition();
+			}
             release(true);
         }
     };
