@@ -25287,7 +25287,7 @@ static int lua_register_fairygui_InputProcessor(lua_State* tolua_S)
 	tolua_cclass(tolua_S,"InputProcessor","fairygui.InputProcessor","",nullptr);
 
 	tolua_beginmodule(tolua_S,"InputProcessor");
-	tolua_function(tolua_S,"getRecentInput",lua_fairygui_InputProcessor_getRecentInput);
+		tolua_function(tolua_S,"getRecentInput",lua_fairygui_InputProcessor_getRecentInput);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::InputProcessor).name();
 	g_luaType[typeName] = "fairygui.InputProcessor";

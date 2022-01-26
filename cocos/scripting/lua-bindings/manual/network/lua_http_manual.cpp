@@ -733,7 +733,7 @@ TOLUA_API int register_http_manual(lua_State* tolua_S)
 	tolua_cclass(tolua_S, "HTTPRequest", "HTTPRequest", "cc.Ref", NULL);
 	tolua_beginmodule(tolua_S, "HTTPRequest");
 	tolua_function(tolua_S, "createWithUrl", tolua_HTTPRequest_createWithUrl);
-    tolua_function(tolua_S, "createForDownload", tolua_HTTPRequest_createForDownload);
+	tolua_function(tolua_S, "createForDownload", tolua_HTTPRequest_createForDownload);
 	tolua_function(tolua_S, "setRequestUrl", tolua_HTTPRequest_setRequestUrl);
 	tolua_function(tolua_S, "getRequestUrl", tolua_HTTPRequest_getRequestUrl);
 	tolua_function(tolua_S, "addRequestHeader", tolua_HTTPRequest_addRequestHeader);

@@ -35,7 +35,14 @@ static int lua_cocos2dx_SkeletonData_create(lua_State* L)
         AttachmentLoader *attachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(atlas);
         SkeletonJson json(attachmentLoader);// SkeletonJson not own AttachmentLoader
         SkeletonData *skeletonData = json.readSkeletonDataFile(skeletonDataFile);
-        CCASSERT(skeletonData, !json.getError().isEmpty() ? json.getError().buffer() : "Error reading skeleton data.");
+        if (!skeletonData) {
+            delete attachmentLoader;
+            delete atlas;
+            delete luaSpData;
+            cocos2d::log("Assert failed: %s", !json.getError().isEmpty() ? json.getError().buffer() : "Error reading skeleton data.");
+            luaL_error(L, "sp.SkeletonData:create fail!");
+            return 0;
+        }
         
         luaSpData->atlas = atlas;
         luaSpData->data = skeletonData;
