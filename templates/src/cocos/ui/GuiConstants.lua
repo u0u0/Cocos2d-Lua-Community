@@ -1,235 +1,220 @@
 if nil == ccui then
-    return
+	return
 end
 
-ccui.BrightStyle =
-{
-    none = -1,
-    normal = 0,
-    highlight = 1,
+ccui.BrightStyle = {
+	NONE = -1,
+	NORMAL = 0,
+	HIGHLIGHT = 1,
 }
 
-ccui.TextureResType =
-{
-    localType = 0,
-    plistType = 1,
+ccui.TextureResType = {
+	LOCAL = 0,
+	PLIST = 1,
 }
 
-ccui.TouchEventType =
-{
-    began = 0,
-    moved = 1,
-    ended = 2,
-    canceled = 3,
+ccui.TouchEventType = {
+	BEGAN = 0,
+	MOVED = 1,
+	ENDED = 2,
+	CANCELED = 3,
 }
 
-ccui.SizeType =
-{
-    absolute = 0,
-    percent = 1,
+ccui.SizeType = {
+	ABSOLUTE = 0,
+	PERCENT = 1,
 }
 
 ccui.PositionType = {
-    absolute = 0,
-    percent = 1,
+	ABSOLUTE = 0,
+	PERCENT = 1,
 }
 
-ccui.CheckBoxEventType =
-{
-    selected = 0,
-    unselected = 1,
+ccui.CheckBoxEventType = {
+	SELECTED = 0,
+	UNSELECTED = 1,
 }
 
-ccui.RadioButtonEventType=
-{
-        selected = 0,
-        unselected = 1
+ccui.RadioButtonEventType = {
+	SELECTED = 0,
+	UNSELECTED = 1
 }
 
-ccui.RadioButtonGroupEventType=
-{
-    select_changed = 0
+ccui.RadioButtonGroupEventType = {
+	SELECT_CHANGED = 0
 }
 
-ccui.TextFiledEventType =
-{
-    attach_with_ime = 0,
-    detach_with_ime = 1,
-    insert_text = 2,
-    delete_backward = 3,
+ccui.TextFiledEventType = {
+	ATTACH_WITH_IME = 0,
+	DETACH_WITH_IME = 1,
+	INSERT_TEXT = 2,
+	DELETE_BACKWARD = 3,
 }
 
-ccui.LayoutBackGroundColorType =
-{
-    none = 0,
-    solid = 1,
-    gradient = 2,
+ccui.LayoutType = {
+	ABSOLUTE = 0,
+	VERTICAL = 1,
+	HORIZONTAL = 2,
+	RELATIVE = 3,
 }
 
-ccui.LayoutType =
-{
-    ABSOLUTE = 0,
-    VERTICAL = 1,
-    HORIZONTAL = 2,
-    RELATIVE = 3,
+ccui.LayoutClippingType = {
+	STENCIL = 0,
+	SCISSOR = 1,
 }
 
-ccui.LayoutParameterType =
-{
-    none = 0,
-    linear = 1,
-    relative = 2,
+ccui.LayoutBackGroundColorType = {
+	NONE = 0,
+	SOLID = 1,
+	GRADIENT = 2,
 }
 
-ccui.LinearGravity =
-{
-    none = 0,
-    left = 1,
-    top = 2,
-    right = 3,
-    bottom = 4,
-    centerVertical = 5,
-    centerHorizontal = 6,
+ccui.LayoutParameterType = {
+	NONE = 0,
+	LINEAR = 1,
+	RELATIVE = 2,
 }
 
-ccui.RelativeAlign =
-{
-    alignNone = 0,
-    alignParentTopLeft = 1,
-    alignParentTopCenterHorizontal = 2,
-    alignParentTopRight = 3,
-    alignParentLeftCenterVertical = 4,
-    centerInParent = 5,
-    alignParentRightCenterVertical = 6,
-    alignParentLeftBottom = 7,
-    alignParentBottomCenterHorizontal = 8,
-    alignParentRightBottom = 9,
-    locationAboveLeftAlign = 10,
-    locationAboveCenter = 11,
-    locationAboveRightAlign = 12,
-    locationLeftOfTopAlign = 13,
-    locationLeftOfCenter = 14,
-    locationLeftOfBottomAlign = 15,
-    locationRightOfTopAlign = 16,
-    locationRightOfCenter = 17,
-    locationRightOfBottomAlign = 18,
-    locationBelowLeftAlign = 19,
-    locationBelowCenter = 20,
-    locationBelowRightAlign = 21,
+ccui.LinearGravity = {
+	NONE = 0,
+	LEFT = 1,
+	TOP = 2,
+	RIGHT = 3,
+	BOTTOM = 4,
+	CENTER_VERTICAL = 5,
+	CENTER_HORIZONTAL = 6,
+}
+
+ccui.RelativeAlign = {
+	NONE = 0,
+	PARENT_TOP_LEFT = 1,
+	PARENT_TOP_CENTER_HORIZONTAL = 2,
+	PARENT_TOP_RIGHT = 3,
+	PARENT_LEFT_CENTER_VERTICAL = 4,
+	CENTER_IN_PARENT = 5,
+	PARENT_RIGHT_CENTER_VERTICAL = 6,
+	PARENT_LEFT_BOTTOM = 7,
+	PARENT_BOTTOM_CENTER_HORIZONTAL = 8,
+	PARENT_RIGHT_BOTTOM = 9,
+	LOCATION_ABOVE_LEFTALIGN = 10,
+	LOCATION_ABOVE_CENTER = 11,
+	LOCATION_ABOVE_RIGHTALIGN = 12,
+	LOCATION_LEFT_OF_TOPALIGN = 13,
+	LOCATION_LEFT_OF_CENTER = 14,
+	LOCATION_LEFT_OF_BOTTOMALIGN = 15,
+	LOCATION_RIGHT_OF_TOPALIGN = 16,
+	LOCATION_RIGHT_OF_CENTER = 17,
+	LOCATION_RIGHT_OF_BOTTOMALIGN = 18,
+	LOCATION_BELOW_LEFTALIGN = 19,
+	LOCATION_BELOW_CENTER = 20,
+	LOCATION_BELOW_RIGHTALIGN = 21,
 }
 
 ccui.SliderEventType = {
-    percentChanged = 0,
-    slideBallDown = 1,
-    slideBallUp = 2,
-    slideBallCancel = 3
+	ON_PERCENTAGE_CHANGED = 0,
+	ON_SLIDEBALL_DOWN = 1,
+	ON_SLIDEBALL_UP = 2,
+	ON_SLIDEBALL_CANCEL = 3,
 }
 
-ccui.LoadingBarDirection = { LEFT = 0, RIGHT = 1}
-
-ccui.ScrollViewDir = {
-    none = 0,
-    vertical = 1,
-    horizontal = 2,
-    both = 3,
+ccui.LoadingBarDirection = {
+	LEFT = 0,
+	RIGHT = 1
 }
 
-ccui.ScrollViewMoveDir = {
-    none = 0,
-    up = 1,
-    down = 2,
-    left = 3,
-    right = 4,
+ccui.ScrollViewDirection = {
+	NONE = 0,
+	VERTICAL = 1,
+	HORIZONTAL = 2,
+	BOTH = 3,
+}
+
+ccui.ScrollViewMoveDirection = {
+	TOP = 0,
+	BOTTOM = 1,
+	LEFT = 2,
+	RIGHT = 3,
 }
 
 ccui.ScrollviewEventType = {
-    scrollToTop =  0,
-    scrollToBottom =  1,
-    scrollToLeft = 2,
-    scrollToRight = 3,
-    scrolling = 4,
-    bounceTop = 5,
-    bounceBottom = 6,
-    bounceLeft = 7,
-    bounceRight = 8,
-    containerMoved = 9,
-    autoscrollEnded = 10,
-}
-
-ccui.ListViewDirection = {
-    none = 0,
-    vertical = 1,
-    horizontal = 2,
-}
-
-ccui.ListViewMoveDirection = {
-    none = 0,
-    up = 1,
-    down = 2,
-    left = 3,
-    right = 4,
-}
-
-ccui.ListViewEventType = {
-    ONSELECTEDITEM_START = 0,
-    ONSELECTEDITEM_END   = 1,
-}
-
-ccui.PageViewEventType = {
-   turning = 0,
-}
-
-ccui.PageViewDirection = {
-  NONE = 0,
-  VERTICAL = 1,
-  HORIZONTAL = 2,
-  BOTH = 3
-}
-
-ccui.PVTouchDir = {
-    touchLeft = 0,
-    touchRight = 1,
-    touchUp = 2,
-    touchDown = 3
+	SCROLL_TO_TOP = 0,
+	SCROLL_TO_BOTTOM = 1,
+	SCROLL_TO_LEFT = 2,
+	SCROLL_TO_RIGHT = 3,
+	SCROLLING = 4,
+	BOUNCE_TOP = 5,
+	BOUNCE_BOTTOM = 6,
+	BOUNCE_LEFT = 7,
+	BOUNCE_RIGHT = 8,
+	CONTAINER_MOVED = 9,
+	SCROLLING_BEGAN = 10,
+	SCROLLING_ENDED = 11,
+	AUTOSCROLL_ENDED = 12,
 }
 
 ccui.ListViewGravity = {
-    left = 0,
-    right = 1,
-    centerHorizontal = 2,
-    top = 3,
-    bottom = 4 ,
-    centerVertical = 5,
+	LEFT = 0,
+	RIGHT = 1,
+	CENTER_HORIZONTAL = 2,
+	TOP = 3,
+	BOTTOM = 4,
+	CENTER_VERTICAL = 5,
+}
+
+ccui.ListViewEventType = {
+	ON_SELECTED_ITEM_START = 0,
+	ON_SELECTED_ITEM_END = 1,
+}
+
+ccui.ListViewMagneticType = {
+	NONE = 0,
+	CENTER = 1,
+	BOTH_END = 2,
+	LEFT = 3,
+	RIGHT = 4,
+	TOP = 5,
+	BOTTOM = 6,
+}
+
+ccui.PageViewEventType = {
+	TURNING = 0,
+}
+
+ccui.PageViewTouchDirection = {
+	LEFT = 0,
+	RIGHT = 1,
+	UP = 2,
+	DOWN = 3
 }
 
 ccui.TextType = {
-    SYSTEM = 0,
-    TTF    = 1,
+	SYSTEM = 0,
+	TTF = 1,
 }
 
-ccui.LayoutComponent.HorizontalEdge = {
-    None = 0,
-    Left = 1,
-    Right = 2,
-    Center = 3,
+ccui.LayoutComponentHorizontalEdge = {
+	None = 0,
+	Left = 1,
+	Right = 2,
+	Center = 3,
 }
 
-ccui.LayoutComponent.VerticalEdge = {
-    None = 0,
-    Bottom = 1,
-    Top = 2,
-    Center = 3,
+ccui.LayoutComponentVerticalEdge = {
+	None = 0,
+	Bottom = 1,
+	Top = 2,
+	Center = 3,
 }
 
 ccui.VideoPlayerEvent = {
-    PLAYING = 0,
-    PAUSED = 1,
-    STOPPED= 2,
-    COMPLETED =3,
+	PLAYING = 0,
+	PAUSED = 1,
+	STOPPED = 2,
+	COMPLETED = 3,
 }
 
 ccui.MovementEventType = {
-    START = 0,
-    COMPLETE = 1,
-    LOOP_COMPLETE = 2,
+	START = 0,
+	COMPLETE = 1,
+	LOOP_COMPLETE = 2,
 }
