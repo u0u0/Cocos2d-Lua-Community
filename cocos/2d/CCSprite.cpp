@@ -177,6 +177,8 @@ bool Sprite::initWithFile(const std::string& filename)
     }
 
     _fileName = filename;
+    _fileType = 0;
+    _unflippedOffsetPositionFromCenter = Vec2::ZERO;
 
     Texture2D *texture = _director->getTextureCache()->addImage(filename);
     if (texture)
@@ -199,6 +201,8 @@ bool Sprite::initWithFile(const std::string &filename, const Rect& rect)
         return false;
 
     _fileName = filename;
+    _fileType = 0;
+    _unflippedOffsetPositionFromCenter = Vec2::ZERO;
 
     Texture2D *texture = _director->getTextureCache()->addImage(filename);
     if (texture)
