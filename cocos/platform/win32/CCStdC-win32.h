@@ -47,12 +47,6 @@ typedef SSIZE_T ssize_t;
 #endif
 #endif
 
-#if _MSC_VER < 1900
-#ifndef snprintf
-#define snprintf _snprintf
-#endif
-#endif
-
 #endif // __MINGW32__
 
 #include <math.h>
@@ -61,6 +55,12 @@ typedef SSIZE_T ssize_t;
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#ifndef __MINGW32__
+#ifndef snprintf
+#define snprintf _snprintf // must after #include <stdio.h>, _snprintf is safty 
+#endif
+#endif // __MINGW32__
 
 #ifndef M_PI
   #define M_PI      3.14159265358
