@@ -6,6 +6,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2022 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -96,7 +97,8 @@ protected:
     public:
         PlistFramesCache() { }
         void init() {
-            _spriteFrames.reserve(20); clear();
+            _spriteFrames.reserve(20);
+            clear();
         }
         /**  Record SpriteFrame with plist and frame name, add frame name 
         *    and plist to index
@@ -301,7 +303,6 @@ protected:
 
     void reloadSpriteFramesWithDictionary(ValueMap& dictionary, Texture2D *texture, const std::string &plist);
 
-    ValueMap _spriteFramesAliases;
     PlistFramesCache _spriteFramesCache;
 };
 
