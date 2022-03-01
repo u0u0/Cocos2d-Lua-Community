@@ -4,6 +4,7 @@ Copyright (c) 2010-2013 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2022 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -650,12 +651,16 @@ void Director::purgeCachedData()
 
     if (s_SharedDirector->getOpenGLView())
     {
-        SpriteFrameCache::getInstance()->removeUnusedSpriteFrames();
+        // SpriteFrame need be free by removeSpriteFramesFromFile(plist)
+        // removeUnusedSpriteFrames() use ref count == 1 is unsafe method for app layer.
         _textureCache->removeUnusedTextures();
 
         // Note: some tests such as ActionsTest are leaking refcounted textures
         // There should be no test textures left in the cache
-        log("%s\n", _textureCache->getCachedTextureInfo().c_str());
+#if COCOS2D_DEBUG >= 1
+        string info = _textureCache->getCachedTextureInfo();
+        log("%s", info.c_str());
+#endif
     }
     FileUtils::getInstance()->purgeCachedEntries();
 }

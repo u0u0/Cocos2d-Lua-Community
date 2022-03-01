@@ -4,7 +4,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2021 cocos2d-lua.org
+Copyright (c) 2021-2022 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -623,16 +623,14 @@ std::string TextureCache::getCachedTextureInfo() const
     unsigned int totalBytes = 0;
 
     for (auto& texture : _textures) {
-
-        memset(buftmp, 0, sizeof(buftmp));
-
-
         Texture2D* tex = texture.second;
         unsigned int bpp = tex->getBitsPerPixelForFormat();
         // Each texture takes up width * height * bytesPerPixel bytes.
         auto bytes = tex->getPixelsWide() * tex->getPixelsHigh() * bpp / 8;
         totalBytes += bytes;
         count++;
+
+        memset(buftmp, 0, sizeof(buftmp));
         snprintf(buftmp, sizeof(buftmp) - 1, "\"%s\" rc=%lu id=%p %lu x %lu @ %ld bpp => %lu KB\n",
             texture.first.c_str(),
             (long)tex->getReferenceCount(),
@@ -645,6 +643,7 @@ std::string TextureCache::getCachedTextureInfo() const
         buffer += buftmp;
     }
 
+    memset(buftmp, 0, sizeof(buftmp));
     snprintf(buftmp, sizeof(buftmp) - 1, "TextureCache dumpDebugInfo: %ld textures, for %lu KB (%.2f MB)\n", (long)count, (long)totalBytes / 1024, totalBytes / (1024.0f*1024.0f));
     buffer += buftmp;
 
