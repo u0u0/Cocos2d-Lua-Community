@@ -164,6 +164,21 @@ function Node:setNodeEventEnabled(enabled)
 	return self
 end
 
+--[[
+  Check if event enabled
+  @function isNodeEventEnabled
+  @param integer evt, value can be:
+    cc.NODE_EVENT
+    cc.NODE_ENTER_FRAME_EVENT
+    cc.NODE_TOUCH_EVENT
+    cc.KEYPAD_EVENT
+    cc.ACCELEROMETER_EVENT
+    cc.MOUSE_EVENT
+]]--
+function Node:isNodeEventEnabled(evt)
+	return self._LuaListeners and self._LuaListeners[evt] ~= nil
+end
+
 local function KeypadEventCodeConvert(code)
     local key
     if code == 6 then
@@ -462,10 +477,11 @@ end
 function Node:addNodeEventListener(evt, hdl)
 	self._LuaListeners = self._LuaListeners or {}
 	if evt == c.NODE_EVENT then
-		self:registerScriptHandler(function(evt)
-			-- call listener
-			self._LuaListeners[c.NODE_EVENT]{name = evt}
-		end)
+		if not self._LuaListeners[c.NODE_EVENT] then -- NODE_EVENT only start ONCE
+			self:registerScriptHandler(function(evt)
+				self._LuaListeners[c.NODE_EVENT]{name = evt} -- call listener in setNodeEventEnabled
+			end)
+		end
 	end
 
 	self._LuaListeners[evt] = hdl
