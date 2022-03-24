@@ -146,7 +146,6 @@ set(COCOS_CS_SRC
     editor-support/cocostudio/WidgetReader/LoadingBarReader/LoadingBarReader.cpp
     editor-support/cocostudio/WidgetReader/ListViewReader/ListViewReader.cpp
     editor-support/cocostudio/WidgetReader/TextFieldReader/TextFieldReader.cpp
-    editor-support/cocostudio/WidgetReader/WidgetReader.cpp
     editor-support/cocostudio/WidgetReader/CheckBoxReader/CheckBoxReader.cpp
     editor-support/cocostudio/WidgetReader/SliderReader/SliderReader.cpp
     editor-support/cocostudio/WidgetReader/PageViewReader/PageViewReader.cpp
@@ -174,7 +173,6 @@ set(COCOS_CS_SRC
     editor-support/cocostudio/ActionTimeline/CCBoneNode.cpp
     editor-support/cocostudio/ActionTimeline/CCSkeletonNode.cpp
     editor-support/cocostudio/ActionTimeline/CCSkinNode.cpp
-    editor-support/cocostudio/FlatBuffersSerialize.cpp
     editor-support/cocostudio/WidgetReader/ArmatureNodeReader/ArmatureNodeReader.cpp
     editor-support/cocostudio/WidgetReader/TabControlReader/TabControlReader.cpp
     )
