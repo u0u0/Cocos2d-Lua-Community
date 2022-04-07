@@ -123,7 +123,7 @@
 
 +(void)load
 {
-    [self setCellClass:[RSVerticallyCenteredSecureTextFieldCell class]];
+    // [self setCellClass:[RSVerticallyCenteredSecureTextFieldCell class]];
 }
 
 
