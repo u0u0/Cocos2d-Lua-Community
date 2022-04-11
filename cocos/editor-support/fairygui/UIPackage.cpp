@@ -603,7 +603,9 @@ void UIPackage::loadAtlas(PackageItem* item)
 {
     TextureCache* textureCache = Director::getInstance()->getTextureCache();
     Texture2D* tex = textureCache->getTextureForKey(item->file);
-    if (!tex) {
+    if (tex) {
+        item->texture = tex;
+    } else {
         tex = textureCache->addImage(item->file);
         if (!tex) {
             item->texture = _emptyTexture;
