@@ -1,7 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- Copyright (c) 2020-2021 cocos2d-lua.org
+ Copyright (c) 2020-2022 cocos2d-lua.org
 
  http://www.cocos2d-x.org
 
@@ -2085,8 +2085,8 @@ static int tolua_cocos2dx_FileUtils_getStringFromFile(lua_State* tolua_S)
 
     if (1 == argc)
     {
-        const char* arg0;
-        std::string arg0_tmp; ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "cc.FileUtils:getStringFromFile"); arg0 = arg0_tmp.c_str();
+        std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.FileUtils:getStringFromFile");
         if (ok)
         {
             std::string contentsOfFile = FileUtils::getInstance()->getStringFromFile(arg0);
@@ -2107,52 +2107,73 @@ tolua_lerror:
 
 static int tolua_cocos2dx_FileUtils_getDataFromFile(lua_State* tolua_S)
 {
-    if (nullptr == tolua_S)
-        return 0;
+	if (nullptr == tolua_S)
+		return 0;
 
-    int argc = 0;
-    FileUtils* self = nullptr;
-    bool ok = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-    if (!tolua_isusertype(tolua_S,1,"cc.FileUtils",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    self = static_cast<FileUtils *>(tolua_tousertype(tolua_S,1,0));
+	int argc = 0;
+	FileUtils* self = nullptr;
+	bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
-    if (nullptr == self)
-    {
-        tolua_error(tolua_S,"invalid 'self' in function 'tolua_cocos2dx_FileUtils_getDataFromFile'\n", nullptr);
-        return 0;
-    }
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(tolua_S, 1, "cc.FileUtils", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+	self = static_cast<FileUtils*>(tolua_tousertype(tolua_S, 1, 0));
 
-    if (1 == argc)
-    {
-        const char* arg0;
-        std::string arg0_tmp; ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "cc.FileUtils:getDataFromFile"); arg0 = arg0_tmp.c_str();
+#if COCOS2D_DEBUG >= 1
+	if (nullptr == self)
+	{
+		tolua_error(tolua_S, "invalid 'self' in function 'tolua_cocos2dx_FileUtils_getDataFromFile'\n", nullptr);
+		return 0;
+	}
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+
+	if (1 == argc)
+	{
+		std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.FileUtils:getDataFromFile");
+		if (ok)
+		{
+			auto data = FileUtils::getInstance()->getDataFromFile(arg0);
+			if (!data.isNull())
+				lua_pushlstring(tolua_S, reinterpret_cast<const char*>(data.getBytes()), static_cast<size_t>(data.getSize()));
+			else
+				lua_pushnil(tolua_S);
+			return 1;
+		}
+	} else if (2 == argc) {
+		std::string arg0;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.FileUtils:getDataFromFile");
+        ok &= toluafix_isfunction(tolua_S, 3, "LUA_FUNCTION", 0, &tolua_err);
         if (ok)
         {
-            auto data = FileUtils::getInstance()->getDataFromFile(arg0);
-            if (!data.isNull())
-                lua_pushlstring(tolua_S, reinterpret_cast<const char*>(data.getBytes()), static_cast<size_t>(data.getSize()));
-            else
-                lua_pushnil(tolua_S);
+            int arg1 = toluafix_ref_function(tolua_S, 3, 0);
+            ScriptHandlerMgr::HandlerType handlerType = ScriptHandlerMgr::getInstance()->addCustomHandler(self, arg1);
+            FileUtils::getInstance()->getDataFromFile(arg0, [=](Data data) {
+                LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
+                if (!data.isNull())
+                {
+                    stack->pushString(reinterpret_cast<const char*>(data.getBytes()), static_cast<size_t>(data.getSize()));
+                } else {
+                    stack->pushNil();
+                }
+                stack->executeFunctionByHandler(arg1, 1);
+                ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)self, handlerType);
+                });
             return 1;
         }
-    }
+	}
 
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.FileUtils:getDataFromFile", argc, 1);
-    return 0;
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.FileUtils:getDataFromFile", argc, 1);
+	return 0;
 
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'tolua_cocos2dx_FileUtils_getDataFromFile'.",&tolua_err);
-    return 0;
+	tolua_error(tolua_S, "#ferror in function 'tolua_cocos2dx_FileUtils_getDataFromFile'.", &tolua_err);
+	return 0;
 #endif
 }
 
@@ -3059,7 +3080,7 @@ static int tolua_cocos2dx_EventListenerKeyboard_create(lua_State* tolua_S)
         return 1;
     }
 
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.EventListenerKeyboard:create", argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.EventListenerKeyboard:create", argc, 0);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
