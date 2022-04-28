@@ -23,9 +23,6 @@ end
 
 function AppBase:exit()
     cc.Director:getInstance():endToLua()
-    if device.platform == "windows" or device.platform == "mac" then
-        os.exit()
-    end
 end
 
 function AppBase:enterScene(sceneName, transitionType, time, more, ...)
