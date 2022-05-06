@@ -2147,7 +2147,9 @@ static int tolua_cocos2dx_FileUtils_getDataFromFile(lua_State* tolua_S)
 	} else if (2 == argc) {
 		std::string arg0;
         ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.FileUtils:getDataFromFile");
+#if COCOS2D_DEBUG >= 1
         ok &= toluafix_isfunction(tolua_S, 3, "LUA_FUNCTION", 0, &tolua_err);
+#endif
         if (ok)
         {
             int arg1 = toluafix_ref_function(tolua_S, 3, 0);
