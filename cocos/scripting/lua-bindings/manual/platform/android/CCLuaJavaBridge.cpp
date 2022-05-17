@@ -974,6 +974,7 @@ int LuaJavaBridge::callLuaGlobalFunction(const char *functionName, const char *a
 		}
 		else
 		{
+            CCLOG("[LUA ERROR] %s", lua_tostring(L, -1));
 			ret = -ok;
 		}
 	}
