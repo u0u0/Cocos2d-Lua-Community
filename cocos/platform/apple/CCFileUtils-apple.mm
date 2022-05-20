@@ -250,11 +250,20 @@ std::string FileUtilsApple::getWritablePath() const
         return _writablePath;
     }
 
-    // save to document folder
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES); // ~/Library/Application Support
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); // ~/Document
+#endif
     NSString *documentsDirectory = [paths objectAtIndex:0];
     std::string strRet = [documentsDirectory UTF8String];
     strRet.append("/");
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    NSString* bundle = [[[NSBundle mainBundle]infoDictionary] objectForKey:@"CFBundleIdentifier"];
+    strRet += [bundle UTF8String];
+    strRet.append("/");
+    createDirectory(strRet); // init directory
+#endif
     return strRet;
 }
 
