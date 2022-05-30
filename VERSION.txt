@@ -1,1 +1,1 @@
-Cocos2d-Lua-Community 4.0.3 Release
+Cocos2d-Lua-Community 4.0.4 Release

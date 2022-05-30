@@ -33,7 +33,7 @@ NS_CC_BEGIN
 
 CC_DLL const char* cocos2dVersion()
 {
-    return "Cocos2d-Lua-Community 4.0.3 Release";
+    return "Cocos2d-Lua-Community 4.0.4 Release";
 }
 
 NS_CC_END

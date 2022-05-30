@@ -1,3 +1,44 @@
+Cocos2d-Lua-Community v4.0.4 Release
+
+[新增] win32 系统字体支持描边。
+
+[改进] Spine 绑定setTimeScale，setTrackTime，getAnimationEnd，getAnimationStart。
+[改进] cc.Label 下划线渲染改进，连续的下换线之间至少1像素的间隔。
+[改进] win32 重载FileUtils::writeDataToFile，正确设置文件创建时间。
+[改进] SpriteFrameCache中正确判断isSpriteFramesWithFileLoaded，优化plist性能。
+[改进] fgui的GGraph添加setPolygonPoints实现画多边形。
+[改进] TextureCache::addImageAsync添加pixelFormat参数，同时display.addImageAsync添加默认的pixelFormat参数。
+[改进] cc.Node去掉无用的_setLocalZOrder。
+[改进] fgui 的FUILabel添加letterSpacing支持。
+[改进] s_function_ref_id回收池，避免爆掉。
+[改进] GuiConstants.lua中的ccui变量统一风格。
+[改进] 去掉texturepacker plist的的aliases，eraseFrame缓存数据修正，改进缓存性能。
+[改进] Node:setNodeEventEnabled优化，避免重复执行。
+[改进] 改名CHANGELOG和VERSION，避免新版mac xcode编译错误。
+[改进] FileUtils:getDataFromFile 绑定回调函数。
+[改进] 优化AppBase:exit()，不需要os.exit()了。
+[改进] Mac的getWritablePath改到 ~/Library/Application Support/BundleIdentifier 下。
+[改进] cc.Label TTF 默认关闭抗锯齿，setTTFScaleFactor能提供更好的字体多分辨率适配效果。
+
+[修正] Apple Silicon运行崩溃。
+[修正] cc.Sprite 使用自定义shader时，如果没有设置u_texture1，Mac的metal运行错误。
+[修正] 同步3.7.x改进，修正事件分发对ProtectedNode顺序不确定的bug。
+[修正] fgui进度条和滑动条显示科学计数法的bug。
+[修正] fgui的slider在min value不为0时，显示错误的bug。
+[修正] lua binding中ResourceData返回值的绑定。
+[修正] display.lua中错误的 cc.TEXTURE2D_PIXEL_FORMAT_xxx.
+[修正] editbox setTTFScaleFactor后nativeFont字体大小不对的问题。
+[修正] tolua.fullgc。
+[修正] ListView::interceptTouchEvent，正确获取_curSelectedIndex。
+[修正] FUISprite::initWithSpriteFrame 没有刷新的bug。
+[修正] cc.Label enableBold 错误。
+[修正] Tiled map 的ObjectGroup-position-Offset解析错误。
+[修正] Android videoplayer bugfix。
+[修正] CCSprite没有重置 unflippedOffset的bug。
+[修正] win32 宏snprintf修正，避免有可能产生的随机崩溃。
+[修正] EditBox build error on Mac OS 12.x。
+[修正] fgui UIPackage::loadAtlas 预加载bug。
+
 Cocos2d-Lua-Community v4.0.3 Release
 
 [新增] add support for mac m1.
