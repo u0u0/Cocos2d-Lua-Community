@@ -374,6 +374,7 @@ void CommandBufferGL::drawElements(PrimitiveType primitiveType, IndexFormat inde
 
 void CommandBufferGL::endRenderPass()
 {
+    glDisable(GL_SCISSOR_TEST);
 }
 
 void CommandBufferGL::endFrame()
@@ -599,20 +600,13 @@ void CommandBufferGL::setLineWidth(float lineWidth)
         glLineWidth(lineWidth);
     else
         glLineWidth(1.0f);
-    
 }
-
 
 void CommandBufferGL::setScissorRect(bool isEnabled, float x, float y, float width, float height)
 {
-    if(isEnabled)
-    {
+    if (isEnabled) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(x, y, width, height);
-    }
-    else
-    {
-        glDisable(GL_SCISSOR_TEST);
     }
 }
 
