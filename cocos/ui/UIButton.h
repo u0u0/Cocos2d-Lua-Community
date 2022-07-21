@@ -248,6 +248,9 @@ public:
      *@return font name in std::string
      */
     std::string getTitleFontName() const;
+    
+    /** Set tile label display offset */
+    void setTitleOffset(float x, float y);
 
     /**
      * Sets the title's text horizontal alignment.
@@ -355,6 +358,7 @@ protected:
     Scale9Sprite* _buttonClickedRenderer;
     Scale9Sprite* _buttonDisabledRenderer;
     Label* _titleRenderer;
+    Point _titleOffset;
 
     float _zoomScale;
     bool _prevIgnoreSize;

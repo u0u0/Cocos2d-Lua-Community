@@ -72,7 +72,8 @@ _disabledFileName(""),
 _normalTexType(TextureResType::LOCAL),
 _pressedTexType(TextureResType::LOCAL),
 _disabledTexType(TextureResType::LOCAL),
-_fontName("")
+_fontName(""),
+_titleOffset(0, 0)
 {
     setTouchEnabled(true);
 }
@@ -581,7 +582,8 @@ void Button::onPressStateChangedToDisabled()
 
 void Button::updateTitleLocation()
 {
-    _titleRenderer->setPosition(_contentSize.width * 0.5f, _contentSize.height * 0.5f);
+    _titleRenderer->setPosition(_contentSize.width * 0.5f + _titleOffset.x,
+                                _contentSize.height * 0.5f + _titleOffset.y);
 }
 
 void Button::updateContentSize()
@@ -836,6 +838,13 @@ std::string Button::getTitleFontName() const
     }
     
     return "";
+}
+
+void Button::setTitleOffset(float x, float y)
+{
+    _titleOffset.x = x;
+    _titleOffset.y = y;
+    updateTitleLocation();
 }
 
 std::string Button::getDescription() const
