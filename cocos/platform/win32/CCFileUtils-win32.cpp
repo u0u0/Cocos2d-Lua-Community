@@ -406,7 +406,16 @@ string FileUtilsWin32::getWritablePath() const
         retPath = retPath.substr(0, retPath.rfind(L"\\") + 1);
     }
 
-    return convertPathFormatToUnixStyle(StringWideCharToUtf8(retPath));
+    // convert WCHAR with CP_ACP to UTF8
+    std::string ret;
+    int nNum = WideCharToMultiByte(CP_ACP, 0, retPath.c_str(), -1, nullptr, 0, nullptr, FALSE);
+    char* utf8String = new char[nNum + 1];
+    utf8String[0] = 0;
+    nNum = WideCharToMultiByte(CP_ACP, 0, retPath.c_str(), -1, utf8String, nNum + 1, nullptr, FALSE);
+    ret = utf8String;
+    delete[] utf8String;
+
+    return convertPathFormatToUnixStyle(ret);
 }
 
 bool FileUtilsWin32::renameFile(const std::string &oldfullpath, const std::string& newfullpath) const
