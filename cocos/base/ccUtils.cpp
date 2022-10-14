@@ -152,7 +152,6 @@ void captureNode(Node* startNode, std::function<void(Image*)> imageCallback, flo
             sprite->visit();
             finalRtx->end();
         }
-        Director::getInstance()->getRenderer()->render();
         
         finalRtx->newImage(imageCallback);
     };
