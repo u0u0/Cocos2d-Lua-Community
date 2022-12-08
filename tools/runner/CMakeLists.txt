@@ -43,7 +43,6 @@ elseif(MACOSX)
 		)
 	set(APP_UI_RES
 		${CMAKE_CURRENT_SOURCE_DIR}/proj.mac/Icon.icns
-		${CMAKE_CURRENT_SOURCE_DIR}/proj.mac/Info.plist
 		${CMAKE_CURRENT_SOURCE_DIR}/proj.mac/ConsoleWindow.xib
 		)
 	list(APPEND GAME_SOURCE

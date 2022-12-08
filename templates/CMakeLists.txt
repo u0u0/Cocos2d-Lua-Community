@@ -99,7 +99,6 @@ elseif(APPLE)
              )
         set(APP_UI_RES
             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Icon.icns
-            ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Info.plist
             ${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/ConsoleWindow.xib
             )
         list(APPEND GAME_SOURCE
