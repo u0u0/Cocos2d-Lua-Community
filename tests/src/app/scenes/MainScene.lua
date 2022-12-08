@@ -19,6 +19,7 @@ function MainScene:ctor()
 		"Test_NodeTouchEvent",
 		"Test_RichText",
 		"Test_Spine",
+		"Test_DragonBones",
 		"Test_TMXTiledMap",
 		"Test_WebSocket",
 	}
