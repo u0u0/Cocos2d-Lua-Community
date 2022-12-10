@@ -525,11 +525,7 @@ bool Texture2D::initWithString(const char *text, const FontDefinition& textDefin
     }
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-    if (textDefinition._stroke._strokeEnabled)
-    {
-        CCLOGERROR("SystemFont Stroke Currently not support on Linux!");
-    }
-    textDefinition._stroke._strokeEnabled = false;
+    CCASSERT(textDefinition._stroke._strokeEnabled == false, "SystemFont Stroke Currently not support on Linux!");
 #endif
 
     PixelFormat      pixelFormat = g_defaultAlphaPixelFormat;
