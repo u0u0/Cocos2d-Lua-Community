@@ -10,6 +10,8 @@ function MainScene:ctor()
 		"Test_Audio",
 		"Test_ClippingRectangleNode",
 		"Test_CocosStudio",
+		"Test_DragonBones",
+		"Test_EditBox",
 		"Test_FairyGUI",
 		"Test_KeypadEvent",
 		"Test_LuaProtobuf",
@@ -19,7 +21,6 @@ function MainScene:ctor()
 		"Test_NodeTouchEvent",
 		"Test_RichText",
 		"Test_Spine",
-		"Test_DragonBones",
 		"Test_TMXTiledMap",
 		"Test_WebSocket",
 	}
