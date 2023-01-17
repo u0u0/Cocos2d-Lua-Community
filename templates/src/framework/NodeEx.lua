@@ -256,20 +256,14 @@ function Node:setMouseEnabled(enable)
 	if enable then
 		local dealFunc = function(mouse, name)
 			local tp = mouse:getLocationInView()
-			local sp = mouse:getStartLocationInView()
-			local pp = mouse:getPreviousLocationInView()
-
 			-- call listener
 			self._LuaListeners[c.MOUSE_EVENT]{
 				name = name,
 				x = tp.x,
 				y = tp.y,
-				startX = sp.x,
-				startY = sp.y,
-				prevX = pp.x,
-				prevY = pp.y,
-				scroll = mouse:getScrollY(),
-				key = mouse:getMouseButton()
+				scrollX = mouse:getScrollX(),
+				scrollY = mouse:getScrollY(),
+				button = mouse:getMouseButton()
 			}
 		end
 

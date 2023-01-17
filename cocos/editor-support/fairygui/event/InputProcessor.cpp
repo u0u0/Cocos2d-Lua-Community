@@ -537,7 +537,7 @@ void InputProcessor::onMouseDown(cocos2d::EventMouse * event)
         return;
 
     auto camera = Camera::getVisitingCamera();
-    Vec2 pt(event->getCursorX(), event->getCursorY());
+    Vec2 pt = event->getLocationInView();
     GObject* target = _owner->hitTest(pt, camera);
     if (!target)
         target = _owner;
@@ -567,7 +567,7 @@ void InputProcessor::onMouseUp(cocos2d::EventMouse * event)
         return;
 
     auto camera = Camera::getVisitingCamera();
-    Vec2 pt(event->getCursorX(), event->getCursorY());
+    Vec2 pt = event->getLocationInView();
     GObject* target = _owner->hitTest(pt, camera);
     if (!target)
         target = _owner;
@@ -628,13 +628,13 @@ void InputProcessor::onMouseUp(cocos2d::EventMouse * event)
 void InputProcessor::onMouseMove(cocos2d::EventMouse * event)
 {
     TouchInfo* ti = getTouch(0);
-    Vec2 npos = UIRoot->worldToRoot(Vec2(event->getCursorX(), event->getCursorY()));
+    Vec2 pt = event->getLocationInView();
+    Vec2 npos = UIRoot->worldToRoot(pt);
     if (std::abs(ti->pos.x - npos.x) < 1
         && std::abs(ti->pos.y - npos.y) < 1)
         return;
 
     auto camera = Camera::getVisitingCamera();
-    Vec2 pt(event->getCursorX(), event->getCursorY());
     GObject* target = _owner->hitTest(pt, camera);
     if (!target)
         target = _owner;
@@ -677,7 +677,7 @@ void InputProcessor::onMouseMove(cocos2d::EventMouse * event)
 void InputProcessor::onMouseScroll(cocos2d::EventMouse * event)
 {
     auto camera = Camera::getVisitingCamera();
-    Vec2 pt(event->getCursorX(), event->getCursorY());
+    Vec2 pt = event->getLocationInView();
     GObject* target = _owner->hitTest(pt, camera);
     if (!target)
         target = _owner;
