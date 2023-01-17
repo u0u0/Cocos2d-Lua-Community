@@ -247,20 +247,6 @@ function Node:isKeypadEnabled()
 	return false
 end
 
-local function MouseEventCodeConvert(code)
-	local key
-	if code == 0 then
-		key = "left"
-	elseif code == 1 then
-		key = "right"
-	elseif code == 2 then
-		key = "middle"
-	else
-		key = tostring(code)
-	end
-	return key
-end
-
 function Node:setMouseEnabled(enable)
 	if enable == self:isMouseEnabled() then
 		return self
@@ -283,7 +269,7 @@ function Node:setMouseEnabled(enable)
 				prevX = pp.x,
 				prevY = pp.y,
 				scroll = mouse:getScrollY(),
-				key = MouseEventCodeConvert(mouse:getMouseButton())
+				key = mouse:getMouseButton()
 			}
 		end
 

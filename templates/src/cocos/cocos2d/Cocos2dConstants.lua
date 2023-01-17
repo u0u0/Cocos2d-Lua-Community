@@ -209,6 +209,18 @@ cc.LabelOverflow =
     SHRINK = 2,
     RESIZE_HEIGHT = 3
 }
+-- Mouse
+cc.MouseButton = {
+	BUTTON_UNSET = -1,
+	BUTTON_LEFT = 0,
+	BUTTON_RIGHT = 1,
+	BUTTON_MIDDLE = 2,
+	BUTTON_4 = 3,
+	BUTTON_5 = 4,
+	BUTTON_6 = 5,
+	BUTTON_7 = 6,
+	BUTTON_8 = 7
+}
 -- keyboard
 cc.KeyCode =
 {
