@@ -123,5 +123,9 @@ endfunction()
         target_compile_options(${target}
             PUBLIC /MP
         )
+    elseif(LINUX)
+        target_compile_options(${target}
+            PUBLIC -fPIE
+        )
     endif()
  endfunction()
