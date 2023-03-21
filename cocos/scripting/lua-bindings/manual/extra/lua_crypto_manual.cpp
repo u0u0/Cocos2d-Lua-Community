@@ -302,7 +302,8 @@ static int tolua_extra_Crypto_md5File(lua_State* tolua_S)
 	{
 		const char *path = (const char*)tolua_tostring(tolua_S,2,0);
 
-		Data data = FileUtils::getInstance()->getDataFromFile(path);
+        Data data;
+        FileUtils::getInstance()->getContents(path, &data); // ge raw data, not use getDataFromFile
 		md5_state_t state;
 		md5_byte_t digest[MD5_DIGEST_LENGTH];
 		char hexOutput[(MD5_DIGEST_LENGTH << 1) + 1] = { 0 };
