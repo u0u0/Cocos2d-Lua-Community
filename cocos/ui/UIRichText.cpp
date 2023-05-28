@@ -1792,7 +1792,7 @@ void RichText::formatRenderers()
     {
         float newContentSizeWidth = 0.0f;
         float nextPosY = 0.0f;
-        std::vector<std::pair<Vector<Node*>*, float> > rowWidthPairs;
+        std::vector<std::pair<Vector<Node*>, float> > rowWidthPairs;
         rowWidthPairs.reserve(_elementRenders.size());
         for (int i = _elementRenders.size() - 1; i >= 0; i--)
         {
@@ -1812,11 +1812,11 @@ void RichText::formatRenderers()
             }
             nextPosY += maxY;
             newContentSizeWidth = std::max(newContentSizeWidth, rowWidth);
-            rowWidthPairs.emplace_back(&element, nextPosX);
+            rowWidthPairs.emplace_back(element, nextPosX); // element is local var, can not use address out of range.
         }
         this->setContentSize(Size(newContentSizeWidth, nextPosY));
         for ( auto& row : rowWidthPairs )
-            doHorizontalAlignment(*row.first, row.second);
+            doHorizontalAlignment(row.first, row.second);
     }
     else
     {
