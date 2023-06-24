@@ -1,3 +1,20 @@
+Cocos2d-Lua-Community v4.0.5 Release
+
+[新增] 添加3.7支持的 ccui.Button:setTitleOffset 接口。
+[新增] 添加龙骨、editbox测试案例。
+[新增] ubuntu 22.04编译支持。感谢bwaiox(bwaiox@gmail.com)。
+[新增] fairygui GImage lua binding补全。
+[新增] 修正RichText在部分机器上崩溃的bug。
+
+[改进] captureNode取代内部的render(), 因RenderTexture::end已包含。
+[改进] Android工程升级, androidx替代android.support, 并默认编译64位。
+[改进] EventMouse去垃圾数据。
+
+[修正] 在某些情况下OpenGL矩形裁剪闪屏。
+[修正] getWritablePath在win32下不支持中文路径的问题。
+[修正] Cocos2dConstants.lua中的cc.KeyCode修正，并添加cc.MouseButton定义。
+[修正] Crypto.md5File错误的使用解密之后的数据进行计算，导致热md5判断错误。
+
 Cocos2d-Lua-Community v4.0.4 Release
 
 [新增] win32 系统字体支持描边。
