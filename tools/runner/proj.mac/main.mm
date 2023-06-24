@@ -101,6 +101,9 @@ int main(int argc, char *argv[])
     CommandSetup *cmd = CommandSetup::getInstance();
     cmd->setRelauncher(relaunchSelf);
     cmd->setEngineRootPath(getEngineRoot());
+    if (argc > 2 && strcmp(argv[1], "-NSDocumentRevisionsDebugMode") == 0) {
+        argc = 1; // not parse -NSDocumentRevisionsDebugMode YES
+    }
     cmd->parseCommand(argc, argv);
     cmd->setupEngine();
     
