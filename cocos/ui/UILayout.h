@@ -43,7 +43,6 @@ class DrawNode;
 class LayerColor;
 class LayerGradient;
 class StencilStateManager;
-struct CC_DLL ResourceData;
 
 namespace ui {
     

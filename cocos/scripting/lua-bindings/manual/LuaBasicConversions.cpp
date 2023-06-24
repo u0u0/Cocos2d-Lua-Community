@@ -1587,41 +1587,6 @@ bool luaval_to_std_vector_int(lua_State* L, int lo, std::vector<int>* ret, const
     return ok;
 }
 
-bool luaval_to_mesh_vertex_attrib(lua_State* L, int lo, cocos2d::MeshVertexAttrib* ret, const char* funcName)
-{
-    if (nullptr == L || nullptr == ret || lua_gettop(L) < lo)
-        return false;
-
-    tolua_Error tolua_err;
-    bool ok = true;
-
-    if (!tolua_istable(L, lo, 0, &tolua_err))
-    {
-#if COCOS2D_DEBUG >=1
-        luaval_to_native_err(L,"#ferror:",&tolua_err,funcName);
-#endif
-        ok = false;
-    }
-
-
-    if (ok)
-    {
-
-       lua_pushstring(L, "type");                  /* L: paramStack key */
-       lua_gettable(L,lo);                         /* L: paramStack paramStack[lo][key] */
-       ret->type  = (backend::VertexFormat)(int)lua_tonumber(L, -1);
-       lua_pop(L,1);
-
-       lua_pushstring(L, "vertexAttrib");          /* L: paramStack key */
-       lua_gettable(L,lo);                         /* L: paramStack paramStack[lo][key] */
-       ret->vertexAttrib = (shaderinfos::VertexKey)(int)lua_tonumber(L, -1);
-       lua_pop(L,1);
-    }
-
-    return ok;
-
-}
-
 bool luaval_to_std_vector_float(lua_State* L, int lo, std::vector<float>* ret, const char* funcName)
 {
     if (nullptr == L || nullptr == ret || lua_gettop(L) < lo)
@@ -2640,27 +2605,6 @@ void ttfconfig_to_luaval(lua_State* L, const cocos2d::TTFConfig& config)
     lua_pushnumber(L, (lua_Number)config.outlineSize);
     lua_rawset(L, -3);
 }
-
-void mesh_vertex_attrib_to_luaval(lua_State* L, const cocos2d::MeshVertexAttrib& inValue)
-{
-    if (nullptr == L)
-        return;
-
-    lua_newtable(L);
-
-    lua_pushstring(L, "type");
-    lua_pushnumber(L, (lua_Number)inValue.type);
-    lua_rawset(L, -3);
-
-    lua_pushstring(L, "vertexAttrib");
-    lua_pushnumber(L, (lua_Number)inValue.vertexAttrib);
-    lua_rawset(L, -3);
-
-    lua_pushstring(L, "attribSizeBytes");
-    lua_pushnumber(L, (lua_Number)inValue.getAttribSizeBytes());
-    lua_rawset(L, -3);
-}
-
 
 void ccvector_std_string_to_luaval(lua_State* L, const std::vector<std::string>& inValue)
 {

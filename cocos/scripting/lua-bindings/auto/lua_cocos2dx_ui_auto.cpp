@@ -1,5 +1,5 @@
-#include "scripting/lua-bindings/auto/lua_cocos2dx_ui_auto.hpp"
 #include "ui/CocosGUI.h"
+#include "scripting/lua-bindings/auto/lua_cocos2dx_ui_auto.hpp"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 
@@ -4600,7 +4600,7 @@ int lua_cocos2dx_ui_Layout_getRenderFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getRenderFile();
+        cocos2d::ui::ResourceData ret = cobj->getRenderFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -6504,7 +6504,7 @@ int lua_cocos2dx_ui_Button_getDisabledFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getDisabledFile();
+        cocos2d::ui::ResourceData ret = cobj->getDisabledFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -6685,7 +6685,7 @@ int lua_cocos2dx_ui_Button_getNormalFile(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) 
     {
-        cocos2d::ResourceData ret = cobj->getNormalFile();
+        cocos2d::ui::ResourceData ret = cobj->getNormalFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -7722,7 +7722,7 @@ int lua_cocos2dx_ui_Button_getPressedFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getPressedFile();
+        cocos2d::ui::ResourceData ret = cobj->getPressedFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -8365,7 +8365,7 @@ int lua_cocos2dx_ui_AbstractCheckButton_getCrossDisabledFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getCrossDisabledFile();
+        cocos2d::ui::ResourceData ret = cobj->getCrossDisabledFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -8402,7 +8402,7 @@ int lua_cocos2dx_ui_AbstractCheckButton_getBackDisabledFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBackDisabledFile();
+        cocos2d::ui::ResourceData ret = cobj->getBackDisabledFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -8572,7 +8572,7 @@ int lua_cocos2dx_ui_AbstractCheckButton_getCrossNormalFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getCrossNormalFile();
+        cocos2d::ui::ResourceData ret = cobj->getCrossNormalFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -8658,7 +8658,7 @@ int lua_cocos2dx_ui_AbstractCheckButton_getBackPressedFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBackPressedFile();
+        cocos2d::ui::ResourceData ret = cobj->getBackPressedFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -9040,7 +9040,7 @@ int lua_cocos2dx_ui_AbstractCheckButton_getBackNormalFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBackNormalFile();
+        cocos2d::ui::ResourceData ret = cobj->getBackNormalFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -11104,7 +11104,7 @@ int lua_cocos2dx_ui_ImageView_getRenderFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getRenderFile();
+        cocos2d::ui::ResourceData ret = cobj->getRenderFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -13435,7 +13435,7 @@ int lua_cocos2dx_ui_TextAtlas_getRenderFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getRenderFile();
+        cocos2d::ui::ResourceData ret = cobj->getRenderFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -13903,7 +13903,7 @@ int lua_cocos2dx_ui_LoadingBar_getRenderFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getRenderFile();
+        cocos2d::ui::ResourceData ret = cobj->getRenderFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -20113,7 +20113,7 @@ int lua_cocos2dx_ui_Slider_getBallNormalFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBallNormalFile();
+        cocos2d::ui::ResourceData ret = cobj->getBallNormalFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -20246,8 +20246,7 @@ int lua_cocos2dx_ui_Slider_getBallPressedFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-
-        cocos2d::ResourceData ret = cobj->getBallPressedFile();
+        cocos2d::ui::ResourceData ret = cobj->getBallPressedFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -20708,7 +20707,7 @@ int lua_cocos2dx_ui_Slider_getProgressBarFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getProgressBarFile();
+        cocos2d::ui::ResourceData ret = cobj->getProgressBarFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -20999,7 +20998,7 @@ int lua_cocos2dx_ui_Slider_getBackFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBackFile();
+        cocos2d::ui::ResourceData ret = cobj->getBackFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -21082,7 +21081,7 @@ int lua_cocos2dx_ui_Slider_getBallDisabledFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getBallDisabledFile();
+        cocos2d::ui::ResourceData ret = cobj->getBallDisabledFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());
@@ -24151,7 +24150,7 @@ int lua_cocos2dx_ui_TextBMFont_getRenderFile(lua_State* tolua_S)
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) {
-        cocos2d::ResourceData ret = cobj->getRenderFile();
+        cocos2d::ui::ResourceData ret = cobj->getRenderFile();
         lua_pushinteger(tolua_S, ret.type);
         lua_pushlstring(tolua_S, ret.file.c_str(), ret.file.size());
         lua_pushlstring(tolua_S, ret.plist.c_str(), ret.plist.size());

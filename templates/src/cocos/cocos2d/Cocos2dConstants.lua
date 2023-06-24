@@ -404,13 +404,6 @@ cc.CameraFlag =
     USER7 = 128,
     USER8 = 256,
 }
-cc.CameraBackgroundBrush.BrushType = 
-{
-    NONE = 0,
-    DEPTH = 1,
-    COLOR = 2,
-    SKYBOX = 3,
-}
 -- 3D BillBoard
 cc.BillBoard_Mode =
 {

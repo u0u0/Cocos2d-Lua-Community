@@ -45,6 +45,27 @@ class Camera;
 namespace ui {
     class LayoutComponent;
 
+    struct ResourceData
+    {
+        int         type;
+        std::string file;
+        std::string plist;
+
+        ResourceData()
+        {
+            type = 0;
+            file = "";
+            plist = "";
+        }
+
+        ResourceData(int iType, std::string sFile, std::string sPlist)
+        {
+            type = iType;
+            file = sFile;
+            plist = sPlist;
+        }
+    };
+
 /**
  *@brief Base class for all ui widgets.
  * This class inherent from `ProtectedNode` and `LayoutParameterProtocol`.

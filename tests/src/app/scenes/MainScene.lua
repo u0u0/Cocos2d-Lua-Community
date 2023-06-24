@@ -4,12 +4,10 @@ end)
 
 function MainScene:ctor()
 	local tests = {
-		"Test_3D",
 		"Test_AccelerometerEvent",
 		"Test_AsyncTCP",
 		"Test_Audio",
 		"Test_ClippingRectangleNode",
-		"Test_CocosStudio",
 		"Test_DragonBones",
 		"Test_EditBox",
 		"Test_FairyGUI",
