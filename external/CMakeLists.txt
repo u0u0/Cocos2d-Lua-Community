@@ -31,9 +31,6 @@ add_subdirectory(libvorbis)
 target_link_libraries(external ext_libvorbis) # before ogg, make android link happy
 add_subdirectory(libogg)
 target_link_libraries(external ext_libogg)
-# FAAD2
-add_subdirectory(faad2)
-target_link_libraries(external ext_libfaad)
 
 if(BUILD_EXT_BOX2D)
     add_subdirectory(Box2D)
