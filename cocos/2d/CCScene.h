@@ -42,9 +42,6 @@ class EventCustom;
 #if CC_USE_PHYSICS
 class PhysicsWorld;
 #endif
-#if CC_USE_NAVMESH
-class NavMesh;
-#endif
 
 /**
  * @addtogroup _2d
@@ -145,14 +142,11 @@ private:
     
 #if (CC_USE_PHYSICS)
 public:
-    
-#if CC_USE_PHYSICS
     /** Get the physics world of the scene.
      * @return The physics world of the scene.
      * @js NA
      */
     PhysicsWorld* getPhysicsWorld() const { return _physicsWorld; }
-#endif
     
     /** Create a scene with physics.
      * @return An autoreleased Scene object with physics.
@@ -160,37 +154,14 @@ public:
      */
     static Scene *createWithPhysics();
     
+    void stepPhysics(float deltaTime);
+    
 CC_CONSTRUCTOR_ACCESS:
     bool initWithPhysics();
     
 protected:
     void addChildToPhysicsWorld(Node* child);
-
-#if CC_USE_PHYSICS
     PhysicsWorld* _physicsWorld = nullptr;
-#endif
-    
-#endif // (CC_USE_PHYSICS)
-    
-#if CC_USE_NAVMESH
-public:
-    /** set navigation mesh */
-    void setNavMesh(NavMesh* navMesh);
-    /** get navigation mesh */
-    NavMesh* getNavMesh() const { return _navMesh; }
-    /**
-    * Set NavMesh debug draw camera.
-    */
-    void setNavMeshDebugCamera(Camera *camera);
-
-protected:
-    NavMesh*        _navMesh = nullptr;
-    Camera *        _navMeshDebugCamera = nullptr;
-#endif
-    
-#if (CC_USE_PHYSICS || CC_USE_NAVMESH)
-public:
-    void stepPhysicsAndNavigation(float deltaTime);
 #endif
 };
 

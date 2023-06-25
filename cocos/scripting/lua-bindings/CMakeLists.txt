@@ -22,8 +22,6 @@ set(lua_bindings_manual_headers
     manual/network/Lua_AsyncTCP.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
-    manual/navmesh/lua_cocos2dx_navmesh_manual.h
-    manual/navmesh/lua_cocos2dx_navmesh_conversions.h
     manual/cocos2d/LuaScriptHandlerMgr.h
     manual/cocos2d/lua_cocos2dx_manual.hpp
     manual/Cocos2dxLuaLoader.h
@@ -61,8 +59,6 @@ set(lua_bindings_manual_files
     manual/dragonBones/lua_dragonBones.cpp
     manual/fairygui/lua_fairygui.cpp
     manual/ui/lua_cocos2dx_ui_manual.cpp
-    manual/navmesh/lua_cocos2dx_navmesh_conversions.cpp
-    manual/navmesh/lua_cocos2dx_navmesh_manual.cpp
     manual/extra/lua_extra_manual.cpp
     manual/extra/lua_crypto_manual.cpp
     )
@@ -71,7 +67,6 @@ set(lua_bindings_auto_headers
     auto/lua_cocos2dx_controller_auto.hpp
     auto/lua_cocos2dx_spine_auto.hpp
     auto/lua_cocos2dx_auto.hpp
-    auto/lua_cocos2dx_navmesh_auto.hpp
     auto/lua_cocos2dx_ui_auto.hpp
     auto/lua_cocos2dx_physics_auto.hpp
     auto/lua_cocos2dx_backend_auto.hpp
@@ -84,7 +79,6 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_physics_auto.cpp
     auto/lua_cocos2dx_spine_auto.cpp
     auto/lua_cocos2dx_ui_auto.cpp
-    auto/lua_cocos2dx_navmesh_auto.cpp
     auto/lua_cocos2dx_backend_auto.cpp
     auto/lua_cocos2dx_tmx_auto.cpp
     )

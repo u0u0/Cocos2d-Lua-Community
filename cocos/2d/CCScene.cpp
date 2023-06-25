@@ -39,10 +39,6 @@ THE SOFTWARE.
 #include "physics/CCPhysicsWorld.h"
 #endif
 
-#if CC_USE_NAVMESH
-#include "navmesh/CCNavMesh.h"
-#endif
-
 NS_CC_BEGIN
 
 Scene::Scene()
@@ -63,9 +59,6 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-#if CC_USE_NAVMESH
-    CC_SAFE_RELEASE(_navMesh);
-#endif
     Director::getInstance()->getEventDispatcher()->removeEventListener(_event);
     CC_SAFE_RELEASE(_event);
     
@@ -81,18 +74,6 @@ Scene::~Scene()
     }
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
 }
-
-#if CC_USE_NAVMESH
-void Scene::setNavMesh(NavMesh* navMesh)
-{
-    if (_navMesh != navMesh)
-    {
-        CC_SAFE_RETAIN(navMesh);
-        CC_SAFE_RELEASE(_navMesh);
-        _navMesh = navMesh;
-    }
-}
-#endif
 
 bool Scene::init()
 {
@@ -193,19 +174,10 @@ void Scene::render(Renderer* renderer, const Mat4& eyeTransform, const Mat4* eye
 
         director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
         director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, camera->getViewProjectionMatrix());
-
         camera->apply();
         //visit the scene
         visit(renderer, transform, 0);
-#if CC_USE_NAVMESH
-        if (_navMesh && _navMeshDebugCamera == camera)
-        {
-            _navMesh->debugDraw(renderer);
-        }
-#endif
-
         renderer->render();
-
         director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 
         // we shouldn't restore the transform matrix since it could be used
@@ -229,16 +201,6 @@ void Scene::removeAllChildren()
         _defaultCamera->release();
     }
 }
-
-#if CC_USE_NAVMESH
-void Scene::setNavMeshDebugCamera(Camera *camera)
-{
-    CC_SAFE_RETAIN(camera);
-    CC_SAFE_RELEASE(_navMeshDebugCamera);
-    _navMeshDebugCamera = camera;
-}
-
-#endif
 
 #if (CC_USE_PHYSICS)
 
@@ -279,20 +241,11 @@ bool Scene::initWithPhysics()
 
 #endif
 
-#if (CC_USE_PHYSICS || CC_USE_NAVMESH)
-void Scene::stepPhysicsAndNavigation(float deltaTime)
+#if (CC_USE_PHYSICS)
+void Scene::stepPhysics(float deltaTime)
 {
-#if CC_USE_PHYSICS
     if (_physicsWorld && _physicsWorld->isAutoStep())
         _physicsWorld->update(deltaTime);
-#endif
-
-#if CC_USE_NAVMESH
-    if (_navMesh)
-    {
-        _navMesh->update(deltaTime);
-    }
-#endif
 }
 #endif
 

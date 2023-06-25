@@ -29,7 +29,6 @@
 #include "scripting/lua-bindings/manual/spine/lua_cocos2dx_spine_manual.hpp"
 #include "scripting/lua-bindings/manual/dragonBones/lua_dragonBones.hpp"
 #include "scripting/lua-bindings/manual/fairygui/lua_fairygui.hpp"
-#include "scripting/lua-bindings/manual/navmesh/lua_cocos2dx_navmesh_manual.h"
 #include "scripting/lua-bindings/manual/audio/lua_audio_manual.h"
 #include "scripting/lua-bindings/manual/extra/lua_extra_manual.h"
 
@@ -43,9 +42,6 @@ int lua_module_register(lua_State* L)
     register_spine_module(L);
     register_dragonBones_manual(L);
     register_fairygui_manual(L);
-#if CC_USE_NAVMESH
-    register_navmesh_module(L);
-#endif
     return 1;
 }
 

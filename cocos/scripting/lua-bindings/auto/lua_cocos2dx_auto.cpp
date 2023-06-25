@@ -11803,7 +11803,7 @@ int lua_cocos2dx_Scene_render(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_Scene_stepPhysicsAndNavigation(lua_State* tolua_S)
+int lua_cocos2dx_Scene_stepPhysics(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::Scene* cobj = nullptr;
@@ -11823,7 +11823,7 @@ int lua_cocos2dx_Scene_stepPhysicsAndNavigation(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Scene_stepPhysicsAndNavigation'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Scene_stepPhysics'", nullptr);
         return 0;
     }
 #endif
@@ -11833,22 +11833,22 @@ int lua_cocos2dx_Scene_stepPhysicsAndNavigation(lua_State* tolua_S)
     {
         double arg0;
 
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.Scene:stepPhysicsAndNavigation");
+        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.Scene:stepPhysics");
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Scene_stepPhysicsAndNavigation'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Scene_stepPhysics'", nullptr);
             return 0;
         }
-        cobj->stepPhysicsAndNavigation(arg0);
+        cobj->stepPhysics(arg0);
         lua_settop(tolua_S, 1);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Scene:stepPhysicsAndNavigation",argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Scene:stepPhysics",argc, 1);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Scene_stepPhysicsAndNavigation'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Scene_stepPhysics'.",&tolua_err);
 #endif
 
     return 0;
@@ -12204,7 +12204,7 @@ int lua_register_cocos2dx_Scene(lua_State* tolua_S)
         tolua_function(tolua_S,"initWithPhysics",lua_cocos2dx_Scene_initWithPhysics);
         tolua_function(tolua_S,"setCameraOrderDirty",lua_cocos2dx_Scene_setCameraOrderDirty);
         tolua_function(tolua_S,"render",lua_cocos2dx_Scene_render);
-        tolua_function(tolua_S,"stepPhysicsAndNavigation",lua_cocos2dx_Scene_stepPhysicsAndNavigation);
+        tolua_function(tolua_S,"stepPhysics",lua_cocos2dx_Scene_stepPhysics);
         tolua_function(tolua_S,"onProjectionChanged",lua_cocos2dx_Scene_onProjectionChanged);
         tolua_function(tolua_S,"getPhysicsWorld",lua_cocos2dx_Scene_getPhysicsWorld);
         tolua_function(tolua_S,"initWithSize",lua_cocos2dx_Scene_initWithSize);
