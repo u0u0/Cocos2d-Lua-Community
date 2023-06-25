@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 project(external)
 
-option(BUILD_EXT_BOX2D "Build with internal Box2D support" ON)
 option(BUILD_EXT_CHIPMUNK "Build with internal chipmunk support" ON)
 option(BUILD_EXT_FREETYPE2 "Build with internal freetype2 support" ON)
 option(BUILD_EXT_RECAST "Build with internal recast support" ON)
@@ -32,10 +31,6 @@ target_link_libraries(external ext_libvorbis) # before ogg, make android link ha
 add_subdirectory(libogg)
 target_link_libraries(external ext_libogg)
 
-if(BUILD_EXT_BOX2D)
-    add_subdirectory(Box2D)
-    target_link_libraries(external ext_box2d)
-endif(BUILD_EXT_BOX2D)
 if(BUILD_EXT_CHIPMUNK)
     add_subdirectory(chipmunk)
     target_link_libraries(external ext_chipmunk)
