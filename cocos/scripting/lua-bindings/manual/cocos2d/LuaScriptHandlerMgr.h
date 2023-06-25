@@ -139,8 +139,6 @@ public:
         
         LUANODE_DRAW,
         
-        ARMATURE_EVENT,
-        
         EVENT_ACC,
         EVENT_CUSTIOM,
         

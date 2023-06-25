@@ -28,8 +28,6 @@
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 
 #include "scripting/lua-bindings/manual/cocos2d/lua_cocos2dx_manual.hpp"
-#include "scripting/lua-bindings/manual/extension/lua_cocos2dx_extension_manual.h"
-#include "scripting/lua-bindings/manual/cocostudio/lua_cocos2dx_coco_studio_manual.hpp"
 #include "scripting/lua-bindings/manual/ui/lua_cocos2dx_ui_manual.hpp"
 #include "base/CCDirector.h"
 #include "base/CCEventCustom.h"
@@ -467,11 +465,6 @@ int LuaEngine::handleEvent(ScriptHandlerMgr::HandlerType type,void* data)
 {
     switch (type)
     {
-        case ScriptHandlerMgr::HandlerType::ARMATURE_EVENT:
-            {
-                return handleArmatureWrapper(type, data);
-            }
-            break;
         case ScriptHandlerMgr::HandlerType::EVENT_ACC:
             {
                 return handleEventAcc(data);
@@ -515,60 +508,6 @@ int LuaEngine::handleEvent(ScriptHandlerMgr::HandlerType type,void* data)
         default:
             break;
     }
-    
-    return 0;
-}
-
-int LuaEngine::handleArmatureWrapper(ScriptHandlerMgr::HandlerType type,void* data)
-{
-    if (nullptr == data)
-        return 0;
-    
-    BasicScriptData* eventData = static_cast<BasicScriptData*>(data);
-    if (nullptr == eventData->nativeObject || nullptr == eventData->value)
-        return 0;
-    
-    LuaArmatureWrapperEventData* wrapperData = static_cast<LuaArmatureWrapperEventData*>(eventData->value);
-    
-    int handler = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)eventData->nativeObject, ScriptHandlerMgr::HandlerType::ARMATURE_EVENT);
-    
-    if (0 == handler)
-        return 0;
-    
-    switch (wrapperData->eventType)
-    {
-        case LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::MOVEMENT_EVENT:
-            {
-                LuaArmatureMovementEventData* movementData = static_cast<LuaArmatureMovementEventData*>(wrapperData->eventData);
-            
-                _stack->pushObject(movementData->objTarget, "ccs.Armature");
-                _stack->pushInt(movementData->movementType);
-                _stack->pushString(movementData->movementID.c_str());
-                _stack->executeFunctionByHandler(handler, 3);
-            }
-            break;
-        case LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::FRAME_EVENT:
-            {
-                LuaArmatureFrameEventData* frameData = static_cast<LuaArmatureFrameEventData*>(wrapperData->eventData);
-            
-                _stack->pushObject(frameData->objTarget, "ccs.Bone");
-                _stack->pushString(frameData->frameEventName.c_str());
-                _stack->pushInt(frameData->originFrameIndex);
-                _stack->pushInt(frameData->currentFrameIndex);
-                _stack->executeFunctionByHandler(handler, 4);
-            }
-            break;
-        case LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::FILE_ASYNC:
-            {
-                _stack->pushFloat(*(float*)wrapperData->eventData);
-                _stack->executeFunctionByHandler(handler, 1);
-            }
-            break;
-        default:
-            break;
-    }
-    
-    _stack->clean();
     
     return 0;
 }
