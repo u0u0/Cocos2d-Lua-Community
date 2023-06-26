@@ -22,6 +22,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+// tcp header
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <netdb.h>
+#endif // !_WIN32
+
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
 #include "scripting/lua-bindings/manual/network/lua_extensions.h"
@@ -32,7 +40,6 @@
 #include "cocos/platform/CCNetwork.h"
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
-#include "luasocket/socket.h"
 
 static int tolua_Network_isLocalWiFiAvailable(lua_State* tolua_S)
 {
