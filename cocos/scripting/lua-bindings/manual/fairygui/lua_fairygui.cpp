@@ -5376,6 +5376,78 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GObject_addClickListener(lua_State* tolua_S)
+{
+
+    int argc = 0;
+    bool ok = true;
+    fairygui::GObject* self = nullptr;
+    argc = lua_gettop(tolua_S) - 1;
+    self = static_cast<fairygui::GObject*>(tolua_tousertype(tolua_S, 1, 0));
+    if(argc == 1){
+        LUA_FUNCTION refid = -1;
+        refid = (toluafix_ref_function(tolua_S,2,0));
+        self->addClickListener([=](fairygui::EventContext* context) {
+                object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
+                LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 1);
+                });
+        return 0;
+    }
+    if (2 == argc)
+    {
+#if COCOS2D_DEBUG >= 1
+        tolua_Error tolua_err;
+        if (!toluafix_isfunction(tolua_S, 2, "LUA_FUNCTION", 0, &tolua_err))
+        {
+            tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GObject_getDraggingObject'.",&tolua_err);
+            return 0;
+        }
+#endif
+        bool ok = true;
+        int tag;
+        ok &= luaval_to_int32(tolua_S, 3, (int *)&tag, "lua_cocos2dx_fairygui_addClickListener");
+        if (!ok)
+        {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_fairygui_addClickListener'", nullptr);
+            return 0;
+        }
+        LUA_FUNCTION refid = -1;
+        refid = (toluafix_ref_function(tolua_S,2,0));
+        self->addClickListener([=](fairygui::EventContext* context) {
+                object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
+                lua_pushinteger(tolua_S, tag);
+                LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
+                },fairygui::EventTag(tag));
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, refid, ScriptHandlerMgr::HandlerType::EVENT_CUSTIOM);// fake a HandlerType
+        
+        return 0;
+    }
+    return 0;
+}
+
+static int lua_fairygui_GObject_removeClickListener(lua_State* tolua_S)
+{
+
+    int argc = 0;
+    bool ok = true;
+    fairygui::GObject* self = nullptr;
+    argc = lua_gettop(tolua_S) - 1;
+    self = static_cast<fairygui::GObject*>(tolua_tousertype(tolua_S, 1, 0));
+    if(argc == 1){
+        bool ok = true;
+        int tag;
+        ok &= luaval_to_int32(tolua_S, 2, (int *)&tag, "lua_cocos2dx_fairygui_addClickListener");
+        if (!ok)
+        {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_fairygui_addClickListener'", nullptr);
+            return 0;
+        }
+        self->removeClickListener(fairygui::EventTag(tag));
+        return 0;
+    }
+    return 0;
+}
+
 static int lua_register_fairygui_GObject(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S,"fairygui.GObject");
@@ -5477,6 +5549,8 @@ static int lua_register_fairygui_GObject(lua_State* tolua_S)
 	tolua_function(tolua_S,"getTooltips",lua_fairygui_GObject_getTooltips);
 	tolua_function(tolua_S,"create", lua_fairygui_GObject_create);
 	tolua_function(tolua_S,"getDraggingObject", lua_fairygui_GObject_getDraggingObject);
+    tolua_function(tolua_S, "addClickListener", lua_fairygui_GObject_addClickListener);
+    tolua_function(tolua_S, "removeClickListener", lua_fairygui_GObject_removeClickListener);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::GObject).name();
 	g_luaType[typeName] = "fairygui.GObject";
