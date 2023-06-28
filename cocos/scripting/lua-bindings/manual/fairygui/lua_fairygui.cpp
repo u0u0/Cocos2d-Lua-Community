@@ -28387,28 +28387,19 @@ static int lua_register_fairygui_TextFormat(lua_State* tolua_S)
 	g_typeCast["TextFormat"] = "fairygui.TextFormat";
 	return 1;
 }
+
 int lua_fairygui_GTween_clean(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTween_clean'", nullptr);
-            return 0;
-        }
         fairygui::GTween::clean();
         lua_settop(tolua_S, 1);
         return 1;
@@ -28416,26 +28407,23 @@ int lua_fairygui_GTween_clean(lua_State* tolua_S)
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.GTween:clean",argc, 0);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_clean'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_delayedCall(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
     if (argc == 1)
     {
         double arg0;
@@ -28452,25 +28440,22 @@ int lua_fairygui_GTween_delayedCall(lua_State* tolua_S)
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.GTween:delayedCall",argc, 1);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_delayedCall'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_getTween(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-
     do
     {
         if (argc == 2)
@@ -28486,7 +28471,7 @@ int lua_fairygui_GTween_getTween(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 1)
@@ -28499,29 +28484,25 @@ int lua_fairygui_GTween_getTween(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d", "fairygui.GTween:getTween",argc, 1);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_getTween'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_isTweening(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-
     do
     {
         if (argc == 2)
@@ -28537,7 +28518,7 @@ int lua_fairygui_GTween_isTweening(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 1)
@@ -28550,29 +28531,25 @@ int lua_fairygui_GTween_isTweening(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d", "fairygui.GTween:isTweening",argc, 1);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_isTweening'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_kill(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-
     do
     {
         if (argc == 2)
@@ -28588,7 +28565,7 @@ int lua_fairygui_GTween_kill(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 1)
@@ -28601,7 +28578,7 @@ int lua_fairygui_GTween_kill(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 3)
@@ -28620,15 +28597,15 @@ int lua_fairygui_GTween_kill(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d", "fairygui.GTween:kill",argc, 3);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_kill'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_shake(lua_State* tolua_S)
 {
     int argc = 0;
@@ -28636,14 +28613,10 @@ int lua_fairygui_GTween_shake(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
     if (argc == 3)
     {
         cocos2d::Vec2 arg0;
@@ -28664,25 +28637,22 @@ int lua_fairygui_GTween_shake(lua_State* tolua_S)
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.GTween:shake",argc, 3);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_shake'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_to(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-
     do
     {
         if (argc == 3)
@@ -28701,7 +28671,7 @@ int lua_fairygui_GTween_to(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 3)
@@ -28720,7 +28690,7 @@ int lua_fairygui_GTween_to(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 3)
@@ -28739,7 +28709,7 @@ int lua_fairygui_GTween_to(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 3)
@@ -28758,7 +28728,7 @@ int lua_fairygui_GTween_to(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
+    ok = true;
     do
     {
         if (argc == 3)
@@ -28777,30 +28747,26 @@ int lua_fairygui_GTween_to(lua_State* tolua_S)
             return 1;
         }
     } while (0);
-    ok  = true;
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d", "fairygui.GTween:to",argc, 3);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_to'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_fairygui_GTween_toDouble(lua_State* tolua_S)
 {
     int argc = 0;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertable(tolua_S,1,"fairygui.GTween",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     argc = lua_gettop(tolua_S) - 1;
-
     if (argc == 3)
     {
         double arg0;
@@ -28821,11 +28787,12 @@ int lua_fairygui_GTween_toDouble(lua_State* tolua_S)
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "fairygui.GTween:toDouble",argc, 3);
     return 0;
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTween_toDouble'.",&tolua_err);
-#endif
     return 0;
+#endif
 }
+
 int lua_register_fairygui_GTween(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"fairygui.GTween");
@@ -28846,24 +28813,20 @@ int lua_register_fairygui_GTween(lua_State* tolua_S)
     g_typeCast["GTween"] = "fairygui.GTween";
     return 1;
 }
+
 int lua_fairygui_GTweener_allCompleted(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_allCompleted'", nullptr);
@@ -28874,11 +28837,6 @@ int lua_fairygui_GTweener_allCompleted(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_allCompleted'", nullptr);
-            return 0;
-        }
         bool ret = cobj->allCompleted();
         tolua_pushboolean(tolua_S,(bool)ret);
         return 1;
@@ -28887,30 +28845,25 @@ int lua_fairygui_GTweener_allCompleted(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_allCompleted'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getDelay(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getDelay'", nullptr);
@@ -28921,11 +28874,6 @@ int lua_fairygui_GTweener_getDelay(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getDelay'", nullptr);
-            return 0;
-        }
         double ret = cobj->getDelay();
         tolua_pushnumber(tolua_S,(lua_Number)ret);
         return 1;
@@ -28934,30 +28882,25 @@ int lua_fairygui_GTweener_getDelay(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getDelay'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getDuration(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getDuration'", nullptr);
@@ -28968,11 +28911,6 @@ int lua_fairygui_GTweener_getDuration(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getDuration'", nullptr);
-            return 0;
-        }
         double ret = cobj->getDuration();
         tolua_pushnumber(tolua_S,(lua_Number)ret);
         return 1;
@@ -28981,30 +28919,25 @@ int lua_fairygui_GTweener_getDuration(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getDuration'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getNormalizedTime(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getNormalizedTime'", nullptr);
@@ -29015,11 +28948,6 @@ int lua_fairygui_GTweener_getNormalizedTime(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getNormalizedTime'", nullptr);
-            return 0;
-        }
         double ret = cobj->getNormalizedTime();
         tolua_pushnumber(tolua_S,(lua_Number)ret);
         return 1;
@@ -29028,30 +28956,25 @@ int lua_fairygui_GTweener_getNormalizedTime(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getNormalizedTime'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getRepeat(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getRepeat'", nullptr);
@@ -29062,11 +28985,6 @@ int lua_fairygui_GTweener_getRepeat(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getRepeat'", nullptr);
-            return 0;
-        }
         int ret = cobj->getRepeat();
         tolua_pushnumber(tolua_S,(lua_Number)ret);
         return 1;
@@ -29075,30 +28993,25 @@ int lua_fairygui_GTweener_getRepeat(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getRepeat'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getTarget(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getTarget'", nullptr);
@@ -29109,11 +29022,6 @@ int lua_fairygui_GTweener_getTarget(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getTarget'", nullptr);
-            return 0;
-        }
         void* ret = cobj->getTarget();
         #pragma warning NO CONVERSION FROM NATIVE FOR void*;
         return 1;
@@ -29122,30 +29030,25 @@ int lua_fairygui_GTweener_getTarget(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getTarget'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_getUserData(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_getUserData'", nullptr);
@@ -29156,11 +29059,6 @@ int lua_fairygui_GTweener_getUserData(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_getUserData'", nullptr);
-            return 0;
-        }
         const cocos2d::Value& ret = cobj->getUserData();
         ccvalue_to_luaval(tolua_S, ret);
         return 1;
@@ -29169,30 +29067,25 @@ int lua_fairygui_GTweener_getUserData(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_getUserData'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_isCompleted(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_isCompleted'", nullptr);
@@ -29203,11 +29096,6 @@ int lua_fairygui_GTweener_isCompleted(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_isCompleted'", nullptr);
-            return 0;
-        }
         bool ret = cobj->isCompleted();
         tolua_pushboolean(tolua_S,(bool)ret);
         return 1;
@@ -29216,30 +29104,26 @@ int lua_fairygui_GTweener_isCompleted(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_isCompleted'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_kill(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_kill'", nullptr);
@@ -29250,11 +29134,6 @@ int lua_fairygui_GTweener_kill(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_kill'", nullptr);
-            return 0;
-        }
         cobj->kill();
         lua_settop(tolua_S, 1);
         return 1;
@@ -29262,7 +29141,6 @@ int lua_fairygui_GTweener_kill(lua_State* tolua_S)
     if (argc == 1)
     {
         bool arg0;
-
         ok &= luaval_to_boolean(tolua_S, 2,&arg0, "fgui.GTweener:kill");
         if(!ok)
         {
@@ -29277,30 +29155,26 @@ int lua_fairygui_GTweener_kill(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_kill'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_seek(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_seek'", nullptr);
@@ -29312,7 +29186,6 @@ int lua_fairygui_GTweener_seek(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:seek");
         if(!ok)
         {
@@ -29327,30 +29200,26 @@ int lua_fairygui_GTweener_seek(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_seek'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setBreakpoint(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setBreakpoint'", nullptr);
@@ -29362,7 +29231,6 @@ int lua_fairygui_GTweener_setBreakpoint(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setBreakpoint");
         if(!ok)
         {
@@ -29377,30 +29245,26 @@ int lua_fairygui_GTweener_setBreakpoint(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setBreakpoint'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setDelay(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setDelay'", nullptr);
@@ -29412,7 +29276,6 @@ int lua_fairygui_GTweener_setDelay(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setDelay");
         if(!ok)
         {
@@ -29427,30 +29290,26 @@ int lua_fairygui_GTweener_setDelay(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setDelay'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setDuration(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setDuration'", nullptr);
@@ -29462,7 +29321,6 @@ int lua_fairygui_GTweener_setDuration(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setDuration");
         if(!ok)
         {
@@ -29477,30 +29335,26 @@ int lua_fairygui_GTweener_setDuration(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setDuration'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setEase(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setEase'", nullptr);
@@ -29512,7 +29366,6 @@ int lua_fairygui_GTweener_setEase(lua_State* tolua_S)
     if (argc == 1)
     {
         fairygui::EaseType arg0;
-
         ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "fgui.GTweener:setEase");
         if(!ok)
         {
@@ -29527,30 +29380,26 @@ int lua_fairygui_GTweener_setEase(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setEase'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setEaseOvershootOrAmplitude(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setEaseOvershootOrAmplitude'", nullptr);
@@ -29562,7 +29411,6 @@ int lua_fairygui_GTweener_setEaseOvershootOrAmplitude(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setEaseOvershootOrAmplitude");
         if(!ok)
         {
@@ -29577,30 +29425,26 @@ int lua_fairygui_GTweener_setEaseOvershootOrAmplitude(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setEaseOvershootOrAmplitude'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setEasePeriod(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setEasePeriod'", nullptr);
@@ -29612,7 +29456,6 @@ int lua_fairygui_GTweener_setEasePeriod(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setEasePeriod");
         if(!ok)
         {
@@ -29627,30 +29470,26 @@ int lua_fairygui_GTweener_setEasePeriod(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setEasePeriod'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setPath(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setPath'", nullptr);
@@ -29662,7 +29501,6 @@ int lua_fairygui_GTweener_setPath(lua_State* tolua_S)
     if (argc == 1)
     {
         fairygui::GPath* arg0;
-
         ok &= luaval_to_object<fairygui::GPath>(tolua_S, 2, "fgui.GPath",&arg0, "fgui.GTweener:setPath");
         if(!ok)
         {
@@ -29677,30 +29515,26 @@ int lua_fairygui_GTweener_setPath(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setPath'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setPaused(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setPaused'", nullptr);
@@ -29712,7 +29546,6 @@ int lua_fairygui_GTweener_setPaused(lua_State* tolua_S)
     if (argc == 1)
     {
         bool arg0;
-
         ok &= luaval_to_boolean(tolua_S, 2,&arg0, "fgui.GTweener:setPaused");
         if(!ok)
         {
@@ -29727,30 +29560,26 @@ int lua_fairygui_GTweener_setPaused(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setPaused'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setRepeat(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setRepeat'", nullptr);
@@ -29762,7 +29591,6 @@ int lua_fairygui_GTweener_setRepeat(lua_State* tolua_S)
     if (argc == 1)
     {
         int arg0;
-
         ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "fgui.GTweener:setRepeat");
         if(!ok)
         {
@@ -29777,9 +29605,7 @@ int lua_fairygui_GTweener_setRepeat(lua_State* tolua_S)
     {
         int arg0;
         bool arg1;
-
         ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "fgui.GTweener:setRepeat");
-
         ok &= luaval_to_boolean(tolua_S, 3,&arg1, "fgui.GTweener:setRepeat");
         if(!ok)
         {
@@ -29794,30 +29620,26 @@ int lua_fairygui_GTweener_setRepeat(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setRepeat'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setSnapping(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setSnapping'", nullptr);
@@ -29829,7 +29651,6 @@ int lua_fairygui_GTweener_setSnapping(lua_State* tolua_S)
     if (argc == 1)
     {
         bool arg0;
-
         ok &= luaval_to_boolean(tolua_S, 2,&arg0, "fgui.GTweener:setSnapping");
         if(!ok)
         {
@@ -29844,140 +29665,83 @@ int lua_fairygui_GTweener_setSnapping(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setSnapping'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setTarget(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setTarget'", nullptr);
         return 0;
     }
 #endif
-    argc = lua_gettop(tolua_S)-1;
-    do{
+
+    argc = lua_gettop(tolua_S) - 1;
+    do {
         if (argc == 2) {
             cocos2d::Ref* arg0;
             ok &= luaval_to_object<cocos2d::Ref>(tolua_S, 2, "cc.Ref",&arg0, "fgui.GTweener:setTarget");
-
             if (!ok) { break; }
+
             fairygui::TweenPropType arg1;
             ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "fgui.GTweener:setTarget");
-
             if (!ok) { break; }
+
             fairygui::GTweener* ret = cobj->setTarget(arg0, arg1);
             object_to_luaval<fairygui::GTweener>(tolua_S, "fgui.GTweener",(fairygui::GTweener*)ret);
             return 1;
         }
-    }while(0);
-    ok  = true;
-    do{
+    } while(0);
+    ok = true;
+    do {
         if (argc == 1) {
             cocos2d::Ref* arg0;
             ok &= luaval_to_object<cocos2d::Ref>(tolua_S, 2, "cc.Ref",&arg0, "fgui.GTweener:setTarget");
-
             if (!ok) { break; }
+
             fairygui::GTweener* ret = cobj->setTarget(arg0);
             object_to_luaval<fairygui::GTweener>(tolua_S, "fgui.GTweener",(fairygui::GTweener*)ret);
             return 1;
         }
-    }while(0);
-    ok  = true;
+    } while(0);
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "fgui.GTweener:setTarget",argc, 1);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setTarget'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
-int lua_fairygui_GTweener_setTargetAny(lua_State* tolua_S)
-{
-    int argc = 0;
-    fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
-
-#ifndef UNCHECK_PTR
-    if (!cobj)
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setTargetAny'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1)
-    {
-        void* arg0;
-
-        #pragma warning NO CONVERSION TO NATIVE FOR void*
-        ok = false;
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_setTargetAny'", nullptr);
-            return 0;
-        }
-        fairygui::GTweener* ret = cobj->setTargetAny(arg0);
-        object_to_luaval<fairygui::GTweener>(tolua_S, "fgui.GTweener",(fairygui::GTweener*)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fgui.GTweener:setTargetAny",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setTargetAny'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_fairygui_GTweener_setTimeScale(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setTimeScale'", nullptr);
@@ -29989,7 +29753,6 @@ int lua_fairygui_GTweener_setTimeScale(lua_State* tolua_S)
     if (argc == 1)
     {
         double arg0;
-
         ok &= luaval_to_number(tolua_S, 2,&arg0, "fgui.GTweener:setTimeScale");
         if(!ok)
         {
@@ -30004,30 +29767,26 @@ int lua_fairygui_GTweener_setTimeScale(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setTimeScale'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
+
 int lua_fairygui_GTweener_setUserData(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
+    bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
 
     cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
 
-#ifndef UNCHECK_PTR
+#if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
         tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setUserData'", nullptr);
@@ -30039,7 +29798,6 @@ int lua_fairygui_GTweener_setUserData(lua_State* tolua_S)
     if (argc == 1)
     {
         cocos2d::Value arg0;
-
         ok &= luaval_to_ccvalue(tolua_S, 2, &arg0, "fgui.GTweener:setUserData");
         if(!ok)
         {
@@ -30054,30 +29812,57 @@ int lua_fairygui_GTweener_setUserData(lua_State* tolua_S)
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_lerror:
+tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setUserData'.",&tolua_err);
-#endif
-
     return 0;
+#endif
 }
-int lua_fairygui_GTweener_constructor(lua_State* tolua_S)
+
+int lua_fairygui_GTweener_onComplete(lua_State* tolua_S)
 {
     int argc = 0;
     fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
 #endif
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0)
+
+    cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
     {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_GTweener_constructor'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_onComplete'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 1) {
+        LUA_FUNCTION handler = (toluafix_ref_function(tolua_S,2,0));
+        if (0 == handler) {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GTweener_onComplete'", nullptr);
             return 0;
         }
-        cobj = new fairygui::GTweener();
+        cobj->onComplete([=]() {
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
+		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
+        return 0;
+    }
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_onComplete'.",&tolua_err);
+    return 0;
+#endif
+}
+
+int lua_fairygui_GTweener_constructor(lua_State* tolua_S)
+{
+    int argc = lua_gettop(tolua_S) - 1;
+    if (argc == 0)
+    {
+        fairygui::GTweener* cobj = new fairygui::GTweener();
         cobj->autorelease();
         int ID =  (int)cobj->_ID ;
         int* luaID =  &cobj->_luaID ;
@@ -30086,54 +29871,8 @@ int lua_fairygui_GTweener_constructor(lua_State* tolua_S)
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fgui.GTweener:GTweener",argc, 0);
     return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_constructor'.",&tolua_err);
-#endif
-
-    return 0;
 }
-int lua_fairygui_GTweener_onComplete(lua_State* tolua_S)
-{
-    int argc = 0;
-    fairygui::GTweener* cobj = nullptr;
-    bool ok  = true;
 
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"fgui.GTweener",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (fairygui::GTweener*)tolua_tousertype(tolua_S,1,0);
-
-#ifndef UNCHECK_PTR
-    if (!cobj)
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GTweener_setUserData'", nullptr);
-        return 0;
-    }
-#endif
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) {
-        LUA_FUNCTION handler = (toluafix_ref_function(tolua_S,2,0));
-        if (0 == handler) {
-            tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GObject_addClickListener'", nullptr);
-            return 0;
-        }
-        cobj->onComplete([=]() {
-            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-        });
-        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
-        return 0;
-    }
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GTweener_setUserData'.",&tolua_err);
-#endif
-    return 0;
-}
 int lua_register_fairygui_GTweener(lua_State* tolua_S)
 {
     tolua_usertype(tolua_S,"fgui.GTweener");
@@ -30162,7 +29901,6 @@ int lua_register_fairygui_GTweener(lua_State* tolua_S)
         tolua_function(tolua_S,"setRepeat",lua_fairygui_GTweener_setRepeat);
         tolua_function(tolua_S,"setSnapping",lua_fairygui_GTweener_setSnapping);
         tolua_function(tolua_S,"setTarget",lua_fairygui_GTweener_setTarget);
-        tolua_function(tolua_S,"setTargetAny",lua_fairygui_GTweener_setTargetAny);
         tolua_function(tolua_S,"setTimeScale",lua_fairygui_GTweener_setTimeScale);
         tolua_function(tolua_S,"setUserData",lua_fairygui_GTweener_setUserData);
         tolua_function(tolua_S,"onComplete",lua_fairygui_GTweener_onComplete);
@@ -30172,6 +29910,7 @@ int lua_register_fairygui_GTweener(lua_State* tolua_S)
     g_typeCast["GTweener"] = "fgui.GTweener";
     return 1;
 }
+
 TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 {
 	lua_getglobal(tolua_S, "_G");
@@ -30222,8 +29961,8 @@ TOLUA_API int register_fairygui_manual(lua_State* tolua_S)
 		lua_register_fairygui_GTree(tolua_S);
 		lua_register_fairygui_GTreeNode(tolua_S);
 		lua_register_fairygui_TextFormat(tolua_S);
-        lua_register_fairygui_GTweener(tolua_S);
-        lua_register_fairygui_GTween(tolua_S);
+		lua_register_fairygui_GTween(tolua_S);
+		lua_register_fairygui_GTweener(tolua_S);
 
 		tolua_endmodule(tolua_S);
 	}
