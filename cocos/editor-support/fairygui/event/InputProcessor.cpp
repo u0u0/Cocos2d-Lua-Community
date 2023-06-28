@@ -338,6 +338,11 @@ void InputProcessor::touchUp(cocos2d::Touch *touch, cocos2d::Event *event)
     onTouchEnded(touch, event);
 }
 
+void InputProcessor::mouseMove(cocos2d::EventMouse* event)
+{
+    onMouseMove(event);
+}
+
 bool InputProcessor::onTouchBegan(Touch *touch, Event* /*unusedEvent*/)
 {
     if (!(_owner->isTouchable() && _owner->isVisible())) {
