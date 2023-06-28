@@ -7,6 +7,16 @@
 #include "utils/html/HtmlObject.h"
 #include "display/FUISprite.h"
 
+// HandlerType for addObjectHandler
+enum {
+    HT_UICONFIG_MUSIC = 1000, // FairyGUI lua binding handler type begin
+    HT_GLIST_RENDERER,
+    HT_GLIST_PROVIDER,
+    HT_GTREE_RENDERER,
+    HT_GTREE_WILLEXPAND,
+    HT_GOBJECT_CLICKED,
+};
+
 static void margin_to_luaval(lua_State* L, const fairygui::Margin& _margin)
 {
 	lua_newtable(L);
@@ -1178,7 +1188,7 @@ static int lua_fairygui_UIEventDispatcher_addEventListener(lua_State* L)
 				object_to_luaval<fairygui::EventContext>(L, "fairygui.EventContext", context);
 				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
 				});
-		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);// fake a HandlerType
+		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);
 		return 0;
 	}
 	if (3 == argc) {
@@ -1201,7 +1211,7 @@ static int lua_fairygui_UIEventDispatcher_addEventListener(lua_State* L)
 				object_to_luaval<fairygui::EventContext>(L, "fairygui.EventContext", context);
 				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
 				}, fairygui::EventTag(tag));
-		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);// fake a HandlerType
+		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);
 		return 0;
 	}
 
@@ -5328,6 +5338,104 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_GObject_addClickListener(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GObject* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GObject",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GObject*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GObject_addClickListener'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        LUA_FUNCTION handler = (toluafix_ref_function(tolua_S,2,0));
+        if (0 == handler) {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GObject_addClickListener'", nullptr);
+            return 0;
+        }
+        cobj->addClickListener([=](fairygui::EventContext* context) {
+            object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+        });
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
+        return 0;
+    }
+    if (2 == argc) {
+        LUA_FUNCTION handler = (toluafix_ref_function(tolua_S,2,0));
+        int tag;
+        ok &= luaval_to_int32(tolua_S,3,&tag,"lua_fairygui_GObject_addClickListener");
+        if (0 == handler || !ok) {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GObject_addClickListener'", nullptr);
+            return 0;
+        }
+        cobj->addClickListener([=](fairygui::EventContext* context) {
+            object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
+            lua_pushinteger(tolua_S, tag);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 2);
+        }, fairygui::EventTag(tag));
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting 1~2 \n", "fairygui.GObject:addClickListener",argc);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GObject_addClickListener'.",&tolua_err);
+    return 0;
+#endif
+}
+
+static int lua_fairygui_GObject_removeClickListener(lua_State* tolua_S)
+{
+    int argc = 0;
+    fairygui::GObject* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+    if (!tolua_isusertype(tolua_S,1,"fairygui.GObject",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (fairygui::GObject*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_GObject_removeClickListener'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) {
+        int tag;
+        ok &= luaval_to_int32(tolua_S, 2, (int *)&tag, "lua_fairygui_GObject_removeClickListener");
+        if (!ok) {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_fairygui_GObject_removeClickListener'", nullptr);
+            return 0;
+        }
+        cobj->removeClickListener(fairygui::EventTag(tag));
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.GObject:removeClickListener",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_fairygui_GObject_removeClickListener'.",&tolua_err);
+    return 0;
+#endif
+}
+
 static int lua_fairygui_GObject_create(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -5475,6 +5583,8 @@ static int lua_register_fairygui_GObject(lua_State* tolua_S)
 	tolua_function(tolua_S,"setSkewY",lua_fairygui_GObject_setSkewY);
 	tolua_function(tolua_S,"setSize",lua_fairygui_GObject_setSize);
 	tolua_function(tolua_S,"getTooltips",lua_fairygui_GObject_getTooltips);
+	tolua_function(tolua_S,"addClickListener", lua_fairygui_GObject_addClickListener);
+	tolua_function(tolua_S,"removeClickListener", lua_fairygui_GObject_removeClickListener);
 	tolua_function(tolua_S,"create", lua_fairygui_GObject_create);
 	tolua_function(tolua_S,"getDraggingObject", lua_fairygui_GObject_getDraggingObject);
 	tolua_endmodule(tolua_S);
@@ -18665,13 +18775,6 @@ tolua_lerror:
 #endif
 }
 
-typedef enum {
-	GLIST_ITEM_RENDERER,
-	GLIST_ITEM_PROVIDER,
-	GTREE_NODE_RENDERER, // GTree is expend from list
-	GTREE_NODE_WILLEXPAND
-} GList_HandlerType;
-
 static int lua_fairygui_GList_get_itemRenderer(lua_State* L)
 {
 	fairygui::GList* cobj = nullptr;
@@ -18689,8 +18792,7 @@ static int lua_fairygui_GList_get_itemRenderer(lua_State* L)
 	}
 #endif
 
-	// GLIST_ITEM_RENDERER is a HandlerType
-	refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+	refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GLIST_RENDERER);
 	if (refid >= 0) {
 		toluafix_get_function_by_refid(L, refid);
 	} else {
@@ -18724,7 +18826,7 @@ static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
 
 	if lua_isnil(L, 2) {
 		cobj->itemRenderer = nullptr;
-		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GLIST_RENDERER);
 		return 0;
 	}
 #if COCOS2D_DEBUG >= 1
@@ -18738,8 +18840,7 @@ static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
 		object_to_luaval<fairygui::GObject>(L, "fairygui.GObject", gobject);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
-	// GLIST_ITEM_RENDERER is a HandlerType
-	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_RENDERER);
+	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GLIST_RENDERER);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
@@ -18766,8 +18867,7 @@ static int lua_fairygui_GList_get_itemProvider(lua_State* L)
 	}
 #endif
 
-	// GLIST_ITEM_PROVIDER is a HandlerType
-	refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+	refid = ScriptHandlerMgr::getInstance()->getObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GLIST_PROVIDER);
 	if (refid >= 0) {
 		toluafix_get_function_by_refid(L, refid);
 	} else {
@@ -18801,7 +18901,7 @@ static int lua_fairygui_GList_set_itemProvider(lua_State* L)
 
 	if lua_isnil(L, 2) {
 		cobj->itemProvider = nullptr;
-		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GLIST_PROVIDER);
 		return 0;
 	}
 #if COCOS2D_DEBUG >= 1
@@ -18823,8 +18923,7 @@ static int lua_fairygui_GList_set_itemProvider(lua_State* L)
 		lua_pop(L, 1);
 		return rtn;
 	};
-	// GLIST_ITEM_PROVIDER is a HandlerType
-	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GLIST_ITEM_PROVIDER);
+	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GLIST_PROVIDER);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
@@ -23901,10 +24000,6 @@ static int lua_register_fairygui_DragDropManager(lua_State* tolua_S)
 	return 1;
 }
 
-typedef enum {
-	UICONFIG_MUSIC
-} UIConfig_HandlerType;
-
 static int lua_fairygui_UIConfig_registerFont(lua_State* tolua_S)
 {
 	int argc = 0;
@@ -24416,7 +24511,7 @@ static int lua_fairygui_UIConfig_set_onMusicCallback(lua_State* L)
 	if lua_isnil(L, 2) {
 		fairygui::UIConfig::onMusicCallback = nullptr;
 		// cheat, use fairygui::UIConfig::registerFont address for ref object *_*
-		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)fairygui::UIConfig::registerFont, (ScriptHandlerMgr::HandlerType)UICONFIG_MUSIC);
+		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)fairygui::UIConfig::registerFont, (ScriptHandlerMgr::HandlerType)HT_UICONFIG_MUSIC);
 		return 0;
 	}
 #if COCOS2D_DEBUG >= 1
@@ -24434,7 +24529,7 @@ static int lua_fairygui_UIConfig_set_onMusicCallback(lua_State* L)
 			lua_pop(L, 1); // remove error message from stack
 		}
 	};
-	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)fairygui::UIConfig::registerFont, refid, (ScriptHandlerMgr::HandlerType)UICONFIG_MUSIC);
+	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)fairygui::UIConfig::registerFont, refid, (ScriptHandlerMgr::HandlerType)HT_UICONFIG_MUSIC);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
@@ -25576,6 +25671,46 @@ tolua_lerror:
 #endif
 }
 
+static int lua_fairygui_InputProcessor_mouseMove(lua_State* tolua_S)
+{
+	int argc = 0;
+	fairygui::InputProcessor* cobj = nullptr;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(tolua_S,1,"fairygui.InputProcessor",0,&tolua_err)) goto tolua_lerror;
+#endif
+	cobj = (fairygui::InputProcessor*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+	if (!cobj) {
+		tolua_error(tolua_S,"invalid 'cobj' in function 'lua_fairygui_InputProcessor_mouseMove'", nullptr);
+		return 0;
+	}
+#endif
+
+	argc = lua_gettop(tolua_S)-1;
+	if (argc == 1) {
+		cocos2d::EventMouse* arg0;
+        ok &= luaval_to_object<cocos2d::EventMouse>(tolua_S, 2, "cc.EventMouse", &arg0, "fairygui.InputProcessor:mouseMove");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_fairygui_InputProcessor_mouseMove'", nullptr);
+            return 0;
+        }
+        cobj->mouseMove(arg0);
+        return 0;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "fairygui.InputProcessor:mouseMove", argc, 1);
+	return 0;
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+	tolua_error(tolua_S,"#ferror in function 'lua_fairygui_InputProcessor_mouseMove'.",&tolua_err);
+	return 0;
+#endif
+}
+
 // InputProcessor is return by GRoot::getInputProcessor()
 static int lua_register_fairygui_InputProcessor(lua_State* tolua_S)
 {
@@ -25584,6 +25719,7 @@ static int lua_register_fairygui_InputProcessor(lua_State* tolua_S)
 
 	tolua_beginmodule(tolua_S,"InputProcessor");
 		tolua_function(tolua_S,"getRecentInput",lua_fairygui_InputProcessor_getRecentInput);
+		tolua_function(tolua_S,"mouseMove",lua_fairygui_InputProcessor_mouseMove);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(fairygui::InputProcessor).name();
 	g_luaType[typeName] = "fairygui.InputProcessor";
@@ -26203,7 +26339,7 @@ static int lua_fairygui_GTree_set_treeNodeRender(lua_State* L)
 
 	if lua_isnil(L, 2) {
 		cobj->treeNodeRender = nullptr;
-		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GTREE_NODE_RENDERER);
+		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GTREE_RENDERER);
 		return 0;
 	}
 #if COCOS2D_DEBUG >= 1
@@ -26217,7 +26353,7 @@ static int lua_fairygui_GTree_set_treeNodeRender(lua_State* L)
 		object_to_luaval<fairygui::GComponent>(L, "fairygui.GComponent", obj);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
-	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GTREE_NODE_RENDERER);
+	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GTREE_RENDERER);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
@@ -26246,7 +26382,7 @@ static int lua_fairygui_GTree_set_treeNodeWillExpand(lua_State* L)
 
 	if lua_isnil(L, 2) {
 		cobj->treeNodeWillExpand = nullptr;
-		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)GTREE_NODE_WILLEXPAND);
+		ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_GTREE_WILLEXPAND);
 		return 0;
 	}
 #if COCOS2D_DEBUG >= 1
@@ -26260,7 +26396,7 @@ static int lua_fairygui_GTree_set_treeNodeWillExpand(lua_State* L)
 		lua_pushboolean(L, (int)expand);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
-	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)GTREE_NODE_WILLEXPAND);
+	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GTREE_WILLEXPAND);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
