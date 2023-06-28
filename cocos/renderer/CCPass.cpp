@@ -33,6 +33,8 @@
 #include "renderer/CCTechnique.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/backend/ProgramState.h"
+#include "3d/CCMeshVertexIndexData.h"
+#include "3d/CCVertexAttribBinding.h"
 #include "base/CCDirector.h"
 #include "renderer/CCRenderer.h"
 
@@ -104,6 +106,7 @@ Pass::Pass()
 
 Pass::~Pass()
 {
+    CC_SAFE_RELEASE(_vertexAttribBinding);
     CC_SAFE_RELEASE(_programState);
 }
 
@@ -113,8 +116,14 @@ Pass* Pass::clone() const
     if (pass)
     {
         pass->_renderState = _renderState;
+
         pass->setProgramState(_programState->clone());
+
+        pass->_vertexAttribBinding = _vertexAttribBinding;
+        CC_SAFE_RETAIN(pass->_vertexAttribBinding);
+
         pass->setTechnique(_technique);
+
         pass->autorelease();
     }
     return pass;
@@ -251,6 +260,21 @@ Node* Pass::getTarget() const
 void Pass::setTechnique(Technique *technique)
 {
     _technique = technique; //weak reference
+}
+
+void Pass::setVertexAttribBinding(VertexAttribBinding* binding)
+{
+    if (_vertexAttribBinding != binding)
+    {
+        CC_SAFE_RELEASE(_vertexAttribBinding);
+        _vertexAttribBinding = binding;
+        CC_SAFE_RETAIN(_vertexAttribBinding);
+    }
+}
+
+VertexAttribBinding* Pass::getVertexAttributeBinding() const
+{
+    return _vertexAttribBinding;
 }
 
 void Pass::setUniformTexture(uint32_t slot, backend::TextureBackend *tex)

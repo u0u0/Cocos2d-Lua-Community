@@ -37,6 +37,7 @@ NS_CC_BEGIN
 
 class Label;
 class SpriteFrame;
+struct CC_DLL ResourceData;
 
 namespace ui{
 

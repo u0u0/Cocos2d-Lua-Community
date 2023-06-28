@@ -205,6 +205,7 @@ private:
     int handleCommonEvent(void* data);
     int handlerControlEvent(void* data);
     int handleEvenCustom(void* data);
+    int handleArmatureWrapper(ScriptHandlerMgr::HandlerType type,void* data);
     int handleEventAcc(void* data);
     int handleEventKeyboard(ScriptHandlerMgr::HandlerType type,void* data);
     int handleEventTouch(ScriptHandlerMgr::HandlerType type, void* data);

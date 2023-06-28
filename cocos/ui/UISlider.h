@@ -37,6 +37,7 @@ NS_CC_BEGIN
  */
 
 class Sprite;
+struct CC_DLL ResourceData;
 
 namespace ui {
     class Scale9Sprite;

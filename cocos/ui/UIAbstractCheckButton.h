@@ -35,6 +35,7 @@ THE SOFTWARE.
  */
 NS_CC_BEGIN
 class Sprite;
+struct CC_DLL ResourceData;
 
 namespace ui {
     

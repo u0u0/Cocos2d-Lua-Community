@@ -137,6 +137,7 @@ THE SOFTWARE.
 
 // 2d utils
 #include "2d/CCCamera.h"
+#include "2d/CCCameraBackgroundBrush.h"
 #include "2d/CCGrid.h"
 #include "2d/CCLight.h"
 
@@ -241,6 +242,27 @@ THE SOFTWARE.
 // component
 #include "2d/CCComponent.h"
 #include "2d/CCComponentContainer.h"
+
+//3d
+#include "3d/CCAABB.h"
+#include "3d/CCAnimate3D.h"
+#include "3d/CCAnimation3D.h"
+#include "3d/CCAttachNode.h"
+#include "3d/CCBillBoard.h"
+#include "3d/CCFrustum.h"
+#include "3d/CCMesh.h"
+#include "3d/CCMeshSkin.h"
+#include "3d/CCMotionStreak3D.h"
+#include "3d/CCMeshVertexIndexData.h"
+#include "3d/CCOBB.h"
+#include "3d/CCPlane.h"
+#include "3d/CCRay.h"
+#include "3d/CCSkeleton3D.h"
+#include "3d/CCSkybox.h"
+#include "3d/CCSprite3D.h"
+#include "3d/CCSprite3DMaterial.h"
+#include "3d/CCTerrain.h"
+#include "3d/CCVertexAttribBinding.h"
 
 NS_CC_BEGIN
 

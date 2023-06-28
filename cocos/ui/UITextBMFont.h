@@ -36,6 +36,7 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 class Label;
+struct CC_DLL ResourceData;
 
 namespace ui {
     

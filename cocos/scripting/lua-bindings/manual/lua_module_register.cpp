@@ -25,10 +25,15 @@
 #include "scripting/lua-bindings/manual/lua_module_register.h"
 
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
+#include "scripting/lua-bindings/manual/cocostudio/lua_cocos2dx_coco_studio_manual.hpp"
+#include "scripting/lua-bindings/manual/extension/lua_cocos2dx_extension_manual.h"
 #include "scripting/lua-bindings/manual/ui/lua_cocos2dx_ui_manual.hpp"
 #include "scripting/lua-bindings/manual/spine/lua_cocos2dx_spine_manual.hpp"
 #include "scripting/lua-bindings/manual/dragonBones/lua_dragonBones.hpp"
 #include "scripting/lua-bindings/manual/fairygui/lua_fairygui.hpp"
+#include "scripting/lua-bindings/manual/3d/lua_cocos2dx_3d_manual.h"
+#include "scripting/lua-bindings/manual/physics3d/lua_cocos2dx_physics3d_manual.h"
+#include "scripting/lua-bindings/manual/navmesh/lua_cocos2dx_navmesh_manual.h"
 #include "scripting/lua-bindings/manual/audio/lua_audio_manual.h"
 #include "scripting/lua-bindings/manual/extra/lua_extra_manual.h"
 
@@ -38,10 +43,19 @@ int lua_module_register(lua_State* L)
     register_extra_manual_all(L);
     register_audio_module(L);
     register_network_module(L);
+    register_cocostudio_module(L);
     register_ui_module(L);
+    register_extension_module(L);
     register_spine_module(L);
     register_dragonBones_manual(L);
     register_fairygui_manual(L);
+    register_cocos3d_module(L);
+#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
+    register_physics3d_module(L);
+#endif
+#if CC_USE_NAVMESH
+    register_navmesh_module(L);
+#endif
     return 1;
 }
 
