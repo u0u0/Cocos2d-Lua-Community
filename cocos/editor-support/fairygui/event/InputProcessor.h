@@ -36,7 +36,7 @@ public:
     bool touchDown(cocos2d::Touch *touch, cocos2d::Event *event);
     void touchMove(cocos2d::Touch *touch, cocos2d::Event *event);
     void touchUp(cocos2d::Touch *touch, cocos2d::Event *event);
-    void mouseMove(cocos2d::EventMouse* event);
+	void mouseMove(float x, float y);
 
 private:
     bool onTouchBegan(cocos2d::Touch * touch, cocos2d::Event *);
