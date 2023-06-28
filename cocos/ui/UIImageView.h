@@ -35,8 +35,6 @@ THE SOFTWARE.
  */
 NS_CC_BEGIN
 
-struct CC_DLL ResourceData;
-
 namespace ui {
     class Scale9Sprite;
 /**

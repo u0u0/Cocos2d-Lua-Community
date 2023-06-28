@@ -17,7 +17,6 @@
 #include "platform/CCFileUtils.h"
 #include "cocos/audio/RDAudio.h"
 #include "cocos/audio/RDAudioOgg.h"
-#include "cocos/audio/RDAudioAAC.h"
 #include "cocos/audio/RDAudioMP3.h"
 #include "cocos2d.h"
 
@@ -150,13 +149,6 @@ void RDAudio::threadLoop()
             std::string ext = cocos2d::FileUtils::getInstance()->getFileExtension(asyncStruct->filename);
             if (ext == ".ogg") {
                 rtn = decodeOgg(data.getBytes(),
-                                    data.getSize(),
-                                    &asyncStruct->pcmData,
-                                    &asyncStruct->channels,
-                                    &asyncStruct->rate,
-                                    &asyncStruct->size);
-            } else if (ext == ".aac") {
-                rtn = decodeAAC(data.getBytes(),
                                     data.getSize(),
                                     &asyncStruct->pcmData,
                                     &asyncStruct->channels,

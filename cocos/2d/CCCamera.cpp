@@ -26,7 +26,6 @@
 
  ****************************************************************************/
 #include "2d/CCCamera.h"
-#include "2d/CCCameraBackgroundBrush.h"
 #include "base/CCDirector.h"
 #include "platform/CCGLView.h"
 #include "2d/CCScene.h"
@@ -105,13 +104,10 @@ const Camera* Camera::getVisitingCamera()
 
 Camera::Camera()
 {
-    // minggo comment
-    // _frustum.setClipZ(true);
 }
 
 Camera::~Camera()
 {
-    CC_SAFE_RELEASE(_clearBrush);
 }
 
 const Mat4& Camera::getProjectionMatrix() const
@@ -125,7 +121,6 @@ const Mat4& Camera::getViewMatrix() const
     if (memcmp(viewInv.m, _viewInv.m, count) != 0)
     {
         _viewProjectionDirty = true;
-        _frustumDirty = true;
         _viewInv = viewInv;
         _view = viewInv.getInversed();
     }
@@ -223,7 +218,6 @@ bool Camera::initPerspective(float fieldOfView, float aspectRatio, float nearPla
     _farPlane = farPlane;
     Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
     _viewProjectionDirty = true;
-    _frustumDirty = true;
     _type = Type::PERSPECTIVE;
     
     return true;
@@ -237,7 +231,6 @@ bool Camera::initOrthographic(float zoomX, float zoomY, float nearPlane, float f
     _farPlane = farPlane;
     Mat4::createOrthographicOffCenter(0, _zoom[0], 0, _zoom[1], _nearPlane, _farPlane, &_projection);
     _viewProjectionDirty = true;
-    _frustumDirty = true;
     _type = Type::ORTHOGRAPHIC;
     
     return true;
@@ -331,16 +324,6 @@ void Camera::unprojectGL(const Size& viewport, const Vec3* src, Vec3* dst) const
     dst->set(screen.x, screen.y, screen.z);
 }
 
- bool Camera::isVisibleInFrustum(const AABB* aabb) const
- {
-     if (_frustumDirty)
-     {
-         _frustum.initFrustum(this);
-         _frustumDirty = false;
-     }
-     return !_frustum.isOutOfFrustum(*aabb);
- }
-
 float Camera::getDepthInView(const Mat4& transform) const
 {
     Mat4 camWorldMat = getNodeToWorldTransform();
@@ -411,14 +394,6 @@ void Camera::setScene(Scene* scene)
     }
 }
 
-void Camera::clearBackground()
-{
-    if (_clearBrush)
-    {
-        _clearBrush->drawBackground(this);
-    }
-}
-
 void Camera::apply()
 {
     _viewProjectionUpdated = _transformUpdated;
@@ -442,18 +417,6 @@ void Camera::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t par
 {
     _viewProjectionUpdated = _transformUpdated;
     return Node::visit(renderer, parentTransform, parentFlags);
-}
-
-void Camera::setBackgroundBrush(CameraBackgroundBrush* clearBrush)
-{
-    CC_SAFE_RETAIN(clearBrush);
-    CC_SAFE_RELEASE(_clearBrush);
-    _clearBrush = clearBrush;
-}
-
-bool Camera::isBrushValid()
-{
-    return _clearBrush != nullptr && _clearBrush->isValid();
 }
 
 NS_CC_END

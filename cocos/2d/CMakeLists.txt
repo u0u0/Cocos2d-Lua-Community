@@ -38,7 +38,6 @@ set(COCOS_2D_HEADER
     2d/CCFont.h
     2d/CCParticleSystemQuad.h
     2d/CCActionGrid3D.h
-    2d/CCCameraBackgroundBrush.h
     2d/CCLabelTextFormatter.h
     2d/CCFontFNT.h
     2d/CCSpriteBatchNode.h
@@ -82,7 +81,6 @@ set(COCOS_2D_SRC
     2d/CCAnimation.cpp
     2d/CCAtlasNode.cpp
     2d/CCCamera.cpp
-    2d/CCCameraBackgroundBrush.cpp
     2d/CCClippingNode.cpp
     2d/CCClippingRectangleNode.cpp
     2d/CCComponentContainer.cpp

@@ -41,7 +41,6 @@ NS_CC_BEGIN
 
 class Technique;
 class Node;
-class VertexAttribBinding;
 class MeshIndexData;
 class RenderState;
 
@@ -56,7 +55,6 @@ class CC_DLL Pass : public Ref
     friend class Material;
     friend class Technique;
     friend class RenderState;
-    friend class VertexAttribBinding;
 public:
     /** Creates a Pass with a GLProgramState.
      */
@@ -70,23 +68,6 @@ public:
     void draw(MeshCommand *meshCommand, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
               MeshCommand::PrimitiveType primitive, MeshCommand::IndexFormat indexFormat,
               unsigned int indexCount, const Mat4& modelView);
-
-    /**
-     * Sets a vertex attribute binding for this pass.
-     *
-     * When a mesh binding is set, the VertexAttribBinding will be automatically
-     * bound when the bind() method is called for the pass.
-     *
-     * @param binding The VertexAttribBinding to set (or NULL to remove an existing binding).
-     */
-    void setVertexAttribBinding(VertexAttribBinding* binding);
-
-    /**
-     * Returns the vertex attribute binding for this pass.
-     *
-     * @return The vertex attribute binding for this pass.
-     */
-    VertexAttribBinding* getVertexAttributeBinding() const;
 
     void setName(const std::string &name) { _name = name; }
     const std::string &getName() const { return _name; }
@@ -132,7 +113,6 @@ protected:
     void setProgramState(backend::ProgramState* programState);
     Node* getTarget() const;
 
-    VertexAttribBinding*        _vertexAttribBinding    = nullptr;
     backend::ProgramState *     _programState           = nullptr;
     Technique *                 _technique              = nullptr;
     bool                        _hashDirty              = true;
