@@ -2,9 +2,7 @@
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  Copyright (c) 2014 GamePlay3D team
-
- http://www.cocos2d-x.org
-
+ Copyright (c) 2023 cocos2d-lua.org
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -46,7 +44,7 @@ std::string RenderState::getName() const
 }
 
 
-void RenderState::bindPass(Pass* pass, MeshCommand* command)
+void RenderState::bindPass(Pass* pass, CustomCommand* command)
 {
     CC_ASSERT(pass);
     assert(pass->_technique && pass->_technique->_material);

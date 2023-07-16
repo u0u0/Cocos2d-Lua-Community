@@ -3,7 +3,6 @@ set(COCOS_RENDERER_HEADER
     renderer/CCCustomCommand.h
     renderer/CCGroupCommand.h
     renderer/CCMaterial.h
-    renderer/CCMeshCommand.h
     renderer/CCPass.h
     renderer/CCPipelineDescriptor.h
     renderer/CCQuadCommand.h
@@ -45,7 +44,6 @@ set(COCOS_RENDERER_SRC
     renderer/CCCustomCommand.cpp
     renderer/CCGroupCommand.cpp
     renderer/CCMaterial.cpp
-    renderer/CCMeshCommand.cpp
     renderer/CCPass.cpp
     renderer/CCQuadCommand.cpp
     renderer/CCRenderCommand.cpp

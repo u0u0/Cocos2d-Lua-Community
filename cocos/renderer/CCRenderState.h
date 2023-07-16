@@ -2,9 +2,7 @@
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  Copyright (c) 2014 GamePlay3D team
- 
- http://www.cocos2d-x.org
-
+ Copyright (c) 2023 cocos2d-lua.org
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -37,13 +35,12 @@
 
 #include "renderer/CCPipelineDescriptor.h"
 #include "renderer/backend/Types.h"
-#include "renderer/CCMeshCommand.h"
 
 NS_CC_BEGIN
 
 class Texture2D;
 class Pass;
-class MeshCommand;
+class CustomCommand;
 
 using CullFaceSide = backend::CullMode;
 using FrontFace = backend::Winding;
@@ -66,7 +63,7 @@ public:
      * Binds the render state for this RenderState and any of its parents, top-down,
      * for the given pass.
      */
-    void bindPass(Pass* pass, MeshCommand *);
+    void bindPass(Pass* pass, CustomCommand *);
 
 
     /**

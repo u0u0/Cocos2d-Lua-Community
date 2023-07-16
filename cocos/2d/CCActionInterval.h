@@ -4,8 +4,7 @@ Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
-http://www.cocos2d-x.org
+Copyright (c) 2023 cocos2d-lua.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -467,7 +466,6 @@ CC_CONSTRUCTOR_ACCESS:
     void calculateAngles(float &startAngle, float &diffAngle, float dstAngle);
     
 protected:
-    bool _is3D;
     Vec3 _dstAngle;
     Vec3 _startAngle;
     Vec3 _diffAngle;
@@ -534,7 +532,6 @@ CC_CONSTRUCTOR_ACCESS:
     bool initWithDuration(float duration, const Vec3& deltaAngle3D);
     
 protected:
-    bool _is3D;
     Vec3 _deltaAngle;
     Vec3 _startAngle;
 
@@ -581,7 +578,7 @@ public:
     virtual void update(float time) override;
     
 CC_CONSTRUCTOR_ACCESS:
-    MoveBy():_is3D(false) {}
+    MoveBy() {}
     virtual ~MoveBy() {}
 
     /** initializes the action */
@@ -589,7 +586,6 @@ CC_CONSTRUCTOR_ACCESS:
     bool initWithDuration(float duration, const Vec3& deltaPosition);
 
 protected:
-    bool _is3D;
     Vec3 _positionDelta;
     Vec3 _startPosition;
     Vec3 _previousPosition;

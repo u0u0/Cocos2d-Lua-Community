@@ -83070,11 +83070,11 @@ int lua_cocos2dx_RenderState_bindPass(lua_State* tolua_S)
     if (argc == 2) 
     {
         cocos2d::Pass* arg0;
-        cocos2d::MeshCommand* arg1;
+        cocos2d::CustomCommand* arg1;
 
         ok &= luaval_to_object<cocos2d::Pass>(tolua_S, 2, "cc.Pass",&arg0, "cc.RenderState:bindPass");
 
-        ok &= luaval_to_object<cocos2d::MeshCommand>(tolua_S, 3, "cc.MeshCommand",&arg1, "cc.RenderState:bindPass");
+        ok &= luaval_to_object<cocos2d::CustomCommand>(tolua_S, 3, "cc.CustomCommand",&arg1, "cc.RenderState:bindPass");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_RenderState_bindPass'", nullptr);
@@ -83630,7 +83630,7 @@ int lua_cocos2dx_Material_draw(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 8) 
     {
-        cocos2d::MeshCommand* arg0;
+        cocos2d::CustomCommand* arg0;
         double arg1;
         cocos2d::backend::Buffer* arg2;
         cocos2d::backend::Buffer* arg3;
@@ -83639,7 +83639,7 @@ int lua_cocos2dx_Material_draw(lua_State* tolua_S)
         unsigned int arg6;
         cocos2d::Mat4 arg7;
 
-        ok &= luaval_to_object<cocos2d::MeshCommand>(tolua_S, 2, "cc.MeshCommand",&arg0, "cc.Material:draw");
+        ok &= luaval_to_object<cocos2d::CustomCommand>(tolua_S, 2, "cc.CustomCommand",&arg0, "cc.Material:draw");
 
         ok &= luaval_to_number(tolua_S, 3,&arg1, "cc.Material:draw");
 
@@ -84846,7 +84846,7 @@ int lua_cocos2dx_Pass_draw(lua_State* tolua_S)
     argc = lua_gettop(tolua_S)-1;
     if (argc == 8) 
     {
-        cocos2d::MeshCommand* arg0;
+        cocos2d::CustomCommand* arg0;
         double arg1;
         cocos2d::backend::Buffer* arg2;
         cocos2d::backend::Buffer* arg3;
@@ -84855,7 +84855,7 @@ int lua_cocos2dx_Pass_draw(lua_State* tolua_S)
         unsigned int arg6;
         cocos2d::Mat4 arg7;
 
-        ok &= luaval_to_object<cocos2d::MeshCommand>(tolua_S, 2, "cc.MeshCommand",&arg0, "cc.Pass:draw");
+        ok &= luaval_to_object<cocos2d::CustomCommand>(tolua_S, 2, "cc.CustomCommand",&arg0, "cc.Pass:draw");
 
         ok &= luaval_to_number(tolua_S, 3,&arg1, "cc.Pass:draw");
 

@@ -1,9 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- Copyright (c) 2021 cocos2d-lua.org
-
- http://www.cocos2d-x.org
+ Copyright (c) 2021-2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +29,6 @@
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCCallbackCommand.h"
 #include "renderer/CCGroupCommand.h"
-#include "renderer/CCMeshCommand.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCTechnique.h"
 #include "renderer/CCPass.h"
@@ -69,31 +66,17 @@ RenderQueue::RenderQueue()
 void RenderQueue::push_back(RenderCommand* command)
 {
     float z = command->getGlobalOrder();
-    if(z < 0)
+    if (z < 0)
     {
         _commands[QUEUE_GROUP::GLOBALZ_NEG].push_back(command);
     }
-    else if(z > 0)
+    else if (z > 0)
     {
         _commands[QUEUE_GROUP::GLOBALZ_POS].push_back(command);
     }
     else
     {
-        if(command->is3D())
-        {
-            if(command->isTransparent())
-            {
-                _commands[QUEUE_GROUP::TRANSPARENT_3D].push_back(command);
-            }
-            else
-            {
-                _commands[QUEUE_GROUP::OPAQUE_3D].push_back(command);
-            }
-        }
-        else
-        {
-            _commands[QUEUE_GROUP::GLOBALZ_ZERO].push_back(command);
-        }
+        _commands[QUEUE_GROUP::GLOBALZ_ZERO].push_back(command);
     }
 }
 
@@ -111,7 +94,6 @@ ssize_t RenderQueue::size() const
 void RenderQueue::sort()
 {
     // Don't sort _queue0, it already comes sorted
-    std::stable_sort(std::begin(_commands[QUEUE_GROUP::TRANSPARENT_3D]), std::end(_commands[QUEUE_GROUP::TRANSPARENT_3D]), compare3DCommand);
     std::stable_sort(std::begin(_commands[QUEUE_GROUP::GLOBALZ_NEG]), std::end(_commands[QUEUE_GROUP::GLOBALZ_NEG]), compareRenderCommand);
     std::stable_sort(std::begin(_commands[QUEUE_GROUP::GLOBALZ_POS]), std::end(_commands[QUEUE_GROUP::GLOBALZ_POS]), compareRenderCommand);
 }
@@ -321,22 +303,6 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
     doVisitRenderQueue(queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_NEG));
 
     //
-    //Process Opaque Object
-    //
-    pushStateBlock();
-    setDepthTest(true); //enable depth test in 3D queue by default
-    setDepthWrite(true);
-    setCullMode(backend::CullMode::BACK);
-    doVisitRenderQueue(queue.getSubQueue(RenderQueue::QUEUE_GROUP::OPAQUE_3D));
-    
-    //
-    //Process 3D Transparent object
-    //
-    setDepthWrite(false);
-    doVisitRenderQueue(queue.getSubQueue(RenderQueue::QUEUE_GROUP::TRANSPARENT_3D));
-    popStateBlock();
-
-    //
     //Process Global-Z = 0 Queue
     //
     doVisitRenderQueue(queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_ZERO));
@@ -345,7 +311,6 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
     //Process Global-Z > 0 Queue
     //
     doVisitRenderQueue(queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_POS));
-
 }
 
 void Renderer::doVisitRenderQueue(const std::vector<RenderCommand*>& renderCommands)

@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -87,10 +86,6 @@ public:
     bool isSkipBatching() const { return _skipBatching; }
     /**Set skip batching.*/
     void setSkipBatching(bool value) { _skipBatching = value; }
-    /**Whether the command should be rendered at 3D mode.*/
-    bool is3D() const { return _is3D; }
-    /**Set the command rendered in 3D mode or not.*/
-    void set3D(bool value) { _is3D = value; }
     /**Get the depth by current model view matrix.*/
     float getDepth() const { return _depth; }
     /// Can use the result to change the descriptor content.
@@ -120,9 +115,6 @@ protected:
      a command is skip batching, it would be forced to draw in a separate function call, and break the batch.
      */
     bool _skipBatching = false;
-    
-    /** Is the command been rendered on 3D pass. */
-    bool _is3D = false;
     
     /** Depth from the model view matrix.*/
     float _depth = 0.f;

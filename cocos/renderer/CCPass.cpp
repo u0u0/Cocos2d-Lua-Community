@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -169,24 +168,23 @@ void Pass::initUniformLocations()
     _locAmbientLigthColor = ps->getUniformLocation(s_ambientLightUniformColorName);
 }
 
-void Pass::draw(MeshCommand *meshCommand, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
-                MeshCommand::PrimitiveType primitive, MeshCommand::IndexFormat indexFormat,
+void Pass::draw(CustomCommand *cmd, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
+    CustomCommand::PrimitiveType primitive, CustomCommand::IndexFormat indexFormat,
                 unsigned int indexCount, const Mat4& modelView)
 {
-
-    meshCommand->setBeforeCallback(CC_CALLBACK_0(Pass::onBeforeVisitCmd, this, meshCommand));
-    meshCommand->setAfterCallback(CC_CALLBACK_0(Pass::onAfterVisitCmd, this, meshCommand));
-    meshCommand->init(globalZOrder, modelView);
-    meshCommand->setPrimitiveType(primitive);
-    meshCommand->setIndexBuffer(indexBuffer, indexFormat);
-    meshCommand->setVertexBuffer(vertexBuffer);
-    meshCommand->setIndexDrawInfo(0, indexCount);
-    meshCommand->getPipelineDescriptor().programState = _programState;
+    cmd->setBeforeCallback(CC_CALLBACK_0(Pass::onBeforeVisitCmd, this, cmd));
+    cmd->setAfterCallback(CC_CALLBACK_0(Pass::onAfterVisitCmd, this, cmd));
+    cmd->init(globalZOrder, modelView, 0);
+    cmd->setPrimitiveType(primitive);
+    cmd->setIndexBuffer(indexBuffer, indexFormat);
+    cmd->setVertexBuffer(vertexBuffer);
+    cmd->setIndexDrawInfo(0, indexCount);
+    cmd->getPipelineDescriptor().programState = _programState;
 
 
     auto *renderer = Director::getInstance()->getRenderer();
 
-    renderer->addCommand(meshCommand);
+    renderer->addCommand(cmd);
 }
 
 void Pass::updateMVPUniform(const Mat4& modelView)
@@ -212,7 +210,7 @@ void Pass::updateMVPUniform(const Mat4& modelView)
 
 }
 
-void Pass::onBeforeVisitCmd(MeshCommand *command)
+void Pass::onBeforeVisitCmd(CustomCommand *command)
 {
     auto *renderer = Director::getInstance()->getRenderer();
 
@@ -228,7 +226,7 @@ void Pass::onBeforeVisitCmd(MeshCommand *command)
     updateMVPUniform(command->getMV());
 }
 
-void Pass::onAfterVisitCmd(MeshCommand *command)
+void Pass::onAfterVisitCmd(CustomCommand *command)
 {
     auto *renderer = Director::getInstance()->getRenderer();
     // restore renderer states

@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +63,7 @@ class CC_DLL Material :public Ref
     friend class Node;
     friend class Technique;
     friend class Pass;
-    friend class MeshCommand;
+    friend class CustomCommand;
     friend class Renderer;
     friend class Mesh;
     friend class RenderState;
@@ -96,7 +95,7 @@ public:
      */
     static Material* createWithProperties(Properties* materialProperties);
 
-    void draw(MeshCommand* meshCommand, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
+    void draw(CustomCommand *cmds, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
               CustomCommand::PrimitiveType primitive, CustomCommand::IndexFormat indexFormat,
               unsigned int indexCount, const Mat4& modelView);
 

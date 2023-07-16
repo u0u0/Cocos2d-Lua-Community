@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +53,7 @@ namespace backend
 
 class EventListenerCustom;
 class TrianglesCommand;
-class MeshCommand;
+class CustomCommand;
 class GroupCommand;
 class CallbackCommand;
 struct PipelineDescriptor;
@@ -75,15 +74,11 @@ public:
     {
         /**Objects with globalZ smaller than 0.*/
         GLOBALZ_NEG = 0,
-        /**Opaque 3D objects with 0 globalZ.*/
-        OPAQUE_3D = 1,
-        /**Transparent 3D objects with 0 globalZ.*/
-        TRANSPARENT_3D = 2,
         /**2D objects with 0 globalZ.*/
-        GLOBALZ_ZERO = 3,
+        GLOBALZ_ZERO = 1,
         /**Objects with globalZ bigger than 0.*/
-        GLOBALZ_POS = 4,
-        QUEUE_COUNT = 5,
+        GLOBALZ_POS = 2,
+        QUEUE_COUNT = 3,
     };
 
 public:

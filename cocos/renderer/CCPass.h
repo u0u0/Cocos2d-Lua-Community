@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +32,6 @@
 
 #include "platform/CCPlatformMacros.h"
 #include "renderer/CCRenderState.h"
-#include "renderer/CCMeshCommand.h"
 #include "renderer/CCGroupCommand.h"
 #include "renderer/CCCallbackCommand.h"
 
@@ -65,8 +63,8 @@ public:
     /** Returns the ProgramState */
     backend::ProgramState* getProgramState() const;
 
-    void draw(MeshCommand *meshCommand, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
-              MeshCommand::PrimitiveType primitive, MeshCommand::IndexFormat indexFormat,
+    void draw(CustomCommand *cmd, float globalZOrder, backend::Buffer* vertexBuffer, backend::Buffer* indexBuffer,
+        CustomCommand::PrimitiveType primitive, CustomCommand::IndexFormat indexFormat,
               unsigned int indexCount, const Mat4& modelView);
 
     void setName(const std::string &name) { _name = name; }
@@ -122,8 +120,8 @@ protected:
 private:
     
     void initUniformLocations();
-    void onBeforeVisitCmd(MeshCommand *);
-    void onAfterVisitCmd(MeshCommand *);
+    void onBeforeVisitCmd(CustomCommand *);
+    void onAfterVisitCmd(CustomCommand *);
 
     backend::UniformLocation _locMVPMatrix;
     backend::UniformLocation _locMVMatrix;

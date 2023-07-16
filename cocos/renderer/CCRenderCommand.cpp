@@ -1,8 +1,7 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-
- http://www.cocos2d-x.org
+ Copyright (c) 2023 cocos2d-lua.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -40,18 +39,7 @@ RenderCommand::~RenderCommand()
 void RenderCommand::init(float globalZOrder, const cocos2d::Mat4 &transform, unsigned int flags)
 {
     _globalOrder = globalZOrder;
-    if (flags & Node::FLAGS_RENDER_AS_3D)
-    {
-        if (Camera::getVisitingCamera())
-            _depth = Camera::getVisitingCamera()->getDepthInView(transform);
-        
-        set3D(true);
-    }
-    else
-    {
-        set3D(false);
-        _depth = 0;
-    }
+    _depth = 0;
 }
 
 void RenderCommand::printID()
