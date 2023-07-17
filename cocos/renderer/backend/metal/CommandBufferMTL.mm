@@ -213,19 +213,16 @@ namespace
 
 CommandBufferMTL::CommandBufferMTL(DeviceMTL* deviceMTL)
 : _mtlCommandQueue(deviceMTL->getMTLCommandQueue())
-, _frameBoundarySemaphore(dispatch_semaphore_create(MAX_INFLIGHT_BUFFER))
 {
 }
 
 CommandBufferMTL::~CommandBufferMTL()
 {
-    dispatch_semaphore_signal(_frameBoundarySemaphore);
 }
 
 void CommandBufferMTL::beginFrame()
 {
     _autoReleasePool = [[NSAutoreleasePool alloc] init];
-    dispatch_semaphore_wait(_frameBoundarySemaphore, DISPATCH_TIME_FOREVER);
 
     _mtlCommandBuffer = [_mtlCommandQueue commandBuffer];
     [_mtlCommandBuffer enqueue];
@@ -362,13 +359,8 @@ void CommandBufferMTL::endFrame()
     
     [_mtlCommandBuffer presentDrawable:DeviceMTL::getCurrentDrawable()];
     _drawableTexture = DeviceMTL::getCurrentDrawable().texture;
-    [_mtlCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> commandBuffer) {
-        // GPU work is complete
-        // Signal the semaphore to start the CPU work
-        dispatch_semaphore_signal(_frameBoundarySemaphore);
-    }];
-
     [_mtlCommandBuffer commit];
+    [_mtlCommandBuffer waitUntilCompleted];
     [_mtlCommandBuffer release];
     DeviceMTL::resetCurrentDrawable();
     [_autoReleasePool drain];

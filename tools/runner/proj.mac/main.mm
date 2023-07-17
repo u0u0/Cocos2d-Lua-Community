@@ -111,12 +111,12 @@ int main(int argc, char *argv[])
     // create after GLView inited
     ConsoleWindowController *consoleController = [[ConsoleWindowController alloc] initWithWindowNibName:@"ConsoleWindow"];
     [consoleController.window orderFrontRegardless];
-#endif
 
     std::string logPath = cmd->getLogPath();
     if (logPath.size() > 0) {
         [consoleController openLogToFile:logPath.c_str()];
     }
+#endif
     
     setupMenu();// after GLView inited
 

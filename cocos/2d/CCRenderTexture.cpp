@@ -637,9 +637,18 @@ void RenderTexture::end()
     CCASSERT(nullptr != director, "Director is null when setting matrix stack");
     
     Renderer *renderer = director->getRenderer();
+    // render may call from touch event callback, and it not in Director drawScene circle.
+    // need beginFrame for metal render backend, or render will crash
+    bool isInitFramed = renderer->isBeginFrame();
+    if (!isInitFramed) {
+        renderer->beginFrame();
+    }
     renderer->addCommand(&_endCommand);
     renderer->popGroup();
     renderer->render();
+    if (!isInitFramed) {
+        renderer->endFrame();
+    }
 
     director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
     director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
