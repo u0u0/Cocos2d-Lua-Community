@@ -405,6 +405,10 @@ public:
     /** returns whether or not a rectangle is visible or not */
     bool checkVisibility(const Mat4& transform, const Size& size);
     
+    bool isBeginFrame() { return _isBeginFrame;};
+    void beginFrame(); /// Indicate the begining of a frame
+    void endFrame(); /// Finish a frame.
+    
 protected:
     friend class Director;
     friend class GroupCommand;
@@ -451,9 +455,6 @@ protected:
     void drawCustomCommand(RenderCommand* command);
     void drawMeshCommand(RenderCommand* command);
     void captureScreen(RenderCommand* command);
-
-    void beginFrame(); /// Indicate the begining of a frame
-    void endFrame(); /// Finish a frame.
 
     ///Draw the previews queued triangles and flush previous context
     void flush();
@@ -532,6 +533,7 @@ protected:
     //the flag for checking whether renderer is rendering
     bool _isRendering = false;
     bool _isDepthTestFor2D = false;
+    bool _isBeginFrame = false;
         
     GroupCommandManager* _groupCommandManager = nullptr;
 

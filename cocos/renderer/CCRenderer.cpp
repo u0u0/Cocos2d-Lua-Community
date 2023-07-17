@@ -378,10 +378,12 @@ void Renderer::render()
 void Renderer::beginFrame()
 {
     _commandBuffer->beginFrame();
+    _isBeginFrame = true;
 }
 
 void Renderer::endFrame()
 {
+    _isBeginFrame = false;
     _commandBuffer->endFrame();
 
 #ifdef CC_USE_METAL
