@@ -42,7 +42,6 @@ THE SOFTWARE.
 #include "2d/CCActionManager.h"
 #include "2d/CCScene.h"
 #include "2d/CCComponent.h"
-#include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 
 

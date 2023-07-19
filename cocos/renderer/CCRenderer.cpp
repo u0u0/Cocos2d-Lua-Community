@@ -29,9 +29,6 @@
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCCallbackCommand.h"
 #include "renderer/CCGroupCommand.h"
-#include "renderer/CCMaterial.h"
-#include "renderer/CCTechnique.h"
-#include "renderer/CCPass.h"
 #include "renderer/CCTexture2D.h"
 
 #include "base/CCConfiguration.h"

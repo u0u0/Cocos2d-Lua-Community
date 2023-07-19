@@ -29,11 +29,9 @@
 #include <cassert>
 
 #include "renderer/CCTexture2D.h"
-#include "renderer/CCPass.h"
 #include "base/ccUtils.h"
 #include "base/CCDirector.h"
 #include "renderer/CCRenderer.h"
-#include "renderer/CCMaterial.h"
 
 NS_CC_BEGIN
 
@@ -43,38 +41,10 @@ std::string RenderState::getName() const
     return _name;
 }
 
-
-void RenderState::bindPass(Pass* pass, CustomCommand* command)
-{
-    CC_ASSERT(pass);
-    assert(pass->_technique && pass->_technique->_material);
-    auto *technique = pass->_technique;
-    auto *material = technique->_material;
-    auto &pipelineDescriptor = command->getPipelineDescriptor();
-
-    //need reset all state
-    //pipelineDescriptor.blendDescriptor.blendEnabled = true;
-
-    // Get the combined modified state bits for our RenderState hierarchy.
-    long overrideBits = _state._modifiedBits;
-    overrideBits |= technique->getStateBlock()._modifiedBits;
-    overrideBits |= material->getStateBlock()._modifiedBits;
-
-    // Restore renderer state to its default, except for explicitly specified states
-    RenderState::StateBlock::restoreUnmodifiedStates(overrideBits, &pipelineDescriptor);
-
-    material->getStateBlock().apply(&pipelineDescriptor);
-    technique->getStateBlock().apply(&pipelineDescriptor);
-    _state.apply(&pipelineDescriptor);
-
-}
-
-
 RenderState::StateBlock& RenderState::getStateBlock() const
 {
     return _state;
 }
-
 
 void RenderState::StateBlock::bind(PipelineDescriptor *pipelineDescriptor)
 {

@@ -246,48 +246,6 @@ public:
                                             float zNearPlane, float zFarPlane, Mat4* dst);
 
     /**
-     * Creates a spherical billboard that rotates around a specified object position.
-     *
-     * This method computes the facing direction of the billboard from the object position
-     * and camera position. When the object and camera positions are too close, the matrix
-     * will not be accurate. To avoid this problem, this method defaults to the identity
-     * rotation if the positions are too close. (See the other overload of createBillboard
-     * for an alternative approach).
-     *
-     * @param objectPosition The position of the object the billboard will rotate around.
-     * @param cameraPosition The position of the camera.
-     * @param cameraUpVector The up vector of the camera.
-     * @param dst A matrix to store the result in.
-     */
-    static void createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
-                                const Vec3& cameraUpVector, Mat4* dst);
-
-    /**
-     * Creates a spherical billboard that rotates around a specified object position with
-     * provision for a safe default orientation.
-     *
-     * This method computes the facing direction of the billboard from the object position
-     * and camera position. When the object and camera positions are too close, the matrix
-     * will not be accurate. To avoid this problem, this method uses the specified camera
-     * forward vector if the positions are too close. (See the other overload of createBillboard
-     * for an alternative approach).
-     *
-     * @param objectPosition The position of the object the billboard will rotate around.
-     * @param cameraPosition The position of the camera.
-     * @param cameraUpVector The up vector of the camera.
-     * @param cameraForwardVector The forward vector of the camera, used if the positions are too close.
-     * @param dst A matrix to store the result in.
-     */
-    static void createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
-                                const Vec3& cameraUpVector, const Vec3& cameraForwardVector,
-                                Mat4* dst);
-
-    //Fills in an existing Mat4 so that it reflects the coordinate system about a specified Plane.
-    //plane The Plane about which to create a reflection.
-    //dst A matrix to store the result in.
-    //static void createReflection(const Plane& plane, Mat4* dst);
-
-    /**
      * Creates a scale matrix.
      *
      * @param scale The amount to scale.
@@ -936,12 +894,6 @@ public:
     static const Mat4 ZERO;
     /** equals to the identity matrix */
     static const Mat4 IDENTITY;
-
-private:
-
-    static void createBillboardHelper(const Vec3& objectPosition, const Vec3& cameraPosition,
-                                      const Vec3& cameraUpVector, const Vec3* cameraForwardVector,
-                                      Mat4* dst);
 };
 
 /**

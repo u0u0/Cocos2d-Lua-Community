@@ -57,21 +57,4 @@ NS_CC_BEGIN
 #include "renderer/shaders/cameraClear.vert"
 #include "renderer/shaders/cameraClear.frag"
 
-
-#include "renderer/shaders/3D_color.frag"
-#include "renderer/shaders/3D_colorNormal.frag"
-#include "renderer/shaders/3D_colorNormalTexture.frag"
-#include "renderer/shaders/3D_colorTexture.frag"
-#include "renderer/shaders/3D_particle.vert"
-#include "renderer/shaders/3D_particle.frag"
-#include "renderer/shaders/3D_positionNormalTexture.vert"
-#include "renderer/shaders/3D_positionTexture.vert"
-#include "renderer/shaders/3D_skybox.vert"
-#include "renderer/shaders/3D_skybox.frag"
-#include "renderer/shaders/3D_terrain.frag"
-#include "renderer/shaders/3D_terrain.vert"
-
-#include "renderer/shaders/lineColor.frag"
-#include "renderer/shaders/lineColor.vert"
-
 NS_CC_END

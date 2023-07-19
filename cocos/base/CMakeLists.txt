@@ -43,7 +43,6 @@ set(COCOS_BASE_HEADER
     base/CCRef.h
     base/CCProfiling.h
     base/ObjectFactory.h
-    base/CCProperties.h
     base/CCVector.h
     base/CCEventCustom.h
     base/CCEventKeyboard.h
@@ -111,7 +110,6 @@ set(COCOS_BASE_SRC
     base/CCIMEDispatcher.cpp
     base/CCNS.cpp
     base/CCProfiling.cpp
-    base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp
     base/CCScriptSupport.cpp

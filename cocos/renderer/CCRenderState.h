@@ -56,15 +56,7 @@ class CC_DLL RenderState : public Ref
     friend class Pass;
 
 public:
-
     std::string getName() const;
-
-    /**
-     * Binds the render state for this RenderState and any of its parents, top-down,
-     * for the given pass.
-     */
-    void bindPass(Pass* pass, CustomCommand *);
-
 
     /**
      * Defines a block of fixed-function render states that can be applied to a

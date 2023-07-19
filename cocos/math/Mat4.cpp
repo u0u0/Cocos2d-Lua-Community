@@ -167,71 +167,6 @@ void Mat4::createOrthographicOffCenter(float left, float right, float bottom, fl
     dst->m[14] = zNearPlane / (zNearPlane - zFarPlane);
 #endif
 }
-    
-void Mat4::createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
-                             const Vec3& cameraUpVector, Mat4* dst)
-{
-    createBillboardHelper(objectPosition, cameraPosition, cameraUpVector, nullptr, dst);
-}
-
-void Mat4::createBillboard(const Vec3& objectPosition, const Vec3& cameraPosition,
-                             const Vec3& cameraUpVector, const Vec3& cameraForwardVector,
-                             Mat4* dst)
-{
-    createBillboardHelper(objectPosition, cameraPosition, cameraUpVector, &cameraForwardVector, dst);
-}
-
-void Mat4::createBillboardHelper(const Vec3& objectPosition, const Vec3& cameraPosition,
-                                   const Vec3& cameraUpVector, const Vec3* cameraForwardVector,
-                                   Mat4* dst)
-{
-    Vec3 delta(objectPosition, cameraPosition);
-    bool isSufficientDelta = delta.lengthSquared() > MATH_EPSILON;
-
-    dst->setIdentity();
-    dst->m[3] = objectPosition.x;
-    dst->m[7] = objectPosition.y;
-    dst->m[11] = objectPosition.z;
-
-    // As per the contracts for the 2 variants of createBillboard, we need
-    // either a safe default or a sufficient distance between object and camera.
-    if (cameraForwardVector || isSufficientDelta)
-    {
-        Vec3 target = isSufficientDelta ? cameraPosition : (objectPosition - *cameraForwardVector);
-
-        // A billboard is the inverse of a lookAt rotation
-        Mat4 lookAt;
-        createLookAt(objectPosition, target, cameraUpVector, &lookAt);
-        dst->m[0] = lookAt.m[0];
-        dst->m[1] = lookAt.m[4];
-        dst->m[2] = lookAt.m[8];
-        dst->m[4] = lookAt.m[1];
-        dst->m[5] = lookAt.m[5];
-        dst->m[6] = lookAt.m[9];
-        dst->m[8] = lookAt.m[2];
-        dst->m[9] = lookAt.m[6];
-        dst->m[10] = lookAt.m[10];
-    }
-}
-    
-// void Mat4::createReflection(const Plane& plane, Mat4* dst)
-// {
-//     Vec3 normal(plane.getNormal());
-//     float k = -2.0f * plane.getDistance();
-
-//     dst->setIdentity();
-
-//     dst->m[0] -= 2.0f * normal.x * normal.x;
-//     dst->m[5] -= 2.0f * normal.y * normal.y;
-//     dst->m[10] -= 2.0f * normal.z * normal.z;
-//     dst->m[1] = dst->m[4] = -2.0f * normal.x * normal.y;
-//     dst->m[2] = dst->m[8] = -2.0f * normal.x * normal.z;
-//     dst->m[6] = dst->m[9] = -2.0f * normal.y * normal.z;
-    
-//     dst->m[3] = k * normal.x;
-//     dst->m[7] = k * normal.y;
-//     dst->m[11] = k * normal.z;
-// }
 
 void Mat4::createScale(const Vec3& scale, Mat4* dst)
 {
@@ -254,7 +189,6 @@ void Mat4::createScale(float xScale, float yScale, float zScale, Mat4* dst)
     dst->m[5] = yScale;
     dst->m[10] = zScale;
 }
-
 
 void Mat4::createRotation(const Quaternion& q, Mat4* dst)
 {

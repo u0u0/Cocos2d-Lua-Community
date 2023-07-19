@@ -347,20 +347,6 @@ enum class ProgramType : size_t
     ETC1_GRAY,                              //positionTextureColor_vert,    etc1Gray_frag
     GRAY_SCALE,                             //positionTextureColor_vert,    grayScale_frag
     CAMERA_CLEAR,                           //cameraClear_vert,             cameraClear_frag
-    
-    TERRAIN_3D,                             //CC3D_terrain_vert,                    CC3D_terrain_frag
-    LINE_COLOR_3D,                          //lineColor3D_vert,                     lineColor3D_frag
-    SKYBOX_3D,                              //CC3D_skybox_vert,                     CC3D_skybox_frag
-    SKINPOSITION_TEXTURE_3D,                //CC3D_skinPositionTexture_vert,        CC3D_colorTexture_frag
-    SKINPOSITION_NORMAL_TEXTURE_3D,         //CC3D_skinPositionNormalTexture_vert,  CC3D_colorNormalTexture_frag
-    POSITION_NORMAL_TEXTURE_3D,             //CC3D_positionNormalTexture_vert,      CC3D_colorNormalTexture_frag
-    POSITION_NORMAL_3D,                     //CC3D_positionNormalTexture_vert,      CC3D_colorNormal_frag
-    POSITION_TEXTURE_3D,                    //CC3D_positionTexture_vert,            CC3D_colorTexture_frag
-    POSITION_3D,                            //CC3D_positionTexture_vert,            CC3D_color_frag
-    POSITION_BUMPEDNORMAL_TEXTURE_3D,       //CC3D_positionNormalTexture_vert,      CC3D_colorNormalTexture_frag
-    SKINPOSITION_BUMPEDNORMAL_TEXTURE_3D,   //CC3D_skinPositionNormalTexture_vert,  CC3D_colorNormalTexture_frag
-    PARTICLE_TEXTURE_3D,                    //CC3D_particle_vert,                   CC3D_particleTexture_frag
-    PARTICLE_COLOR_3D,                      //CC3D_particle_vert,                   CC3D_particleColor_frag
 
     CUSTOM_PROGRAM,                         //user-define program
 };

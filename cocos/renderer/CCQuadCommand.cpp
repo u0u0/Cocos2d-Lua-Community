@@ -26,10 +26,7 @@
 
 #include "renderer/CCQuadCommand.h"
 
-#include "renderer/CCMaterial.h"
-#include "renderer/CCTechnique.h"
 #include "renderer/CCRenderer.h"
-#include "renderer/CCPass.h"
 #include "renderer/CCTexture2D.h"
 #include "base/ccUtils.h"
 

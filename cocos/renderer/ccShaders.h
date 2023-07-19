@@ -48,8 +48,6 @@ extern CC_DLL const char * label_normal_frag;
 extern CC_DLL const char * label_distanceNormal_frag;
 extern CC_DLL const char * labelOutline_frag;
 extern CC_DLL const char * labelDistanceFieldGlow_frag;
-extern CC_DLL const char * lineColor3D_frag;
-extern CC_DLL const char * lineColor3D_vert;
 extern CC_DLL const char * positionColorLengthTexture_vert;
 extern CC_DLL const char * positionColorLengthTexture_frag;
 extern CC_DLL const char * positionColorTextureAsPointsize_vert;
@@ -66,21 +64,6 @@ extern CC_DLL const char * etc1Gray_frag;
 extern CC_DLL const char * cameraClear_vert;
 extern CC_DLL const char * cameraClear_frag;
 
-extern CC_DLL const char * CC3D_color_frag;
-extern CC_DLL const char * CC3D_colorNormal_frag;
-extern CC_DLL const char * CC3D_colorNormalTexture_frag;
-extern CC_DLL const char * CC3D_colorTexture_frag;
-extern CC_DLL const char * CC3D_particleTexture_frag;
-extern CC_DLL const char * CC3D_particleColor_frag;
-extern CC_DLL const char * CC3D_particle_vert;
-extern CC_DLL const char * CC3D_positionNormalTexture_vert;
-extern CC_DLL const char * CC3D_skinPositionNormalTexture_vert;
-extern CC_DLL const char * CC3D_positionTexture_vert;
-extern CC_DLL const char * CC3D_skinPositionTexture_vert;
-extern CC_DLL const char * CC3D_skybox_frag;
-extern CC_DLL const char * CC3D_skybox_vert;
-extern CC_DLL const char * CC3D_terrain_frag;
-extern CC_DLL const char * CC3D_terrain_vert;
 NS_CC_END
 /**
  end of support group

@@ -403,12 +403,6 @@ cc.CameraFlag =
     USER7 = 128,
     USER8 = 256,
 }
--- 3D BillBoard
-cc.BillBoard_Mode =
-{
-    VIEW_POINT_ORIENTED = 0,
-    VIEW_PLANE_ORIENTED = 1,
-}
 -- light
 cc.LightType = 
 {

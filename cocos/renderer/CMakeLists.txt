@@ -2,15 +2,12 @@ set(COCOS_RENDERER_HEADER
     renderer/CCCallbackCommand.h
     renderer/CCCustomCommand.h
     renderer/CCGroupCommand.h
-    renderer/CCMaterial.h
-    renderer/CCPass.h
     renderer/CCPipelineDescriptor.h
     renderer/CCQuadCommand.h
     renderer/CCRenderCommand.h
     renderer/CCRenderCommandPool.h
     renderer/CCRenderState.h
     renderer/CCRenderer.h
-    renderer/CCTechnique.h
     renderer/CCTexture2D.h
     renderer/CCTextureAtlas.h
     renderer/CCTextureCache.h
@@ -43,13 +40,10 @@ set(COCOS_RENDERER_SRC
     renderer/CCCallbackCommand.cpp
     renderer/CCCustomCommand.cpp
     renderer/CCGroupCommand.cpp
-    renderer/CCMaterial.cpp
-    renderer/CCPass.cpp
     renderer/CCQuadCommand.cpp
     renderer/CCRenderCommand.cpp
     renderer/CCRenderState.cpp
     renderer/CCRenderer.cpp
-    renderer/CCTechnique.cpp
     renderer/CCTexture2D.cpp
     renderer/CCTextureAtlas.cpp
     renderer/CCTextureCache.cpp
