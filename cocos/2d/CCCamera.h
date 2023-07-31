@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2014-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2019 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -204,21 +205,6 @@ public:
     float getDepthInView(const Mat4& transform) const;
     
     /**
-     * set depth, camera with larger depth is drawn on top of camera with smaller depth, the depth of camera with CameraFlag::DEFAULT is 0, user defined camera is -1 by default
-     */
-    void setDepth(int8_t depth);
-    
-    /**
-     * get depth, camera with larger depth is drawn on top of camera with smaller depth, the depth of camera with CameraFlag::DEFAULT is 0, user defined camera is -1 by default
-     */
-    int8_t getDepth() const { return _depth; }
-    
-    /**
-     get rendered order
-     */
-    int getRenderOrder() const;
-    
-    /**
      * Get the frustum's far plane.
      */
     float getFarPlane() const { return _farPlane; }
@@ -231,6 +217,7 @@ public:
     //override
     virtual void onEnter() override;
     virtual void onExit() override;
+    virtual void setTag(int tag) override;
 
     /**
      Apply the FBO, RenderTargets and viewport.
@@ -283,7 +270,6 @@ protected:
     mutable bool  _viewProjectionDirty = true;
     bool _viewProjectionUpdated = false; //Whether or not the viewprojection matrix was updated since the last frame.
     CameraFlag _cameraFlag = CameraFlag::DEFAULT; // camera flag
-    int8_t  _depth = -1;                 //camera depth, the depth of camera with CameraFlag::DEFAULT flag is 0 by default, a camera with larger depth is drawn on top of camera with smaller depth
 };
 
 NS_CC_END

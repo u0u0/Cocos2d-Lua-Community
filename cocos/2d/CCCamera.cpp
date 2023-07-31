@@ -1,6 +1,7 @@
 /****************************************************************************
  Copyright (c) 2014-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2019 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2023 cocos2d-lua.org
  
  http://www.cocos2d-x.org
  
@@ -44,7 +45,6 @@ Camera* Camera::create()
     Camera* camera = new (std::nothrow) Camera();
     camera->initDefault();
     camera->autorelease();
-    camera->setDepth(0);
     
     return camera;
 }
@@ -332,19 +332,6 @@ float Camera::getDepthInView(const Mat4& transform) const
     return depth;
 }
 
-void Camera::setDepth(int8_t depth)
-{
-    if (_depth != depth)
-    {
-        _depth = depth;
-        if (_scene)
-        {
-            //notify scene that the camera order is dirty
-            _scene->setCameraOrderDirty();
-        }
-    }
-}
-
 void Camera::onEnter()
 {
     if (_scene == nullptr)
@@ -363,6 +350,19 @@ void Camera::onExit()
     // remove this camera from scene
     setScene(nullptr);
     Node::onExit();
+}
+
+void Camera::setTag(int tag)
+{
+    if (_tag != tag)
+    {
+        _tag = tag;
+        if (_scene)
+        {
+            //notify scene that the camera order is dirty
+            _scene->setCameraOrderDirty();
+        }
+    }
 }
 
 void Camera::setScene(Scene* scene)
@@ -403,14 +403,6 @@ void Camera::apply()
 void Camera::applyViewport()
 {
     Director::getInstance()->getRenderer()->setViewPort(_defaultViewport.x, _defaultViewport.y, _defaultViewport.w, _defaultViewport.h);
-}
-
-int Camera::getRenderOrder() const
-{
-    int result(0);
-    result = 127 <<8;
-    result += _depth;
-    return result;
 }
 
 void Camera::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)

@@ -50,11 +50,6 @@ static bool compareRenderCommand(RenderCommand* a, RenderCommand* b)
     return a->getGlobalOrder() < b->getGlobalOrder();
 }
 
-static bool compare3DCommand(RenderCommand* a, RenderCommand* b)
-{
-    return  a->getDepth() > b->getDepth();
-}
-
 // queue
 RenderQueue::RenderQueue()
 {

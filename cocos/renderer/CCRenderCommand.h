@@ -86,8 +86,6 @@ public:
     bool isSkipBatching() const { return _skipBatching; }
     /**Set skip batching.*/
     void setSkipBatching(bool value) { _skipBatching = value; }
-    /**Get the depth by current model view matrix.*/
-    float getDepth() const { return _depth; }
     /// Can use the result to change the descriptor content.
     inline PipelineDescriptor& getPipelineDescriptor() { return _pipelineDescriptor; }
 
@@ -115,9 +113,6 @@ protected:
      a command is skip batching, it would be forced to draw in a separate function call, and break the batch.
      */
     bool _skipBatching = false;
-    
-    /** Depth from the model view matrix.*/
-    float _depth = 0.f;
 
     Mat4 _mv;
 

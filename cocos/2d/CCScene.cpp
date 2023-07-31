@@ -4,7 +4,7 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2021 cocos2d-lua.org
+Copyright (c) 2021-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -132,7 +132,7 @@ void Scene::onProjectionChanged(EventCustom* /*event*/)
 
 static bool camera_cmp(const Camera* a, const Camera* b)
 {
-    return a->getRenderOrder() < b->getRenderOrder();
+    return a->getTag() < b->getTag(); // use tag for sort order, no need a extra value
 }
 
 const std::vector<Camera*>& Scene::getCameras()

@@ -39,7 +39,6 @@ RenderCommand::~RenderCommand()
 void RenderCommand::init(float globalZOrder, const cocos2d::Mat4 &transform, unsigned int flags)
 {
     _globalOrder = globalZOrder;
-    _depth = 0;
 }
 
 void RenderCommand::printID()
