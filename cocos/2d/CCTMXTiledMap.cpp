@@ -3,7 +3,7 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2020 cocos2d-lua.org
+Copyright (c) 2020-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -93,6 +93,11 @@ TMXTiledMap::TMXTiledMap()
 ,_tileSize(Size::ZERO)
 ,_tmxFile("")
 ,_setupTiles(true)
+,_mapOrientation(TMXOrientationOrtho)
+,_staggerAxis(TMXStaggerAxis_Y)
+,_staggerIndex(TMXStaggerIndex_Even)
+,_renderOrder(TMXRenderOrder_RightDown)
+,_hexSideLength(0)
 {
 }
 
@@ -170,6 +175,7 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
     _mapOrientation = mapInfo->getOrientation();
     _staggerAxis = mapInfo->getStaggerAxis();
     _staggerIndex = mapInfo->getStaggerIndex();
+    _renderOrder = mapInfo->getRenderOrder();
     _hexSideLength = mapInfo->getHexSideLength();
     _objectGroups = mapInfo->getObjectGroups();
     _properties = mapInfo->getProperties();
