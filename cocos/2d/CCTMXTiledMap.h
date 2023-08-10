@@ -3,7 +3,7 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2020 cocos2d-lua.org
+Copyright (c) 2020-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -78,6 +78,14 @@ enum
 
     /** Stagger Index: Even */
     TMXStaggerIndex_Even,
+};
+
+enum
+{
+    TMXRenderOrder_RightDown,
+    TMXRenderOrder_RightUp,
+    TMXRenderOrder_LeftDown,
+    TMXRenderOrder_LeftUp,
 };
 
 /** @brief TMXTiledMap knows how to parse and render a TMX map.
@@ -195,6 +203,9 @@ public:
     /** Map staggerIndex */
     int getStaggerIndex() const { return _staggerIndex; }
     void setStaggerIndex(int staggerIndex) { _staggerIndex = staggerIndex; }
+    /** Map renderOrder */
+    int getRenderOrder() const { return _renderOrder; }
+    void setRenderOrder(int renderOrder) { _renderOrder = renderOrder; }
     /** Map hexSideLength */
     int getHexSideLength() const { return _hexSideLength; }
     void setHexSideLength(int hexSideLength) { _hexSideLength = hexSideLength; }
@@ -251,6 +262,8 @@ protected:
     int _staggerAxis;
     /** Stagger Index */
     int _staggerIndex;
+    /** Render Order */
+    int _renderOrder;
     /** Hex side length*/
     int _hexSideLength;
     /** object groups */

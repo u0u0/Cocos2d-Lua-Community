@@ -3,7 +3,7 @@ Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2020-2021 cocos2d-lua.org
+Copyright (c) 2020-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -339,6 +339,7 @@ bool TMXLayer::initCommon(Vec2 &layerOffset, TMXTiledMap *tileMap)
     _layerOrientation = tileMap->getMapOrientation();
     _staggerAxis = tileMap->getStaggerAxis();
     _staggerIndex = tileMap->getStaggerIndex();
+    _renderOrder = tileMap->getRenderOrder();
     _hexSideLength = tileMap->getHexSideLength();
 
     // offset (after layer orientation is set);
@@ -382,6 +383,7 @@ TMXLayer::TMXLayer()
 ,_layerOrientation(TMXOrientationOrtho)
 ,_staggerAxis(TMXStaggerAxis_Y)
 ,_staggerIndex(TMXStaggerIndex_Even)
+,_renderOrder(TMXRenderOrder_RightDown)
 ,_hexSideLength(0)
 ,_tileMap(nullptr)
 ,_layerType(TMX_LAYER_UNDEFINED)
@@ -857,27 +859,34 @@ Vec2 TMXLayer::getPositionForObject(const Vec2& pos)
 int TMXLayer::getLocalZForPos(const Vec2& pos) const
 {
     int ret = 0;
-    int maxVal = 0;
-    switch (_layerOrientation) {
-        case TMXOrientationOrtho:
-            ret = static_cast<int>(-(_layerSize.height - pos.y));
-            break;
-        case TMXOrientationIso:
-            maxVal = static_cast<int>(_layerSize.width + _layerSize.height);
-            ret = static_cast<int>(-(maxVal - (pos.x + pos.y)));
-            break;
-        case TMXOrientationStaggered:
-            ret = static_cast<int>(-(_layerSize.height - pos.y));
-            break;
-        case TMXOrientationHex:
-            ret = static_cast<int>(-(_layerSize.height - pos.y));
-            break;
-        default:
-            CCASSERT(0, "TMX invalid value");
-            break;
+    int x = static_cast<int>(pos.x);
+    int y = static_cast<int>(pos.y);
+    int width = static_cast<int>(_layerSize.width);
+    int height = static_cast<int>(_layerSize.height);
+    
+    if (_layerOrientation == TMXOrientationIso) {
+        y = x + y;
+        width = width + height;
+        height = width;
     }
     
-//    printf("x:%d, y:%d, z:%d\n", (int)pos.x, (int)pos.y, ret);
+    switch (_renderOrder) {
+        case TMXRenderOrder_RightDown:
+            ret = x + y * width;
+            break;
+        case TMXRenderOrder_RightUp:
+            ret = x + (height - y - 1) * width;
+            break;
+        case TMXRenderOrder_LeftDown:
+            ret = (width - x - 1) + y * width;
+            break;
+        case TMXRenderOrder_LeftUp:
+            ret = (width - x - 1) + (height - y - 1) * width;
+            break;
+        default:
+            CCASSERT(0, "TMX invalid layer render order");
+            break;
+    }
     return ret;
 }
 

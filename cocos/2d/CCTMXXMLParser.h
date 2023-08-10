@@ -3,7 +3,7 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2020 cocos2d-lua.org
+Copyright (c) 2020-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -245,6 +245,9 @@ public:
     
     /// map stagger index
     int getStaggerIndex() const { return _staggerIndex; }
+    
+    /// map renderorder
+    int getRenderOrder() const { return _renderOrder; }
 
     /// map hexsidelength
     int getHexSideLength() const { return _hexSideLength; }
@@ -294,6 +297,8 @@ protected:
     int    _staggerAxis;
     ///map staggerIndex
     int    _staggerIndex;
+    ///map renderorder
+    int    _renderOrder;
     ///map hexsidelength
     int    _hexSideLength;
     /// map width & height

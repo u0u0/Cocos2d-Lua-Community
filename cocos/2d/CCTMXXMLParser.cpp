@@ -4,7 +4,7 @@ Copyright (c) 2009-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2020 cocos2d-lua.org
+Copyright (c) 2020-2023 cocos2d-lua.org
 
 http://www.cocos2d-x.org
 
@@ -227,6 +227,7 @@ TMXMapInfo::TMXMapInfo()
 : _orientation(TMXOrientationOrtho)
 , _staggerAxis(TMXStaggerAxis_Y)
 , _staggerIndex(TMXStaggerIndex_Even)
+, _renderOrder(TMXRenderOrder_RightDown)
 , _hexSideLength(0)
 , _mapSize(Size::ZERO)
 , _tileSize(Size::ZERO)
@@ -319,6 +320,17 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             _staggerIndex = TMXStaggerIndex_Odd;
         } else if (staggerIndex == "even") {
             _staggerIndex = TMXStaggerIndex_Even;
+        }
+        
+        std::string renderorderStr = attributeDict["renderorder"].asString();
+        if (renderorderStr == "right-down") {
+            _renderOrder = TMXRenderOrder_RightDown;
+        } else if (renderorderStr  == "right-up") {
+            _renderOrder = TMXRenderOrder_RightUp;
+        } else if (renderorderStr == "left-down") {
+            _renderOrder = TMXRenderOrder_LeftDown;
+        } else if (renderorderStr == "left-up") {
+            _renderOrder = TMXRenderOrder_LeftUp;
         }
 
         float hexSideLength = attributeDict["hexsidelength"].asFloat();
