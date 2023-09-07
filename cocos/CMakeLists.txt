@@ -42,9 +42,14 @@ include(network/CMakeLists.txt)
 include(audio/CMakeLists.txt)
 
 # default value for cocos2dx extensions modules build
+option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
 option(BUILD_EDITOR_DRAGONBONES "Build editor support for dragonBones" ON)
 option(BUILD_EDITOR_FAIRYGUI "Build editor support for fairygui" ON)
+if(BUILD_EDITOR_COCOSTUDIO)
+    include(editor-support/cocostudio/CMakeLists.txt)
+    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CS_SRC} ${COCOS_CS_HEADER})
+endif(BUILD_EDITOR_COCOSTUDIO)
 
 if(BUILD_EDITOR_SPINE)
     include(editor-support/spine/CMakeLists.txt)

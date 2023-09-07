@@ -25,6 +25,7 @@
 #include "scripting/lua-bindings/manual/lua_module_register.h"
 
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
+#include "scripting/lua-bindings/manual/cocostudio/lua_cocos2dx_coco_studio_manual.hpp"
 #include "scripting/lua-bindings/manual/ui/lua_cocos2dx_ui_manual.hpp"
 #include "scripting/lua-bindings/manual/spine/lua_cocos2dx_spine_manual.hpp"
 #include "scripting/lua-bindings/manual/dragonBones/lua_dragonBones.hpp"
@@ -38,6 +39,7 @@ int lua_module_register(lua_State* L)
     register_extra_manual_all(L);
     register_audio_module(L);
     register_network_module(L);
+    register_cocostudio_module(L);
     register_ui_module(L);
     register_spine_module(L);
     register_dragonBones_manual(L);

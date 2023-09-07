@@ -26,6 +26,8 @@ set(lua_bindings_manual_headers
     manual/cocos2d/lua_cocos2dx_manual.hpp
     manual/Cocos2dxLuaLoader.h
     manual/CCLuaValue.h
+    manual/cocostudio/lua-cocos-studio-conversions.h
+    manual/cocostudio/CustomGUIReader.h
     manual/ui/lua_cocos2dx_ui_manual.hpp
     manual/controller/lua_cocos2dx_controller_manual.hpp
     manual/extra/lua_extra_manual.h
@@ -46,6 +48,10 @@ set(lua_bindings_manual_files
     manual/cocos2d/LuaScriptHandlerMgr.cpp
     manual/cocos2d/lua_cocos2dx_manual.cpp
     manual/cocos2d/lua_cocos2dx_physics_manual.cpp
+    manual/cocostudio/CustomGUIReader.cpp
+    manual/cocostudio/lua_cocos2dx_coco_studio_manual.cpp
+    manual/cocostudio/lua-cocos-studio-conversions.cpp
+    manual/cocostudio/lua_cocos2dx_csloader_manual.cpp
     manual/controller/lua_cocos2dx_controller_manual.cpp
     manual/network/lua_extensions.c
     manual/network/lua_cocos2dx_network_manual.cpp
@@ -66,7 +72,9 @@ set(lua_bindings_manual_files
 set(lua_bindings_auto_headers
     auto/lua_cocos2dx_controller_auto.hpp
     auto/lua_cocos2dx_spine_auto.hpp
+    auto/lua_cocos2dx_studio_auto.hpp
     auto/lua_cocos2dx_auto.hpp
+    auto/lua_cocos2dx_csloader_auto.hpp
     auto/lua_cocos2dx_ui_auto.hpp
     auto/lua_cocos2dx_physics_auto.hpp
     auto/lua_cocos2dx_backend_auto.hpp
@@ -78,6 +86,8 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_controller_auto.cpp
     auto/lua_cocos2dx_physics_auto.cpp
     auto/lua_cocos2dx_spine_auto.cpp
+    auto/lua_cocos2dx_studio_auto.cpp
+    auto/lua_cocos2dx_csloader_auto.cpp
     auto/lua_cocos2dx_ui_auto.cpp
     auto/lua_cocos2dx_backend_auto.cpp
     auto/lua_cocos2dx_tmx_auto.cpp

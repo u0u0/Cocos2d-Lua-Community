@@ -8,6 +8,7 @@ function MainScene:ctor()
 		"Test_AsyncTCP",
 		"Test_Audio",
 		"Test_ClippingRectangleNode",
+		"Test_CocosStudio",
 		"Test_DragonBones",
 		"Test_EditBox",
 		"Test_FairyGUI",
