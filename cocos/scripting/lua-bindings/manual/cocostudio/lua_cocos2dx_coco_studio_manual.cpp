@@ -35,6 +35,12 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "scripting/lua-bindings/manual/cocostudio/CustomGUIReader.h"
 
+// HandlerType for addObjectHandler
+enum {
+    HT_TIMELINE_FRAME_EVENT = 2000, // studio lua binding handler type begin
+    HT_TIMELINE_LAST_FRAME,
+};
+
 using namespace cocostudio;
 
 class LuaArmatureWrapper:public Ref
@@ -102,7 +108,7 @@ static int lua_cocos2dx_ArmatureAnimation_setMovementEventCallFunc(lua_State* L)
         }
 #endif
         
-        LUA_FUNCTION handler = (  toluafix_ref_function(L,2,0));
+        LUA_FUNCTION handler = toluafix_ref_function(L,2,0);
         
         LuaArmatureWrapper* wrapper = new (std::nothrow) LuaArmatureWrapper();
         wrapper->autorelease();
@@ -110,18 +116,13 @@ static int lua_cocos2dx_ArmatureAnimation_setMovementEventCallFunc(lua_State* L)
         Vector<LuaArmatureWrapper*> vec;
         vec.pushBack(wrapper);
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)wrapper, handler, ScriptHandlerMgr::HandlerType::ARMATURE_EVENT);
-                
-        self->setMovementEventCallFunc([=](Armature *armature, MovementEventType movementType, const std::string& movementID){
-            
+        self->setMovementEventCallFunc([=](Armature *armature, MovementEventType movementType, const std::string& movementID) {
             if (0 != handler)
             {
                 std::string strMovementID = movementID;
                 LuaArmatureMovementEventData movementData(armature,(int)movementType, strMovementID);
-                
-                LuaArmatureWrapperEventData wrapperData(LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::MOVEMENT_EVENT , (void*)&movementData);
-                
+                LuaArmatureWrapperEventData wrapperData(LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::MOVEMENT_EVENT, (void*)&movementData);
                 BasicScriptData data((void*)vec.at(0),(void*)&wrapperData);
-                
                 LuaEngine::getInstance()->handleEvent(ScriptHandlerMgr::HandlerType::ARMATURE_EVENT, (void*)&data);
             }
         });
@@ -171,7 +172,7 @@ static int lua_cocos2dx_ArmatureAnimation_setFrameEventCallFunc(lua_State* L)
         }
 #endif
         
-        LUA_FUNCTION handler = (  toluafix_ref_function(L,2,0));
+        LUA_FUNCTION handler = toluafix_ref_function(L,2,0);
         
         LuaArmatureWrapper* wrapper = new (std::nothrow) LuaArmatureWrapper();
         wrapper->autorelease();
@@ -180,26 +181,19 @@ static int lua_cocos2dx_ArmatureAnimation_setFrameEventCallFunc(lua_State* L)
         vec.pushBack(wrapper);
         
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)wrapper, handler, ScriptHandlerMgr::HandlerType::ARMATURE_EVENT);
-
         self->setFrameEventCallFunc([=](cocostudio::Bone *bone, const std::string& frameEventName, int originFrameIndex, int currentFrameIndex){
-            
             if (0 != handler)
             {
                 std::string strFrameEventName(frameEventName);
-                
                 LuaArmatureFrameEventData frameData(bone,frameEventName,originFrameIndex,currentFrameIndex);
-                
                 LuaArmatureWrapperEventData wrapperData(LuaArmatureWrapperEventData::LuaArmatureWrapperEventType::FRAME_EVENT , (void*)&frameData);
-                
                 BasicScriptData data((void*)vec.at(0),(void*)&wrapperData);
-                
                 LuaEngine::getInstance()->handleEvent(ScriptHandlerMgr::HandlerType::ARMATURE_EVENT, (void*)&data);
             }
         });
-        
+
         return 0;
     }
-    
     
     luaL_error(L, "'setFrameEventCallFunc' function of ArmatureAnimation has wrong number of arguments: %d, was expecting %d\n", argc, 1);
     
@@ -255,13 +249,12 @@ static int lua_cocos2dx_ArmatureDataManager_addArmatureFileInfoAsyncCallFunc(lua
         }
 #endif
         const char* configFilePath = tolua_tostring(L, 2, "");
-        LUA_FUNCTION handler = (  toluafix_ref_function(L, 3, 0));
+        LUA_FUNCTION handler = toluafix_ref_function(L, 3, 0);
     
         LuaArmatureWrapper* wrapper = new (std::nothrow) LuaArmatureWrapper();
         wrapper->autorelease();
         
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)wrapper, handler, ScriptHandlerMgr::HandlerType::ARMATURE_EVENT);
-        
         self->addArmatureFileInfoAsync(configFilePath, wrapper, CC_SCHEDULE_SELECTOR(LuaArmatureWrapper::addArmatureFileInfoAsyncCallback));
         
         return 0;
@@ -281,13 +274,12 @@ static int lua_cocos2dx_ArmatureDataManager_addArmatureFileInfoAsyncCallFunc(lua
         const char* plistPath = tolua_tostring(L, 3, "");
         const char* configFilePath = tolua_tostring(L, 4, "");
         
-        LUA_FUNCTION handler = (  toluafix_ref_function(L,5,0));
+        LUA_FUNCTION handler = toluafix_ref_function(L,5,0);
         
         LuaArmatureWrapper* wrapper = new (std::nothrow) LuaArmatureWrapper();
         wrapper->autorelease();
         
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)wrapper, handler, ScriptHandlerMgr::HandlerType::ARMATURE_EVENT);
-        
         self->addArmatureFileInfoAsync(imagePath, plistPath,configFilePath,wrapper, CC_SCHEDULE_SELECTOR(LuaArmatureWrapper::addArmatureFileInfoAsyncCallback));
         
         return 0;
@@ -455,9 +447,6 @@ static void extendActionTimelineCache(lua_State* L)
 
 static int lua_cocos2dx_ActionTimeline_setFrameEventCallFunc(lua_State* L)
 {
-    if (nullptr == L)
-        return 0;
-    
     int argc = 0;
     cocostudio::timeline::ActionTimeline* self = nullptr;
     
@@ -476,24 +465,26 @@ static int lua_cocos2dx_ActionTimeline_setFrameEventCallFunc(lua_State* L)
 #endif
     argc = lua_gettop(L) - 1;
     
-    if (1 == argc)
-    {
+    if (0 == argc) {
+        self->clearFrameEventCallFunc();
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)self, (ScriptHandlerMgr::HandlerType)HT_TIMELINE_FRAME_EVENT);
+        return 0;
+    } else if (1 == argc) {
 #if COCOS2D_DEBUG >= 1
         if (!toluafix_isfunction(L,2,"LUA_FUNCTION",0,&tolua_err) )
         {
             goto tolua_lerror;
         }
 #endif
-        
-        LUA_FUNCTION handler = (  toluafix_ref_function(L,2,0));
-        self->setFrameEventCallFunc([=](cocostudio::timeline::Frame* frame){
-            toluafix_pushusertype_ccobject(L, frame->_ID, &frame->_luaID, (void*)frame, getLuaTypeName(frame, "ccs.Frame"));
+        LUA_FUNCTION handler = toluafix_ref_function(L, 2, 0);
+        self->setFrameEventCallFunc([=](cocostudio::timeline::Frame* frame) {
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<cocostudio::timeline::Frame>(coroutine, "ccs.Frame", frame);
             LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
         });
-        
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, (ScriptHandlerMgr::HandlerType)HT_TIMELINE_FRAME_EVENT);
         return 0;
     }
-    
     
     luaL_error(L, "'setFrameEventCallFunc' function of ActionTimeline has wrong number of arguments: %d, was expecting %d\n", argc, 1);
     
@@ -504,6 +495,56 @@ tolua_lerror:
     return 0;
 }
 
+static int lua_cocos2dx_studio_ActionTimeline_setLastFrameCallFunc(lua_State* tolua_S)
+{
+	int argc = 0;
+	cocostudio::timeline::ActionTimeline* cobj = nullptr;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+	if (!tolua_isusertype(tolua_S, 1, "ccs.ActionTimeline", 0, &tolua_err))goto tolua_lerror;
+#endif
+
+	cobj = (cocostudio::timeline::ActionTimeline*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+	if (!cobj)
+	{
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_studio_ActionTimeline_setLastFrameCallFunc'", nullptr);
+		return 0;
+	}
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+
+    if (0 == argc) {
+        cobj->clearLastFrameCallFunc();
+        ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)cobj, (ScriptHandlerMgr::HandlerType)HT_TIMELINE_LAST_FRAME);
+        return 0;
+    } else if (1 == argc) {
+#if COCOS2D_DEBUG >= 1
+		if (!toluafix_isfunction(tolua_S, 2, "LUA_FUNCTION", 0, &tolua_err))
+		{
+			goto tolua_lerror;
+		}
+#endif
+		LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 2, 0));
+		cobj->setLastFrameCallFunc([=]() {
+			LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+		});
+        ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_TIMELINE_LAST_FRAME);
+		return 0;
+	}
+
+	luaL_error(tolua_S, "'setLastFrameCallFunc' function of ActionTimeline has wrong number of arguments: %d, was expecting %d\n", argc, 1);
+
+#if COCOS2D_DEBUG >= 1
+tolua_lerror:
+	tolua_error(tolua_S, "#ferror in function 'setLastFrameCallFunc'.", &tolua_err);
+#endif
+	return 0;
+}
+
 static void extendActionTimeline(lua_State* L)
 {
     lua_pushstring(L, "ccs.ActionTimeline");
@@ -511,6 +552,7 @@ static void extendActionTimeline(lua_State* L)
     if (lua_istable(L,-1))
     {
         tolua_function(L, "setFrameEventCallFunc", lua_cocos2dx_ActionTimeline_setFrameEventCallFunc);
+        tolua_function(L, "setLastFrameCallFunc", lua_cocos2dx_studio_ActionTimeline_setLastFrameCallFunc);
     }
     lua_pop(L, 1);
 }
@@ -550,6 +592,8 @@ int lua_cocos2dx_CustomGUIReader_create(lua_State* L)
             LUA_FUNCTION arg2 = toluafix_ref_function(L,4,0);
 
             cocostudio::CustomGUIReader* ret = cocostudio::CustomGUIReader::create(arg0, arg1, arg2);
+            ScriptHandlerMgr::getInstance()->addCustomHandler((void*)ret, arg1);
+            ScriptHandlerMgr::getInstance()->addCustomHandler((void*)ret, arg2);
             object_to_luaval<cocostudio::CustomGUIReader>(L, "ccs.CustomGUIReader",(cocostudio::CustomGUIReader*)ret);
             return 1;
         }

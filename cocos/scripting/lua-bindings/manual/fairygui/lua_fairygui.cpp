@@ -1185,9 +1185,10 @@ static int lua_fairygui_UIEventDispatcher_addEventListener(lua_State* L)
 		LUA_FUNCTION handler = (toluafix_ref_function(L, 3, 0));
 
 		cobj->addEventListener(eventType, [=](fairygui::EventContext* context) {
-				object_to_luaval<fairygui::EventContext>(L, "fairygui.EventContext", context);
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
-				});
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+        });
 		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);
 		return 0;
 	}
@@ -1208,9 +1209,10 @@ static int lua_fairygui_UIEventDispatcher_addEventListener(lua_State* L)
 		}
 
 		cobj->addEventListener(eventType, [=](fairygui::EventContext* context) {
-				object_to_luaval<fairygui::EventContext>(L, "fairygui.EventContext", context);
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
-				}, fairygui::EventTag(tag));
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+        }, fairygui::EventTag(tag));
 		ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)eventType);
 		return 0;
 	}
@@ -5364,7 +5366,8 @@ static int lua_fairygui_GObject_addClickListener(lua_State* tolua_S)
             return 0;
         }
         cobj->addClickListener([=](fairygui::EventContext* context) {
-            object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
             LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
         });
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
@@ -5379,8 +5382,9 @@ static int lua_fairygui_GObject_addClickListener(lua_State* tolua_S)
             return 0;
         }
         cobj->addClickListener([=](fairygui::EventContext* context) {
-            object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
-            lua_pushinteger(tolua_S, tag);
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
+            lua_pushinteger(coroutine, tag);
             LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 2);
         }, fairygui::EventTag(tag));
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, handler, (ScriptHandlerMgr::HandlerType)HT_GOBJECT_CLICKED);
@@ -6885,8 +6889,8 @@ static int lua_fairygui_GMovieClip_setPlaySettings(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->setPlaySettings(arg0, arg1, arg2, arg3, [=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11529,8 +11533,8 @@ static int lua_fairygui_Transition_setHook(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->setHook(arg0, [=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11734,8 +11738,8 @@ static int lua_fairygui_Transition_playReverse(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->playReverse([=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11758,8 +11762,8 @@ static int lua_fairygui_Transition_playReverse(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->playReverse(arg0, arg1, [=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11803,8 +11807,8 @@ static int lua_fairygui_Transition_play(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->play([=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11827,8 +11831,8 @@ static int lua_fairygui_Transition_play(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->play(arg0, arg1, [=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -11859,8 +11863,8 @@ static int lua_fairygui_Transition_play(lua_State* tolua_S)
 			return 0;
 		}
 		cobj->play(arg0, arg1, arg2, arg3, [=]() {
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
-				});
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 0);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		return 0;
 	}
@@ -18836,8 +18840,9 @@ static int lua_fairygui_GList_set_itemRenderer(lua_State* L)
 
 	refid = (toluafix_ref_function(L, 2, 0));
 	cobj->itemRenderer = [=](int index, fairygui::GObject *gobject) {
-		lua_pushinteger(L, index);
-		object_to_luaval<fairygui::GObject>(L, "fairygui.GObject", gobject);
+        lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+		lua_pushinteger(coroutine, index);
+		object_to_luaval<fairygui::GObject>(coroutine, "fairygui.GObject", gobject);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
 	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GLIST_RENDERER);
@@ -23145,9 +23150,10 @@ static int lua_fairygui_PopupMenu_addItem(lua_State* tolua_S)
 			return 0;
 		}
 		fairygui::GButton* ret = cobj->addItem(arg0, [=](fairygui::EventContext* context) {
-				object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
-				});
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		object_to_luaval<fairygui::GButton>(tolua_S, "fairygui.GButton",(fairygui::GButton*)ret);
 		return 1;
@@ -23225,9 +23231,10 @@ static int lua_fairygui_PopupMenu_addItemAt(lua_State* tolua_S)
 			return 0;
 		}
 		fairygui::GButton* ret = cobj->addItemAt(arg0, arg1, [=](fairygui::EventContext* context) {
-				object_to_luaval<fairygui::EventContext>(tolua_S, "fairygui.EventContext", context);
-				LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
-				});
+            lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+            object_to_luaval<fairygui::EventContext>(coroutine, "fairygui.EventContext", context);
+            LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
+        });
 		ScriptHandlerMgr::getInstance()->addCustomHandler((void*)cobj, handler);
 		object_to_luaval<fairygui::GButton>(tolua_S, "fairygui.GButton",(fairygui::GButton*)ret);
 		return 1;
@@ -26350,8 +26357,9 @@ static int lua_fairygui_GTree_set_treeNodeRender(lua_State* L)
 
 	refid = (toluafix_ref_function(L, 2, 0));
 	cobj->treeNodeRender = [=](fairygui::GTreeNode* node, fairygui::GComponent* obj) {
-		object_to_luaval<fairygui::GTreeNode>(L, "fairygui.GTreeNode", node);
-		object_to_luaval<fairygui::GComponent>(L, "fairygui.GComponent", obj);
+        lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+		object_to_luaval<fairygui::GTreeNode>(coroutine, "fairygui.GTreeNode", node);
+		object_to_luaval<fairygui::GComponent>(coroutine, "fairygui.GComponent", obj);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
 	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GTREE_RENDERER);
@@ -26393,8 +26401,9 @@ static int lua_fairygui_GTree_set_treeNodeWillExpand(lua_State* L)
 
 	refid = (toluafix_ref_function(L, 2, 0));
 	cobj->treeNodeWillExpand = [=](fairygui::GTreeNode* node, bool expand) {
-		object_to_luaval<fairygui::GTreeNode>(L, "fairygui.GTreeNode", node);
-		lua_pushboolean(L, (int)expand);
+        lua_State *coroutine = LuaEngine::getInstance()->getLuaStack()->getLuaState();
+		object_to_luaval<fairygui::GTreeNode>(coroutine, "fairygui.GTreeNode", node);
+		lua_pushboolean(coroutine, (int)expand);
 		LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(refid, 2);
 	};
 	ScriptHandlerMgr::getInstance()->addObjectHandler((void*)cobj, refid, (ScriptHandlerMgr::HandlerType)HT_GTREE_WILLEXPAND);
