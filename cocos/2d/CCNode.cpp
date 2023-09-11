@@ -1049,6 +1049,33 @@ void Node::removeChildByName(const std::string &name, bool cleanup)
     }
 }
 
+void Node::removeChildrenByTag(int tag, bool cleanup/* = true */)
+{
+    CCASSERT(tag != Node::INVALID_TAG, "Invalid tag");
+
+    for (int i = _children.size() - 1; i >= 0; i--) {
+        auto child = _children.at(i);
+        if (child->_tag == tag) {
+            this->removeChild(child, cleanup);
+        }
+    }
+}
+
+void Node::removeChildrenByName(const std::string& name, bool cleanup/* = true */)
+{
+    CCASSERT(!name.empty(), "Invalid name");
+
+    std::hash<std::string> h;
+    size_t hash = h(name);
+    for (int i = _children.size() - 1; i >= 0; i--) {
+        auto child = _children.at(i);
+        // Different strings may have the same hash code, but can use it to compare first for speed
+        if (child->_hashOfName == hash && child->_name.compare(name) == 0) {
+            this->removeChild(child, cleanup);
+        }
+    }
+}
+
 void Node::removeAllChildren()
 {
     this->removeAllChildrenWithCleanup(true);
@@ -1895,11 +1922,10 @@ Component* Node::getComponent(const std::string& name)
 bool Node::addComponent(Component *component)
 {
     // lazy alloc
-    if (!_componentContainer)
+    if (!_componentContainer) {
         _componentContainer = new (std::nothrow) ComponentContainer(this);
-    
-    // should enable schedule update, then all components can receive this call back
-    scheduleUpdate();
+        scheduleUpdate(); // ONLY need scheduleUpdate once.
+    }
     
     return _componentContainer->add(component);
 }

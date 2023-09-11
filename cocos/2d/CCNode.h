@@ -886,6 +886,20 @@ public:
      */
     virtual void removeChildByName(const std::string &name, bool cleanup = true);
     /**
+     * Removes children from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
+     *
+     * @param name       A string that identifies children nodes.
+     * @param cleanup   True if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     */
+    virtual void removeChildrenByTag(int tag, bool cleanup = true);
+    /**
+     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
+     *
+     * @param name       A string that identifies a child node.
+     * @param cleanup   True if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     */
+    virtual void removeChildrenByName(const std::string& name, bool cleanup = true);
+    /**
      * Removes all children from the container with a cleanup.
      *
      * @see `removeAllChildrenWithCleanup(bool)`
