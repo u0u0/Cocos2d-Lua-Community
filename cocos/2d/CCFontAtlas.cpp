@@ -125,11 +125,12 @@ FontAtlas::~FontAtlas()
     releaseTextures();
 
     delete []_currentPageData;
+    CC_SAFE_DELETE_ARRAY(_currentPageDataRGBA);
 
 #if CC_TARGET_PLATFORM != CC_PLATFORM_WIN32 && CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
     if (_iconv)
     {
-        iconv_close(_iconv);
+        iconv_close((iconv_t)_iconv);
         _iconv = nullptr;
     }
 #endif
@@ -248,7 +249,7 @@ void FontAtlas::conversionU32TOGB2312(const std::u32string& u32Text, std::unorde
 #else
         if (_iconv == nullptr)
         {
-            _iconv = iconv_open("GBK//TRANSLIT", "UTF-32LE");
+            _iconv = (void *)iconv_open("GBK//TRANSLIT", "UTF-32LE");
         }
 
         if (_iconv == (iconv_t)-1)
@@ -262,7 +263,7 @@ void FontAtlas::conversionU32TOGB2312(const std::u32string& u32Text, std::unorde
             size_t inLen = strLen * 2;
             size_t outLen = gb2312StrSize;
 
-            iconv(_iconv, (char**)&pin, &inLen, &pout, &outLen);
+            iconv((iconv_t)_iconv, (char**)&pin, &inLen, &pout, &outLen);
         }
 #endif
     }
