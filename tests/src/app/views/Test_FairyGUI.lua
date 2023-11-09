@@ -17,10 +17,13 @@ function TestCase:ctor()
 	-- btn event, fairy has it's own EventDispatcher, cover the cocos's node
 	local btn = view:getChild("n9")
 	btn:addEventListener(fairygui.UIEventType.Click, function(context)
-		self.fairyRoot:release()
-		-- XXX:场景切换的时候需要释放fairygui的静态数据，避免不必要的异常
-		fairygui.HtmlObject:clearStaticPools()
-		fairygui.DragDropManager:destroyInstance()
+		-- 不能在fgui事件里面做删除自己等操作,内部会崩.
+		self:performWithDelay(function()
+			self.fairyRoot:release()
+			-- XXX:场景切换的时候需要释放fairygui的静态数据，避免不必要的异常
+			fairygui.HtmlObject:clearStaticPools()
+			fairygui.DragDropManager:destroyInstance()
+		end, 0)
 	end)
 
 	local btnOpenWin = view:getChild("btnOpenWin")
