@@ -1,6 +1,5 @@
 /****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- Copyright (c) 2022 cocos2d-lua.org
  
  http://www.cocos2d-x.org
  
@@ -27,14 +26,11 @@
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "base/CCRef.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
-
 #include <stdlib.h>
-#include <queue>
 
 using namespace cocos2d;
 
-static int s_luaFuncRefId = 0;
-static std::queue<int> s_luaFuncRefIdPool;
+static int s_function_ref_id = 0;
 
 TOLUA_API void toluafix_open(lua_State* L)
 {
@@ -199,23 +195,17 @@ TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
     // function at lo
     if (!lua_isfunction(L, lo)) return 0;
 
-    int refid;
-    if (s_luaFuncRefIdPool.size() > 0) {
-        refid = s_luaFuncRefIdPool.front();
-        s_luaFuncRefIdPool.pop();
-    } else {
-        refid = ++s_luaFuncRefId;
-    }
+    s_function_ref_id++;
 
     lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: fun ... refid_fun */
-    lua_pushinteger(L, refid);                      /* stack: fun ... refid_fun refid */
+    lua_pushinteger(L, s_function_ref_id);                      /* stack: fun ... refid_fun refid */
     lua_pushvalue(L, lo);                                       /* stack: fun ... refid_fun refid fun */
 
     lua_rawset(L, -3);                  /* refid_fun[refid] = fun, stack: fun ... refid_ptr */
     lua_pop(L, 1);                                              /* stack: fun ... */
 
-    return refid;
+    return s_function_ref_id;
 
     // lua_pushvalue(L, lo);                                           /* stack: ... func */
     // return luaL_ref(L, LUA_REGISTRYINDEX);
@@ -238,8 +228,7 @@ TOLUA_API void toluafix_remove_function_by_refid(lua_State* L, int refid)
     lua_pushnil(L);                                             /* stack: ... refid_fun refid nil */
     lua_rawset(L, -3);                  /* refid_fun[refid] = fun, stack: ... refid_ptr */
     lua_pop(L, 1);                                              /* stack: ... */
-    
-    s_luaFuncRefIdPool.push(refid);
+
     // luaL_unref(L, LUA_REGISTRYINDEX, refid);
 }
 
