@@ -88,6 +88,9 @@ bool HTTPRequest::initWithUrl(const char *url, int method)
     curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0L);
 
+    curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYHOST, 0);
+
     switch (method) {
         case kCCHTTPRequestMethodGET:
             curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "GET");
