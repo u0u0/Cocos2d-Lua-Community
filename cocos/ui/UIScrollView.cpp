@@ -609,14 +609,13 @@ void ScrollView::processAutoScrolling(float deltaTime)
         }
     }
 
+    moveInnerContainer(newPosition - getInnerContainerPosition(), reachedEnd);
     // Finish auto scroll if it ended
     if(reachedEnd)
     {
         _autoScrolling = false;
         dispatchEvent(EventType::AUTOSCROLL_ENDED);
     }
-
-    moveInnerContainer(newPosition - getInnerContainerPosition(), reachedEnd);
 }
 
 void ScrollView::jumpToDestination(const Vec2 &des)
